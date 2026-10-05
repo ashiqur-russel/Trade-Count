@@ -19,11 +19,14 @@
           site, can read it.
         </p>
       </div>
-      <tc-segmented-control
-        label="Colour theme"
-        [options]="themeOptions"
-        [(value)]="theme.preference"
-      />
+      <div class="tools">
+        <a class="settings-link" routerLink="/settings">Settings</a>
+        <tc-segmented-control
+          label="Colour theme"
+          [options]="themeOptions"
+          [(value)]="theme.preference"
+        />
+      </div>
     </div>
   </header>
 } @else {
@@ -32,11 +35,20 @@
       <tc-brand-mark class="brand-mark" />
       <span>Trade Count</span>
     </a>
-    <tc-segmented-control
-      label="Colour theme"
-      [options]="themeOptions"
-      [(value)]="theme.preference"
-    />
+    <div class="tools">
+      <a
+        class="settings-link"
+        routerLink="/settings"
+        routerLinkActive="active"
+        ariaCurrentWhenActive="page"
+        >Settings</a
+      >
+      <tc-segmented-control
+        label="Colour theme"
+        [options]="themeOptions"
+        [(value)]="theme.preference"
+      />
+    </div>
   </header>
 }
 <main>

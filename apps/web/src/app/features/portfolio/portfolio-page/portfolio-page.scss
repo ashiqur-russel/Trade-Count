@@ -11,12 +11,6 @@
   align-items: start;
 }
 
-.column {
-  display: grid;
-  gap: var(--tc-space-6);
-  min-width: 0;
-}
-
 @media (width <= 880px) {
   .bench {
     grid-template-columns: minmax(0, 1fr);

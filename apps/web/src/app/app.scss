@@ -103,3 +103,25 @@ main {
 .brand-mark {
   font-size: 1.6em;
 }
+
+.tools {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--tc-space-3);
+  align-items: center;
+}
+
+.settings-link {
+  padding: var(--tc-space-1) var(--tc-space-3);
+  border: var(--tc-rule-width) solid var(--tc-color-rule);
+  border-radius: var(--tc-radius-sm);
+  color: var(--tc-color-text);
+  font-size: var(--tc-text-sm);
+  font-weight: var(--tc-weight-semibold);
+  text-decoration: none;
+}
+
+.settings-link:hover,
+.settings-link.active {
+  background: var(--tc-color-surface-sunken);
+}

@@ -12,13 +12,17 @@ class FakeLockManager {
 
   request(_name: string, optionsOrCallback: unknown, maybeCallback?: unknown): Promise<unknown> {
     const ifAvailable = typeof optionsOrCallback === 'object';
-    const callback = (maybeCallback ?? optionsOrCallback) as (lock: object | null) => Promise<unknown>;
+    const callback = (maybeCallback ?? optionsOrCallback) as (
+      lock: object | null,
+    ) => Promise<unknown>;
     if (!this.held) {
       this.held = true;
       return callback({});
     }
     if (ifAvailable) return callback(null);
-    return new Promise((resolve) => this.queue.push(() => ((this.held = true), resolve(callback({})))));
+    return new Promise((resolve) =>
+      this.queue.push(() => ((this.held = true), resolve(callback({})))),
+    );
   }
 }
 

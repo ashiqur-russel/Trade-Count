@@ -296,7 +296,10 @@ describe('PortfolioSync', () => {
       };
       await sync.sync();
       db.snapshot = emptySnapshot();
-      db.mergeFailure = new PortfolioDbError({ code: 'CONFLICT', message: 'These changes conflict.' });
+      db.mergeFailure = new PortfolioDbError({
+        code: 'CONFLICT',
+        message: 'These changes conflict.',
+      });
       await sync.sync();
     }
 

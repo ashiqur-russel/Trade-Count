@@ -13,12 +13,11 @@ const legalRoutes: Routes = (Object.keys(LEGAL_PATHS) as LegalKind[]).flatMap((k
 );
 
 export const routes: Routes = [
+  ...legalRoutes,
   {
     path: '',
-    title: 'Trade Count',
-    loadComponent: () =>
-      import('./features/portfolio/portfolio-page/portfolio-page').then((m) => m.PortfolioPage),
+    loadChildren: () =>
+      import('./features/portfolio/portfolio.routes').then((m) => m.PORTFOLIO_ROUTES),
   },
-  ...legalRoutes,
   { path: '**', redirectTo: '' },
 ];

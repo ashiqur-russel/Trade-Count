@@ -1,18 +1,27 @@
 import { expect, test } from './fixtures';
-import { addBuy, addSale, addStockWithBuy, joinWithKey, syncButton, syncPanel, turnOnSync } from './portfolio-page';
-
-const summary = (page: import('@playwright/test').Page) => page.locator('tc-portfolio-summary');
+import {
+  addBuy,
+  addSale,
+  addStockWithBuy,
+  clickSync,
+  joinWithKey,
+  openPortfolio,
+  stocksOf,
+  summaryOf,
+  syncPanelOf,
+  turnOnSync,
+} from './portfolio-page';
 
 test.describe('local database', () => {
   test('keeps a stock and trade after the page is reloaded', async ({ openDevice }) => {
     const page = await openDevice();
     await addStockWithBuy(page, 'Reload Co', '3', '100');
-    await expect(summary(page)).toContainText('300,00');
+    await expect(await summaryOf(page)).toContainText('300,00');
 
     await page.reload();
 
-    await expect(page.locator('tc-stocks-panel')).toContainText('Reload Co');
-    await expect(summary(page)).toContainText('300,00');
+    await expect(await stocksOf(page)).toContainText('Reload Co');
+    await expect(await summaryOf(page)).toContainText('300,00');
   });
 });
 
@@ -24,13 +33,13 @@ test.describe('encrypted sync between two devices', () => {
 
     const laptop = await openDevice();
     await joinWithKey(laptop, key);
-    await expect(summary(laptop)).toContainText('300,00');
+    await expect(await summaryOf(laptop)).toContainText('300,00');
 
     await addBuy(laptop, '2', '110');
-    await expect(summary(laptop)).toContainText('520,00');
+    await expect(await summaryOf(laptop)).toContainText('520,00');
     await expect(async () => {
-      await syncButton(phone, 'Sync now').click();
-      await expect(summary(phone)).toContainText('520,00', { timeout: 2000 });
+      await clickSync(phone, 'Sync now');
+      await expect(await summaryOf(phone)).toContainText('520,00', { timeout: 2000 });
     }).toPass({ timeout: 20_000 });
   });
 
@@ -40,16 +49,17 @@ test.describe('encrypted sync between two devices', () => {
     const key = await turnOnSync(phone, { rememberKey: true });
     const laptop = await openDevice();
     await joinWithKey(laptop, key);
-    await expect(laptop.locator('tc-stocks-panel')).toContainText('Gone Co');
+    await expect(await stocksOf(laptop)).toContainText('Gone Co');
 
-    await syncButton(phone, 'Turn off sync').click();
-    await syncButton(phone, 'Delete synced copy').click();
-    await expect(syncPanel(phone)).toContainText('Turn on sync');
-    await syncButton(laptop, 'Sync now').click();
+    await clickSync(phone, 'Turn off sync');
+    await clickSync(phone, 'Delete synced copy');
+    await expect(await syncPanelOf(phone)).toContainText('Turn on sync');
+    await clickSync(laptop, 'Sync now');
 
-    await expect(syncPanel(laptop)).toContainText('Turn on sync');
-    await expect(syncPanel(laptop)).toContainText('no longer exists');
-    await expect(laptop.locator('tc-stocks-panel')).toContainText('Gone Co');
+    await expect(await syncPanelOf(laptop)).toContainText('Turn on sync');
+    await expect(await syncPanelOf(laptop)).toContainText('no longer exists');
+    await expect(await stocksOf(laptop)).toContainText('Gone Co');
+    await expect(laptop.locator('tc-sync-attention')).toContainText('no longer exists');
   });
 });
 
@@ -59,16 +69,16 @@ test.describe('sync key that is not stored on the device', () => {
     const key = await turnOnSync(page, { rememberKey: false });
 
     await page.reload();
-    await expect(syncPanel(page)).toContainText('Key needed');
+    await expect(await syncPanelOf(page)).toContainText('Key needed');
 
     await page.locator('#sync-unlock-key').fill('AAAA-AAAA-AAAA-AAAA-AAAA-AAAA-AAAA-AAAA');
-    await syncButton(page, 'Continue syncing').click();
-    await expect(syncPanel(page).locator('tc-alert')).toBeVisible();
-    await expect(syncPanel(page)).toContainText('Key needed');
+    await clickSync(page, 'Continue syncing');
+    await expect((await syncPanelOf(page)).locator('tc-alert')).toBeVisible();
+    await expect(await syncPanelOf(page)).toContainText('Key needed');
 
     await page.locator('#sync-unlock-key').fill(key);
-    await syncButton(page, 'Continue syncing').click();
-    await expect(syncPanel(page)).toContainText('Synced');
+    await clickSync(page, 'Continue syncing');
+    await expect(await syncPanelOf(page)).toContainText('Synced');
   });
 });
 
@@ -96,12 +106,12 @@ test.describe('two tabs of the same device', () => {
     await second.goto(first.url());
 
     await expect(second.locator('main')).toContainText('open in another tab');
-    await expect(first.locator('tc-stocks-panel')).toContainText('Shared Co');
+    await expect(await stocksOf(first)).toContainText('Shared Co');
 
     await first.close();
 
-    await expect(second.locator('tc-stocks-panel')).toContainText('Shared Co');
-    await expect(second.locator('tc-portfolio-summary')).toContainText('20,00');
+    await expect(await stocksOf(second)).toContainText('Shared Co');
+    await expect(await summaryOf(second)).toContainText('20,00');
   });
 
   test('a reloaded page waits for its old worker to end instead of failing', async ({ openDevice }) => {
@@ -111,7 +121,7 @@ test.describe('two tabs of the same device', () => {
     await page.reload();
     await page.reload();
 
-    await expect(page.locator('tc-stocks-panel')).toContainText('Reload Co');
+    await expect(await stocksOf(page)).toContainText('Reload Co');
   });
 });
 
@@ -123,48 +133,50 @@ test.describe('changes that cannot be merged', () => {
     const key = await turnOnSync(phone, { rememberKey: true });
     const laptop = await openDevice();
     await joinWithKey(laptop, key);
-    await expect(laptop.locator('tc-stocks-panel')).toContainText('Acme');
+    await expect(await stocksOf(laptop)).toContainText('Acme');
 
     await phone.context().setOffline(true);
     await laptop.context().setOffline(true);
     await addSale(phone, '3', '11');
     await addSale(laptop, '2', '12');
-    await expect(summary(phone)).toContainText('Shares sold3');
-    await expect(summary(laptop)).toContainText('Shares sold2');
+    await expect(await summaryOf(phone)).toContainText('Shares sold3');
+    await expect(await summaryOf(laptop)).toContainText('Shares sold2');
 
     await phone.context().setOffline(false);
-    await syncButton(phone, 'Sync now').click();
-    await expect(syncPanel(phone)).toContainText('Synced');
+    await clickSync(phone, 'Sync now');
+    await expect(await syncPanelOf(phone)).toContainText('Synced');
     await laptop.context().setOffline(false);
-    await syncButton(laptop, 'Sync now').click();
-    await expect(syncPanel(laptop)).toContainText('Choose which version to keep');
+    await clickSync(laptop, 'Sync now');
+    await expect(await syncPanelOf(laptop)).toContainText('Choose which version to keep');
+    await openPortfolio(laptop);
+    await expect(laptop.locator('tc-sync-attention')).toContainText('Sync needs your decision');
     return { phone, laptop };
   }
 
   test('shows what each side changed and lets this device\'s version win everywhere', async ({ openDevice }) => {
     const { phone, laptop } = await twoDevicesWithConflictingSales(openDevice);
 
-    await expect(syncPanel(laptop)).toContainText('Sale 2 × Acme @ 12');
-    await expect(syncPanel(laptop)).toContainText('Sale 3 × Acme @ 11');
+    await expect(await syncPanelOf(laptop)).toContainText('Sale 2 × Acme @ 12');
+    await expect(await syncPanelOf(laptop)).toContainText('Sale 3 × Acme @ 11');
 
-    await syncButton(laptop, "Keep this device's version").click();
-    await syncButton(laptop, 'Replace the synced copy?').click();
-    await expect(syncPanel(laptop)).toContainText('Synced');
-    await expect(summary(laptop)).toContainText('Shares sold2');
+    await clickSync(laptop, "Keep this device's version");
+    await clickSync(laptop, 'Replace the synced copy?');
+    await expect(await syncPanelOf(laptop)).toContainText('Synced');
+    await expect(await summaryOf(laptop)).toContainText('Shares sold2');
 
-    await syncButton(phone, 'Sync now').click();
-    await expect(summary(phone)).toContainText('Shares sold2');
+    await clickSync(phone, 'Sync now');
+    await expect(await summaryOf(phone)).toContainText('Shares sold2');
   });
 
   test('using the synced copy saves a backup first, then adopts the other version', async ({ openDevice }) => {
     const { laptop } = await twoDevicesWithConflictingSales(openDevice);
     const download = laptop.waitForEvent('download');
 
-    await syncButton(laptop, 'Use the synced copy').click();
-    await syncButton(laptop, 'Replace this device').click();
+    await clickSync(laptop, 'Use the synced copy');
+    await clickSync(laptop, 'Replace this device');
 
     expect((await download).suggestedFilename()).toMatch(/^trade-count-backup-.*\.json$/);
-    await expect(syncPanel(laptop)).toContainText('Synced');
-    await expect(summary(laptop)).toContainText('Shares sold3');
+    await expect(await syncPanelOf(laptop)).toContainText('Synced');
+    await expect(await summaryOf(laptop)).toContainText('Shares sold3');
   });
 });

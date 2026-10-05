@@ -16,7 +16,9 @@ const initSqlite = sqlite3InitModule as (options: {
 const database = openWhenNoOtherTabHasIt();
 
 async function openWhenNoOtherTabHasIt(): Promise<PortfolioDatabase> {
-  await acquireDatabaseLock(() => postMessage({ notice: 'waiting-for-other-tab' } satisfies DbNotice));
+  await acquireDatabaseLock(() =>
+    postMessage({ notice: 'waiting-for-other-tab' } satisfies DbNotice),
+  );
   const opened = await openDatabase();
   postMessage({ notice: 'database-ready' } satisfies DbNotice);
   return opened;

@@ -1,7 +1,7 @@
 import { expect, test } from './fixtures';
 import { addStockWithBuy } from './portfolio-page';
 
-const PAGES = ['/', '/datenschutz', '/privacy', '/impressum', '/imprint', '/terms', '/nutzungsbedingungen'];
+const PAGES = ['/', '/settings', '/datenschutz', '/privacy', '/impressum', '/imprint', '/terms', '/nutzungsbedingungen'];
 
 test.describe('page width', () => {
   for (const width of [390, 1440]) {

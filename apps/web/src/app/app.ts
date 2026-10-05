@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, Component, DOCUMENT, inject } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
-import { NavigationEnd, Router, RouterLink, RouterOutlet } from '@angular/router';
+import { NavigationEnd, Router, RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
 import { filter, map } from 'rxjs';
 import type { ThemePreference } from './core/theme/theme';
 import { ThemeService } from './core/theme/theme.service';
@@ -20,6 +20,7 @@ import { UpdateBanner } from './shell/update-banner';
   imports: [
     RouterOutlet,
     RouterLink,
+    RouterLinkActive,
     Backdrop,
     BrandMark,
     SegmentedControl,

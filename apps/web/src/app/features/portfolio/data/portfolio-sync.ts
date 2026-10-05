@@ -156,7 +156,10 @@ export class PortfolioSync {
     try {
       const credentials = await deriveCredentials(key);
       if (credentials.vaultId !== this.establishedVaultId) {
-        return { ok: false, message: 'That key belongs to a different synced copy than the one this device uses.' };
+        return {
+          ok: false,
+          message: 'That key belongs to a different synced copy than the one this device uses.',
+        };
       }
       await this.activate(key);
     } catch (error) {
@@ -216,7 +219,11 @@ export class PortfolioSync {
     return run;
   }
 
-  private async begin(key: string, options: SyncOptions, rememberKey: boolean): Promise<SyncResult> {
+  private async begin(
+    key: string,
+    options: SyncOptions,
+    rememberKey: boolean,
+  ): Promise<SyncResult> {
     try {
       await this.activate(key);
     } catch (error) {

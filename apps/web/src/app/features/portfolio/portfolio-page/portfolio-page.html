@@ -1,49 +1,25 @@
-@switch (store.loadStatus()) {
-  @case ('loading') {
-    <tc-panel>
-      @if (db.waitingForOtherTab()) {
-        <tc-empty-state heading="Trade Count is open in another tab"
-          >Close the other tab or window and this one continues by itself. Your data is safe.</tc-empty-state
-        >
-      } @else {
-        <tc-empty-state heading="Loading your portfolio">Fetching stocks and trades.</tc-empty-state>
-      }
-    </tc-panel>
-  }
-  @case ('error') {
-    <tc-panel>
-      <tc-empty-state heading="Couldn't load your portfolio">{{
-        store.loadError()
-      }}</tc-empty-state>
-      <button tc-button type="button" (click)="store.load()">Try again</button>
-    </tc-panel>
-  }
-  @case ('ready') {
-    @if (store.notice(); as notice) {
-      <tc-alert (dismissed)="store.notice.set(null)">{{ notice }}</tc-alert>
-    }
+<tc-sync-attention />
 
-    <tc-portfolio-summary />
-
-    <div class="bench">
-      <tc-trade-form
-        [editing]="editingTrade()"
-        [preferredStockId]="filter().stockId"
-        (finished)="editingTrade.set(null)"
-      />
-      <div class="column">
-        <tc-stocks-panel
-          [selectedStockId]="filter().stockId"
-          (selectedStockIdChange)="selectStock($event)"
-        />
-        <tc-data-panel />
-      </div>
-    </div>
-
-    <tc-ledger-panel
-      [(filter)]="filter"
-      [editingTradeId]="editingTrade()?.id ?? null"
-      (editTrade)="startEdit($event)"
-    />
-  }
+@if (store.notice(); as notice) {
+  <tc-alert (dismissed)="store.notice.set(null)">{{ notice }}</tc-alert>
 }
+
+<tc-portfolio-summary />
+
+<div class="bench">
+  <tc-trade-form
+    [editing]="editingTrade()"
+    [preferredStockId]="filter().stockId"
+    (finished)="editingTrade.set(null)"
+  />
+  <tc-stocks-panel
+    [selectedStockId]="filter().stockId"
+    (selectedStockIdChange)="selectStock($event)"
+  />
+</div>
+
+<tc-ledger-panel
+  [(filter)]="filter"
+  [editingTradeId]="editingTrade()?.id ?? null"
+  (editTrade)="startEdit($event)"
+/>
