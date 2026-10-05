@@ -1,6 +1,12 @@
-import { findOversells, computeLedger, type Portfolio, type Stock, type Trade } from '@trade-count/ledger';
-import { validName, validSymbol, validTradeFields } from './record-validation.js';
-import { StoreError } from './store-error.js';
+import { findOversells, computeLedger, type Portfolio } from '@trade-count/ledger';
+import {
+  assertUnique,
+  invalid,
+  isIsoTime,
+  isRecord,
+  parseStockRecord,
+  parseTradeRecord,
+} from './record-parsing.js';
 
 export const BACKUP_FORMAT = 'trade-count-backup';
 export const BACKUP_VERSION = 1;
@@ -37,18 +43,18 @@ export function parseBackup(input: unknown): PortfolioBackup {
   if (typeof input['version'] !== 'number' || input['version'] > BACKUP_VERSION) {
     throw invalid('This backup was made by a newer version of Trade Count. Update the app, then import it.');
   }
-  if (typeof input['exportedAt'] !== 'string' || Number.isNaN(Date.parse(input['exportedAt']))) {
+  if (!isIsoTime(input['exportedAt'])) {
     throw invalid('This backup has no valid export date.');
   }
   if (!Array.isArray(input['stocks']) || !Array.isArray(input['trades'])) {
     throw invalid('This backup is missing its stocks or trades.');
   }
 
-  const stocks = input['stocks'].map((raw, i) => parseStock(raw, i + 1));
-  const trades = input['trades'].map((raw, i) => parseTrade(raw, i + 1));
-  assertUnique(stocks.map((s) => s.id), 'stock');
-  assertUnique(stocks.map((s) => s.name.normalize('NFC').toLowerCase()), 'stock name');
-  assertUnique(trades.map((t) => t.id), 'trade');
+  const stocks = input['stocks'].map((raw, i) => parseStockRecord(raw, i + 1, 'this backup'));
+  const trades = input['trades'].map((raw, i) => parseTradeRecord(raw, i + 1, 'this backup'));
+  assertUnique(stocks.map((s) => s.id), 'This backup lists the same stock twice.');
+  assertUnique(stocks.map((s) => s.name.normalize('NFC').toLowerCase()), 'This backup lists the same stock name twice.');
+  assertUnique(trades.map((t) => t.id), 'This backup lists the same trade twice.');
 
   const stockIds = new Set(stocks.map((s) => s.id));
   const orphan = trades.find((t) => !stockIds.has(t.stockId));
@@ -60,54 +66,4 @@ export function parseBackup(input: unknown): PortfolioBackup {
   }
 
   return { format: BACKUP_FORMAT, version: BACKUP_VERSION, exportedAt: input['exportedAt'], stocks, trades };
-}
-
-function parseStock(raw: unknown, position: number): Stock {
-  if (!isRecord(raw) || !isId(raw['id'])) throw invalid(`Stock ${position} in this backup is damaged.`);
-  return { id: raw['id'], name: inRecord(() => validName(raw['name']), position, 'Stock'), symbol: inRecord(() => validSymbol(raw['symbol']), position, 'Stock') };
-}
-
-function parseTrade(raw: unknown, position: number): Trade {
-  if (!isRecord(raw) || !isId(raw['id']) || typeof raw['createdAt'] !== 'string' || Number.isNaN(Date.parse(raw['createdAt']))) {
-    throw invalid(`Trade ${position} in this backup is damaged.`);
-  }
-  const fields = inRecord(
-    () =>
-      validTradeFields({
-        stockId: raw['stockId'] as string,
-        side: raw['side'] as Trade['side'],
-        quantity: raw['quantity'] as string,
-        price: raw['price'] as string,
-        tradedOn: raw['tradedOn'] as string,
-      }),
-    position,
-    'Trade',
-  );
-  return { id: raw['id'], ...fields, createdAt: new Date(raw['createdAt']).toISOString() };
-}
-
-/** Prefixes a field rule's message with where in the file it failed. */
-function inRecord<T>(read: () => T, position: number, kind: 'Stock' | 'Trade'): T {
-  try {
-    return read();
-  } catch (error) {
-    if (error instanceof StoreError) throw invalid(`${kind} ${position} in this backup: ${error.message}`);
-    throw error;
-  }
-}
-
-function assertUnique(values: string[], kind: string): void {
-  if (new Set(values).size !== values.length) throw invalid(`This backup lists the same ${kind} twice.`);
-}
-
-function isRecord(value: unknown): value is Record<string, unknown> {
-  return typeof value === 'object' && value !== null && !Array.isArray(value);
-}
-
-function isId(value: unknown): value is string {
-  return typeof value === 'string' && value.length > 0 && value.length <= 64;
-}
-
-function invalid(message: string): StoreError {
-  return new StoreError('INVALID', message);
 }

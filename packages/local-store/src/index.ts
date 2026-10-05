@@ -11,3 +11,13 @@ export { PortfolioDatabase, type PortfolioDatabaseOptions } from './portfolio-da
 export { SCHEMA_VERSION, migrate } from './schema.js';
 export { StoreError, isStoreFailure, type StoreErrorCode, type StoreFailure } from './store-error.js';
 export type { NewStock, NewTrade, StockChanges, TradeChanges } from './store-inputs.js';
+export { mergeVaults } from './vault-merge.js';
+export {
+  VAULT_DATA_FORMAT,
+  VAULT_DATA_VERSION,
+  parseVaultSnapshot,
+  type Deletion,
+  type SyncedStock,
+  type SyncedTrade,
+  type VaultSnapshot,
+} from './vault-snapshot.js';

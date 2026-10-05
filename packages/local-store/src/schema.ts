@@ -31,6 +31,14 @@ const MIGRATIONS: readonly string[] = [
     value TEXT NOT NULL
   ) STRICT;
   `,
+  `
+  CREATE TABLE deletions (
+    kind TEXT NOT NULL CHECK (kind IN ('stock', 'trade')),
+    id TEXT NOT NULL,
+    deleted_at TEXT NOT NULL,
+    PRIMARY KEY (kind, id)
+  ) STRICT;
+  `,
 ];
 
 export const SCHEMA_VERSION = MIGRATIONS.length;

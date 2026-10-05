@@ -9,6 +9,13 @@ import {
   type TradeSide,
 } from '@trade-count/ledger';
 import { createBackup, parseBackup, type PortfolioBackup } from './backup.js';
+import { mergeVaults } from './vault-merge.js';
+import {
+  VAULT_DATA_FORMAT,
+  VAULT_DATA_VERSION,
+  parseVaultSnapshot,
+  type VaultSnapshot,
+} from './vault-snapshot.js';
 import { validName, validSymbol, validTradeFields } from './record-validation.js';
 import { migrate } from './schema.js';
 import { StoreError } from './store-error.js';
@@ -93,6 +100,7 @@ export class PortfolioDatabase {
         throw new StoreError('CONFLICT', 'This stock still has trades. Delete its trades first.');
       }
       this.db.exec('DELETE FROM stocks WHERE id = ?', { bind: [id] });
+      this.recordDeletion('stock', id);
     });
   }
 
@@ -142,6 +150,7 @@ export class PortfolioDatabase {
       const current = this.findTrade(id);
       this.assertNoOversell([current.stockId], { type: 'remove', tradeId: id }, id);
       this.db.exec('DELETE FROM trades WHERE id = ?', { bind: [id] });
+      this.recordDeletion('trade', id);
     });
   }
 
@@ -162,9 +171,15 @@ export class PortfolioDatabase {
   restoreBackup(input: unknown): Portfolio {
     const backup = parseBackup(input);
     this.db.transaction('IMMEDIATE', () => {
+      const at = this.now().toISOString();
+      const restoredIds = new Set([...backup.stocks, ...backup.trades].map((r) => r.id));
+      // Removed records become deletions, so syncing an older device can't bring them back.
+      for (const row of this.db.selectObjects("SELECT 'stock' AS kind, id FROM stocks UNION ALL SELECT 'trade', id FROM trades")) {
+        if (!restoredIds.has(String(row['id']))) this.recordDeletion(row['kind'] as 'stock' | 'trade', String(row['id']));
+      }
+      for (const id of restoredIds) this.db.exec('DELETE FROM deletions WHERE id = ?', { bind: [id] });
       this.db.exec('DELETE FROM trades');
       this.db.exec('DELETE FROM stocks');
-      const at = this.now().toISOString();
       for (const stock of backup.stocks) {
         this.db.exec(
           'INSERT INTO stocks (id, name, name_key, symbol, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?)',
@@ -180,6 +195,58 @@ export class PortfolioDatabase {
     });
     this.lastCreatedAt = Math.max(0, ...backup.trades.map((t) => Date.parse(t.createdAt)));
     return this.getPortfolio();
+  }
+
+  /** Everything this device knows, with change times and deletions, ready to be encrypted and synced. */
+  exportVault(): VaultSnapshot {
+    const stocks = this.db
+      .selectObjects('SELECT id, name, symbol, updated_at FROM stocks ORDER BY id')
+      .map((row) => ({ ...toStock(row), updatedAt: String(row['updated_at']) }));
+    const trades = this.db
+      .selectObjects(`SELECT ${TRADE_COLUMNS}, updated_at FROM trades ORDER BY id`)
+      .map((row) => ({ ...toTrade(row), updatedAt: String(row['updated_at']) }));
+    const deletions = this.db
+      .selectObjects('SELECT kind, id, deleted_at FROM deletions ORDER BY kind, id')
+      .map((row) => ({ kind: row['kind'] as 'stock' | 'trade', id: String(row['id']), deletedAt: String(row['deleted_at']) }));
+    return { format: VAULT_DATA_FORMAT, version: VAULT_DATA_VERSION, stocks, trades, deletions };
+  }
+
+  /**
+   * Merges another device's (decrypted, untrusted) data into this one and returns the merged
+   * snapshot to upload. If the merge is refused or invalid, nothing changes here.
+   */
+  syncWith(remote: unknown): VaultSnapshot {
+    const merged = mergeVaults(this.exportVault(), parseVaultSnapshot(remote), this.formatDate);
+    this.db.transaction('IMMEDIATE', () => {
+      this.db.exec('DELETE FROM trades');
+      this.db.exec('DELETE FROM stocks');
+      this.db.exec('DELETE FROM deletions');
+      for (const stock of merged.stocks) {
+        this.db.exec(
+          'INSERT INTO stocks (id, name, name_key, symbol, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?)',
+          { bind: [stock.id, stock.name, nameKey(stock.name), stock.symbol, stock.updatedAt, stock.updatedAt] },
+        );
+      }
+      for (const trade of merged.trades) {
+        this.db.exec(`INSERT INTO trades (${TRADE_COLUMNS}, updated_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?)`, {
+          bind: [trade.id, trade.stockId, trade.side, trade.quantity, trade.price, trade.tradedOn, trade.createdAt, trade.updatedAt],
+        });
+      }
+      for (const deletion of merged.deletions) {
+        this.db.exec('INSERT INTO deletions (kind, id, deleted_at) VALUES (?, ?, ?)', {
+          bind: [deletion.kind, deletion.id, deletion.deletedAt],
+        });
+      }
+    });
+    this.lastCreatedAt = Math.max(this.lastCreatedAt, ...merged.trades.map((t) => Date.parse(t.createdAt)));
+    return merged;
+  }
+
+  private recordDeletion(kind: 'stock' | 'trade', id: string): void {
+    this.db.exec(
+      'INSERT INTO deletions (kind, id, deleted_at) VALUES (?, ?, ?) ON CONFLICT (kind, id) DO UPDATE SET deleted_at = excluded.deleted_at',
+      { bind: [kind, id, this.now().toISOString()] },
+    );
   }
 
   private setMeta(key: string, value: string): void {
