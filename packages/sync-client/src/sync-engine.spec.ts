@@ -204,6 +204,53 @@ describe("syncOnce with two devices through the real server handler", () => {
     expect(laptop.store.exportVault()).toEqual(before);
   });
 
+  describe("after a refused merge", () => {
+    async function conflictingSales() {
+      const acme = phone.store.createStock({ name: "Acme" });
+      buy(phone, acme.id, "3", "2026-10-01");
+      await sync(phone, phoneApi);
+      await sync(laptop, laptopApi);
+      phone.at(5);
+      laptop.at(6);
+      phone.store.createTrade({ stockId: acme.id, side: "sell", quantity: "3", price: "11", tradedOn: "2026-10-03" });
+      laptop.store.createTrade({ stockId: acme.id, side: "sell", quantity: "2", price: "11", tradedOn: "2026-10-04" });
+      await sync(phone, phoneApi);
+      await expect(sync(laptop, laptopApi)).rejects.toBeInstanceOf(StoreError);
+    }
+    const sold = (d: ReturnType<typeof createDevice>) =>
+      d.store.getPortfolio().trades.filter((t) => t.side === "sell").map((t) => t.quantity);
+
+    it("keeping this device uploads its version, and the other device then pulls it", async () => {
+      await conflictingSales();
+      laptop.at(10);
+
+      const outcome = await sync(laptop, laptopApi, { resolveConflict: "keep-this-device" });
+      phone.at(11);
+      await sync(phone, phoneApi);
+
+      expect(outcome).toMatchObject({ pushed: true });
+      expect(sold(laptop)).toEqual(["2"]);
+      expect(sold(phone)).toEqual(["2"]);
+    });
+
+    it("using the synced copy adopts it and uploads nothing", async () => {
+      await conflictingSales();
+      const versionBefore = server.store.vaults.values().next().value!.version;
+
+      const outcome = await sync(laptop, laptopApi, { resolveConflict: "use-synced-copy" });
+
+      expect(outcome).toMatchObject({ pulled: true, pushed: false, version: versionBefore });
+      expect(sold(laptop)).toEqual(["3"]);
+    });
+
+    it("an ordinary sync after resolving finds nothing left to merge", async () => {
+      await conflictingSales();
+      await sync(laptop, laptopApi, { resolveConflict: "use-synced-copy" });
+
+      await expect(sync(laptop, laptopApi)).resolves.toMatchObject({ pushed: false });
+    });
+  });
+
   describe("when sync was turned off on another device", () => {
     it("does not re-create the deleted vault from a device that had synced before", async () => {
       const acme = phone.store.createStock({ name: "Acme" });

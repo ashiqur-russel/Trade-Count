@@ -1,4 +1,4 @@
-import { parseVaultSnapshot, type VaultSnapshot } from '@trade-count/local-store';
+import { parseVaultSnapshot, type ConflictChoice, type VaultSnapshot } from '@trade-count/local-store';
 import { decryptVault, encryptVault, type SyncCredentials, type VaultEnvelope } from '@trade-count/sync-crypto';
 import { fingerprint } from './fingerprint.js';
 import { SyncBusyError, VaultGoneError, VaultNotFoundError } from './sync-errors.js';
@@ -11,6 +11,8 @@ export interface SyncDevice {
   setClockOffset?(offsetMs: number): Promise<void> | void;
   /** Merges remote data into local storage and returns the merged result; throws if the merge is refused. */
   syncWith(remote: unknown): Promise<VaultSnapshot>;
+  /** Lets one side win outright after a refused merge and returns the result to upload. */
+  resolveConflict(remote: unknown, choice: ConflictChoice): Promise<VaultSnapshot>;
 }
 
 export interface SyncOutcome {
@@ -31,6 +33,8 @@ export interface SyncOptions {
    * The engine then refuses to create a new one; only an explicit "turn on sync" may do that.
    */
   wasSynced?: boolean;
+  /** Settles a refused merge by letting one side win, instead of merging. */
+  resolveConflict?: ConflictChoice;
 }
 
 const MAX_ATTEMPTS = 4;
@@ -63,7 +67,9 @@ export async function syncOnce(
 
     if (remote) {
       const remoteSnapshot = parseVaultSnapshot(JSON.parse(await decryptVault(remote.envelope, credentials)));
-      merged = await device.syncWith(remoteSnapshot);
+      merged = options.resolveConflict
+        ? await device.resolveConflict(remoteSnapshot, options.resolveConflict)
+        : await device.syncWith(remoteSnapshot);
       pulled ||= fingerprint(merged) !== before;
       if (fingerprint(merged) === fingerprint(remoteSnapshot)) return { pulled, pushed: false, version: remote.version, clockOffsetMs };
       baseVersion = remote.version;

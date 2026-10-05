@@ -56,6 +56,8 @@ export function createDevice(startMinute = 0) {
     exportVault: async () => store.exportVault(),
     syncWith: async (remote) =>
       store.syncWith(JSON.parse(JSON.stringify(remote))),
+    resolveConflict: async (remote, choice) =>
+      store.resolveConflict(JSON.parse(JSON.stringify(remote)), choice),
     setClockOffset: async (offsetMs) => store.setClockOffset(offsetMs),
   };
   return {
