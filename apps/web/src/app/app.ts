@@ -29,7 +29,8 @@ import { UpdateBanner } from './shell/update-banner';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class App {
-  /** The big masthead introduces the app; other pages (legal texts) get a slim bar instead. */
+  protected readonly today = new Intl.DateTimeFormat('de-DE').format(new Date());
+  /** Only the portfolio page shows the introduction banner. */
   protected readonly isHome = toSignal(
     inject(Router).events.pipe(
       filter((event) => event instanceof NavigationEnd),

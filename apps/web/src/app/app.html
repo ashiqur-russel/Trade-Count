@@ -1,10 +1,17 @@
 <tc-backdrop />
-<header class="bar">
-  <a class="brand" routerLink="/">
-    <tc-brand-mark class="brand-mark" />
-    <span>Trade Count</span>
-  </a>
-  <tc-settings-link />
+<header class="top">
+  <div class="meta">
+    <span>FIFO ledger</span>
+    <span class="meta-middle">Stored only on this device</span>
+    <span>{{ today }}</span>
+  </div>
+  <div class="bar">
+    <a class="brand" routerLink="/">
+      <tc-brand-mark class="brand-mark" />
+      <span>Trade Count</span>
+    </a>
+    <tc-settings-link />
+  </div>
 </header>
 @if (isHome()) {
   <tc-intro-banner />

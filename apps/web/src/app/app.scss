@@ -2,15 +2,40 @@
   display: block;
 }
 
-.bar {
+.top {
   width: var(--tc-page-width);
   margin: 0 auto;
+  padding-top: var(--tc-space-6);
+}
+
+.meta {
   display: flex;
   flex-wrap: wrap;
   gap: var(--tc-space-3);
   align-items: center;
   justify-content: space-between;
-  padding-block: var(--tc-space-5) var(--tc-space-3);
+  padding-block: var(--tc-space-2);
+  border-block: var(--tc-rule-width) solid var(--tc-color-rule);
+  font-family: var(--tc-font-numeric);
+  font-size: var(--tc-text-xs);
+  font-weight: var(--tc-weight-semibold);
+  letter-spacing: var(--tc-tracking-label);
+  text-transform: uppercase;
+}
+
+@media (width <= 560px) {
+  .meta-middle {
+    display: none;
+  }
+}
+
+.bar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--tc-space-3);
+  align-items: center;
+  justify-content: space-between;
+  padding-block: var(--tc-space-4);
   border-bottom: var(--tc-rule-width) solid var(--tc-color-rule);
 }
 
