@@ -29,7 +29,8 @@ import {
 import { PortfolioStore } from '../../data/portfolio-store';
 import { todayIsoDate } from '../../../../shared/dates/iso-date';
 import { DisplayDatePipe, EuroPipe, QuantityPipe } from '../../format/display-pipes';
-import { PRICE_FORMAT, QUANTITY_FORMAT, parseDecimalInput } from '../../format/decimal-input';
+import { PRICE_LIMITS, QUANTITY_LIMITS } from '@trade-count/local-store';
+import { parseDecimalInput } from '../../format/decimal-input';
 import { ProfitAmount } from '../profit-amount/profit-amount';
 
 const PREVIEW_ID = 'preview';
@@ -94,8 +95,8 @@ export class TradeForm {
 
   protected readonly draft = computed<Trade | null>(() => {
     const values = { ...this.form.getRawValue(), ...this.values() };
-    const quantity = parseDecimalInput(values.quantity, QUANTITY_FORMAT);
-    const price = parseDecimalInput(values.price, PRICE_FORMAT);
+    const quantity = parseDecimalInput(values.quantity, QUANTITY_LIMITS);
+    const price = parseDecimalInput(values.price, PRICE_LIMITS);
     if (!values.stockId || !quantity || !price || !values.tradedOn) return null;
     const editing = this.editing();
     return {
@@ -190,10 +191,10 @@ export class TradeForm {
     const { stockId, quantity, price } = this.form.getRawValue();
     const errors: FieldErrors = {};
     if (!stockId) errors.stockId = 'Add a stock first.';
-    if (!parseDecimalInput(quantity, QUANTITY_FORMAT)) {
+    if (!parseDecimalInput(quantity, QUANTITY_LIMITS)) {
       errors.quantity = 'Enter a quantity above 0, with up to 6 decimals.';
     }
-    if (!parseDecimalInput(price, PRICE_FORMAT)) {
+    if (!parseDecimalInput(price, PRICE_LIMITS)) {
       errors.price = 'Enter a price like 560 or 560,50 (up to 4 decimals).';
     }
     return errors;

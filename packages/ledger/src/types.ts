@@ -21,7 +21,7 @@ export interface Trade {
   createdAt: string;
 }
 
-/** Everything the ledger needs, as returned by GET /api/portfolio. */
+/** Everything the ledger needs: all stocks and trades of one portfolio. */
 export interface Portfolio {
   stocks: Stock[];
   trades: Trade[];
