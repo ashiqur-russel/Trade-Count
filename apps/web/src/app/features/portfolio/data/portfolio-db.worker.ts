@@ -3,7 +3,8 @@ import sqlite3InitModule from '@sqlite.org/sqlite-wasm';
 import sqliteWasmUrl from '@sqlite.org/sqlite-wasm/sqlite3.wasm';
 import { PortfolioDatabase, StoreError } from '@trade-count/local-store';
 import { formatIsoDate } from '../../../shared/dates/iso-date';
-import type { DbFailure, DbRequest, DbResponse } from './portfolio-db-protocol';
+import { acquireDatabaseLock } from './database-lock';
+import type { DbFailure, DbNotice, DbRequest, DbResponse } from './portfolio-db-protocol';
 
 const DATABASE_FILE = '/portfolio.sqlite3';
 
@@ -12,7 +13,14 @@ const initSqlite = sqlite3InitModule as (options: {
   locateFile: (file: string) => string;
 }) => ReturnType<typeof sqlite3InitModule>;
 
-const database = openDatabase();
+const database = openWhenNoOtherTabHasIt();
+
+async function openWhenNoOtherTabHasIt(): Promise<PortfolioDatabase> {
+  await acquireDatabaseLock(() => postMessage({ notice: 'waiting-for-other-tab' } satisfies DbNotice));
+  const opened = await openDatabase();
+  postMessage({ notice: 'database-ready' } satisfies DbNotice);
+  return opened;
+}
 
 /** The SAH-pool VFS stores the file in this origin's private file system and needs no special headers. */
 async function openDatabase(): Promise<PortfolioDatabase> {

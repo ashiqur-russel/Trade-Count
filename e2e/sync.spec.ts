@@ -86,3 +86,31 @@ test.describe('storage unavailable', () => {
     await expect(page.locator('main')).toContainText('Private browsing windows may not allow storage');
   });
 });
+
+test.describe('two tabs of the same device', () => {
+  test('the second tab waits for the first, then continues by itself with the same data', async ({ openDevice }) => {
+    const first = await openDevice();
+    await addStockWithBuy(first, 'Shared Co', '2', '10');
+    const second = await first.context().newPage();
+
+    await second.goto(first.url());
+
+    await expect(second.locator('main')).toContainText('open in another tab');
+    await expect(first.locator('tc-stocks-panel')).toContainText('Shared Co');
+
+    await first.close();
+
+    await expect(second.locator('tc-stocks-panel')).toContainText('Shared Co');
+    await expect(second.locator('tc-portfolio-summary')).toContainText('20,00');
+  });
+
+  test('a reloaded page waits for its old worker to end instead of failing', async ({ openDevice }) => {
+    const page = await openDevice();
+    await addStockWithBuy(page, 'Reload Co', '1', '10');
+
+    await page.reload();
+    await page.reload();
+
+    await expect(page.locator('tc-stocks-panel')).toContainText('Reload Co');
+  });
+});

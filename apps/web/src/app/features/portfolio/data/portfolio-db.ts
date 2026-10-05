@@ -1,6 +1,7 @@
-import { Injectable, type OnDestroy } from '@angular/core';
+import { Injectable, signal, type OnDestroy } from '@angular/core';
 import type {
   DbFailure,
+  DbNotice,
   DbRequest,
   DbResponse,
   PortfolioDbMethod,
@@ -33,6 +34,8 @@ export class PortfolioDb implements OnDestroy {
   });
   private readonly pending = new Map<number, Pending>();
   private nextRequestId = 0;
+  /** True while another tab of this app holds the database and this tab waits for it. */
+  readonly waitingForOtherTab = signal(false);
   /** Set once the worker itself failed to load; every call fails fast from then on. */
   private failure: DbFailure | null = null;
 
@@ -41,7 +44,12 @@ export class PortfolioDb implements OnDestroy {
       event.preventDefault();
       this.failAll(WORKER_FAILED);
     });
-    this.worker.addEventListener('message', ({ data }: MessageEvent<DbResponse>) => {
+    this.worker.addEventListener('message', ({ data }: MessageEvent<DbResponse | DbNotice>) => {
+      if ('notice' in data) {
+        this.waitingForOtherTab.set(data.notice === 'waiting-for-other-tab');
+        return;
+      }
+      this.waitingForOtherTab.set(false);
       const pending = this.pending.get(data.id);
       if (!pending) return;
       this.pending.delete(data.id);

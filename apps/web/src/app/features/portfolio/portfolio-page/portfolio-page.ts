@@ -40,6 +40,7 @@ import { PortfolioSync } from '../data/portfolio-sync';
 })
 export class PortfolioPage {
   protected readonly store = inject(PortfolioStore);
+  protected readonly db = inject(PortfolioDb);
   private readonly sync = inject(PortfolioSync);
   protected readonly filter = signal<LedgerFilter>(NO_FILTER);
   protected readonly editingTrade = signal<Trade | null>(null);

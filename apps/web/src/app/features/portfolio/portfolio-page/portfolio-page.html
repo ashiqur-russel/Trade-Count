@@ -1,7 +1,13 @@
 @switch (store.loadStatus()) {
   @case ('loading') {
     <tc-panel>
-      <tc-empty-state heading="Loading your portfolio">Fetching stocks and trades.</tc-empty-state>
+      @if (db.waitingForOtherTab()) {
+        <tc-empty-state heading="Trade Count is open in another tab"
+          >Close the other tab or window and this one continues by itself. Your data is safe.</tc-empty-state
+        >
+      } @else {
+        <tc-empty-state heading="Loading your portfolio">Fetching stocks and trades.</tc-empty-state>
+      }
     </tc-panel>
   }
   @case ('error') {

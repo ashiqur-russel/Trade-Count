@@ -43,5 +43,10 @@ export interface DbRequest<M extends PortfolioDbMethod = PortfolioDbMethod> {
 /** A rule the data broke, or storage this browser can't provide. */
 export type DbFailure = StoreFailure | { code: 'UNAVAILABLE'; message: string };
 
+/** Sent by the worker on its own, not as the answer to a request. */
+export interface DbNotice {
+  notice: 'waiting-for-other-tab' | 'database-ready';
+}
+
 export type DbResponse =
   { id: number; ok: true; result: unknown } | { id: number; ok: false; failure: DbFailure };
