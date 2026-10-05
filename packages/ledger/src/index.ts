@@ -10,4 +10,5 @@ export {
   type Oversell,
   type TradeChange,
 } from './oversell.js';
+export { describeOversell } from './describe-oversell.js';
 export { portfolioTotals, type PortfolioTotals } from './portfolio-totals.js';
