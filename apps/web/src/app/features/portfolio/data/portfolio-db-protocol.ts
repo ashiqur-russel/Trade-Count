@@ -28,6 +28,7 @@ export interface PortfolioDbMethods {
   setSyncKey(key: string | null): void;
   syncEstablishedVault(): string | null;
   markSyncEstablished(vaultId: string): void;
+  setClockOffset(offsetMs: number): void;
 }
 
 export type PortfolioDbMethod = keyof PortfolioDbMethods;

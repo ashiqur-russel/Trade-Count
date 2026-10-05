@@ -21,6 +21,7 @@ class FakeDb {
   snapshot = emptySnapshot();
   syncKeyValue: string | null = null;
   establishedVault: string | null = null;
+  clockOffset: number | null = null;
   mergeFailure: PortfolioDbError | null = null;
   readonly calls: string[] = [];
 
@@ -45,6 +46,9 @@ class FakeDb {
         this.syncKeyValue = args[0] as string | null;
         if (args[0] === null) this.establishedVault = null;
         return undefined;
+      case 'setClockOffset':
+        this.clockOffset = args[0] as number;
+        return undefined;
       case 'syncEstablishedVault':
         return this.establishedVault;
       case 'markSyncEstablished':
@@ -63,10 +67,11 @@ class FakeVaultApi implements VaultApi {
   state: { version: number; updatedAt: string; envelope: VaultEnvelope } | null = null;
   offline = false;
   deleted = false;
+  clockOffsetMs: number | null = null;
 
   async get() {
     if (this.offline) throw new SyncNetworkError();
-    return this.state;
+    return { vault: this.state, clockOffsetMs: this.clockOffsetMs };
   }
 
   async put(baseVersion: number, envelope: VaultEnvelope): Promise<PutOutcome> {
@@ -184,7 +189,7 @@ describe('PortfolioSync', () => {
 
   it('refuses to join when no synced data exists for the key and does not keep the key', async () => {
     const failing: VaultApi = {
-      get: async () => null,
+      get: async () => ({ vault: null, clockOffsetMs: null }),
       put: async () => ({ ok: true, version: 1 }),
       delete: async () => undefined,
     };
@@ -322,6 +327,35 @@ describe('PortfolioSync', () => {
 
       expect(api.state?.version).toBe(1);
       expect(sync.notice()).toBeNull();
+    });
+  });
+
+  describe('clock accuracy', () => {
+    it('passes the measured offset to the database and warns when this device is far off', async () => {
+      api.clockOffsetMs = -3 * 3600_000;
+
+      await sync.turnOn(await sync.newKey());
+
+      expect(db.clockOffset).toBe(-3 * 3600_000);
+      expect(sync.clockWarning()).toContain('about 3 hours ahead of the correct time');
+    });
+
+    it('does not warn about a clock that is only slightly off', async () => {
+      api.clockOffsetMs = 20_000;
+
+      await sync.turnOn(await sync.newKey());
+
+      expect(db.clockOffset).toBe(20_000);
+      expect(sync.clockWarning()).toBeNull();
+    });
+
+    it('forgets the warning when sync is turned off', async () => {
+      api.clockOffsetMs = 3600_000;
+      await sync.turnOn(await sync.newKey());
+
+      await sync.turnOff();
+
+      expect(sync.clockWarning()).toBeNull();
     });
   });
 

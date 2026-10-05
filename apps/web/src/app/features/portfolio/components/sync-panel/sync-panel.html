@@ -18,6 +18,10 @@
       }
     </p>
 
+    @if (sync.clockWarning(); as warning) {
+      <tc-alert tone="warn" (dismissed)="sync.clockOffsetMs.set(null)">{{ warning }}</tc-alert>
+    }
+
     @if (showProblem() && sync.message(); as message) {
       <p class="problem" role="status">{{ message }}</p>
     }

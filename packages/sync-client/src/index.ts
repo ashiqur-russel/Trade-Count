@@ -10,4 +10,4 @@ export {
   VaultGoneError,
   VaultNotFoundError,
 } from './sync-errors.js';
-export { createFetchVaultApi, type FetchVaultApiOptions, type PutOutcome, type VaultApi } from './vault-api.js';
+export { createFetchVaultApi, type FetchVaultApiOptions, type PutOutcome, type VaultApi, type VaultRead } from './vault-api.js';

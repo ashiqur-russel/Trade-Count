@@ -19,6 +19,7 @@ import {
   type VaultApi,
 } from '@trade-count/sync-client';
 import { deriveCredentials, generateSyncKey, type SyncCredentials } from '@trade-count/sync-crypto';
+import { clockWarningMessage } from './clock-warning';
 import { PortfolioDb, PortfolioDbError } from './portfolio-db';
 import { PortfolioStore } from './portfolio-store';
 
@@ -54,6 +55,9 @@ export class PortfolioSync {
   readonly message = signal<string | null>(null);
   /** Something that happened without the user asking, e.g. sync turned off from another device. */
   readonly notice = signal<string | null>(null);
+  /** Server time minus this device's clock, from the latest sync; null if not measured. */
+  readonly clockOffsetMs = signal<number | null>(null);
+  readonly clockWarning = computed(() => clockWarningMessage(this.clockOffsetMs()));
   readonly enabled = computed(() => this.status() !== 'off');
 
   private syncKey: string | null = null;
@@ -69,6 +73,7 @@ export class PortfolioSync {
   private readonly device: SyncDevice = {
     exportVault: () => this.db.call('exportVault'),
     syncWith: (remote) => this.db.call('syncWith', remote),
+    setClockOffset: (offsetMs) => this.db.call('setClockOffset', offsetMs),
   };
 
   constructor() {
@@ -195,6 +200,7 @@ export class PortfolioSync {
     this.credentials = null;
     this.api = null;
     this.establishedVaultId = null;
+    this.clockOffsetMs.set(null);
     this.lastSyncedAt.set(null);
     this.message.set(null);
     this.status.set('off');
@@ -211,6 +217,7 @@ export class PortfolioSync {
         wasSynced,
       });
       await this.rememberEstablished(this.credentials.vaultId);
+      if (outcome.clockOffsetMs !== null) this.clockOffsetMs.set(outcome.clockOffsetMs);
       if (outcome.pulled) await this.store.refresh();
       this.lastSyncedAt.set(new Date().toISOString());
       this.message.set(null);

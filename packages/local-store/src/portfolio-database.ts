@@ -9,6 +9,7 @@ import {
   type TradeSide,
 } from '@trade-count/ledger';
 import { createBackup, parseBackup, type PortfolioBackup } from './backup.js';
+import { CLOCK_TOLERANCE_MS, MIN_CLOCK_OFFSET_MS, clampStamps, latestStamp } from './clock.js';
 import { mergeVaults } from './vault-merge.js';
 import {
   VAULT_DATA_FORMAT,
@@ -38,22 +39,28 @@ const DRAFT_ID = 'draft';
  * with a message for the user, if it breaks a rule (duplicate name, selling shares not held, …).
  */
 export class PortfolioDatabase {
-  private readonly now: () => Date;
+  private readonly rawNow: () => Date;
   private readonly newId: () => string;
   private readonly formatDate: (isoDate: string) => string;
   /** Entry times must strictly increase: they order trades made on the same day. */
   private lastCreatedAt: number;
+  /** Server time minus this device's clock, learned while syncing; 0 until then. */
+  private clockOffsetMs = 0;
+  /** The latest edit or deletion time this device has seen; new edits are stamped after it. */
+  private lastStamp = 0;
 
   constructor(
     private readonly db: Database,
     options: PortfolioDatabaseOptions = {},
   ) {
-    this.now = options.now ?? (() => new Date());
+    this.rawNow = options.now ?? (() => new Date());
     this.newId = options.newId ?? (() => crypto.randomUUID());
     this.formatDate = options.formatDate ?? ((isoDate) => isoDate);
     migrate(db);
     const latest = db.selectValue('SELECT max(created_at) FROM trades');
     this.lastCreatedAt = typeof latest === 'string' ? Date.parse(latest) : 0;
+    this.clockOffsetMs = Number(db.selectValue("SELECT value FROM app_meta WHERE key = 'clock_offset_ms'")) || 0;
+    this.lastStamp = latestStamp(this.exportVault());
   }
 
   getPortfolio(): Portfolio {
@@ -71,7 +78,7 @@ export class PortfolioDatabase {
     return this.db.transaction('IMMEDIATE', () => {
       this.assertNameFree(name);
       const stock: Stock = { id: this.newId(), name, symbol };
-      const at = this.now().toISOString();
+      const at = this.stamp();
       this.db.exec(
         'INSERT INTO stocks (id, name, name_key, symbol, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?)',
         { bind: [stock.id, name, nameKey(name), symbol, at, at] },
@@ -87,7 +94,7 @@ export class PortfolioDatabase {
       const symbol = changes.symbol === undefined ? current.symbol : validSymbol(changes.symbol);
       this.assertNameFree(name, id);
       this.db.exec('UPDATE stocks SET name = ?, name_key = ?, symbol = ?, updated_at = ? WHERE id = ?', {
-        bind: [name, nameKey(name), symbol, this.now().toISOString(), id],
+        bind: [name, nameKey(name), symbol, this.stamp(), id],
       });
       return { id, name, symbol };
     });
@@ -139,7 +146,7 @@ export class PortfolioDatabase {
       this.db.exec(
         `UPDATE trades SET stock_id = ?, side = ?, quantity = ?, price = ?, traded_on = ?, updated_at = ?
          WHERE id = ?`,
-        { bind: [next.stockId, next.side, next.quantity, next.price, next.tradedOn, this.now().toISOString(), id] },
+        { bind: [next.stockId, next.side, next.quantity, next.price, next.tradedOn, this.stamp(), id] },
       );
       return next;
     });
@@ -156,7 +163,7 @@ export class PortfolioDatabase {
 
   /** A full copy of the data; also remembered as the latest backup. */
   exportBackup(): PortfolioBackup {
-    const backup = createBackup(this.getPortfolio(), this.now());
+    const backup = createBackup(this.getPortfolio(), new Date(this.trustedNow()));
     this.setMeta('last_backup_at', backup.exportedAt);
     return backup;
   }
@@ -171,7 +178,7 @@ export class PortfolioDatabase {
   restoreBackup(input: unknown): Portfolio {
     const backup = parseBackup(input);
     this.db.transaction('IMMEDIATE', () => {
-      const at = this.now().toISOString();
+      const at = this.stamp();
       const restoredIds = new Set([...backup.stocks, ...backup.trades].map((r) => r.id));
       // Removed records become deletions, so syncing an older device can't bring them back.
       for (const row of this.db.selectObjects("SELECT 'stock' AS kind, id FROM stocks UNION ALL SELECT 'trade', id FROM trades")) {
@@ -194,6 +201,7 @@ export class PortfolioDatabase {
       this.setMeta('last_backup_at', backup.exportedAt);
     });
     this.lastCreatedAt = Math.max(0, ...backup.trades.map((t) => Date.parse(t.createdAt)));
+    this.lastStamp = latestStamp(this.exportVault());
     return this.getPortfolio();
   }
 
@@ -216,7 +224,14 @@ export class PortfolioDatabase {
    * snapshot to upload. If the merge is refused or invalid, nothing changes here.
    */
   syncWith(remote: unknown): VaultSnapshot {
-    const merged = mergeVaults(this.exportVault(), parseVaultSnapshot(remote), this.formatDate);
+    // Nothing may claim to be from the future, or a wrong clock would win forever. Our own records get no
+    // grace (our clock is corrected); other devices get a minute, as healthy clocks differ slightly.
+    const now = this.trustedNow();
+    const merged = mergeVaults(
+      clampStamps(this.exportVault(), new Date(now).toISOString()),
+      clampStamps(parseVaultSnapshot(remote), new Date(now + CLOCK_TOLERANCE_MS).toISOString()),
+      this.formatDate,
+    );
     this.db.transaction('IMMEDIATE', () => {
       this.db.exec('DELETE FROM trades');
       this.db.exec('DELETE FROM stocks');
@@ -239,13 +254,14 @@ export class PortfolioDatabase {
       }
     });
     this.lastCreatedAt = Math.max(this.lastCreatedAt, ...merged.trades.map((t) => Date.parse(t.createdAt)));
+    this.lastStamp = latestStamp(merged);
     return merged;
   }
 
   private recordDeletion(kind: 'stock' | 'trade', id: string): void {
     this.db.exec(
       'INSERT INTO deletions (kind, id, deleted_at) VALUES (?, ?, ?) ON CONFLICT (kind, id) DO UPDATE SET deleted_at = excluded.deleted_at',
-      { bind: [kind, id, this.now().toISOString()] },
+      { bind: [kind, id, this.stamp()] },
     );
   }
 
@@ -314,8 +330,30 @@ export class PortfolioDatabase {
     if (oversell) throw new StoreError('CONFLICT', describeOversell(oversell, changedTradeId, this.formatDate));
   }
 
+  /** Tells the database how far its clock is from the server's, so edits are stamped with the right time. */
+  setClockOffset(offsetMs: number): void {
+    this.clockOffsetMs = Math.abs(offsetMs) < MIN_CLOCK_OFFSET_MS ? 0 : Math.round(offsetMs);
+    this.setMeta('clock_offset_ms', String(this.clockOffsetMs));
+    // A stamp learned from a wrong clock must not keep pushing new edits into the future.
+    this.lastStamp = Math.min(this.lastStamp, this.trustedNow() + CLOCK_TOLERANCE_MS);
+  }
+
+  clockOffset(): number {
+    return this.clockOffsetMs;
+  }
+
+  private trustedNow(): number {
+    return this.rawNow().getTime() + this.clockOffsetMs;
+  }
+
+  /** A time for an edit or deletion: the corrected clock, but always after anything seen so far. */
+  private stamp(): string {
+    this.lastStamp = Math.max(this.trustedNow(), this.lastStamp + 1);
+    return new Date(this.lastStamp).toISOString();
+  }
+
   private nextCreatedAt(): string {
-    this.lastCreatedAt = Math.max(this.now().getTime(), this.lastCreatedAt + 1);
+    this.lastCreatedAt = Math.max(this.trustedNow(), this.lastCreatedAt + 1);
     return new Date(this.lastCreatedAt).toISOString();
   }
 }

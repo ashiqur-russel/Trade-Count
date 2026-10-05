@@ -24,8 +24,8 @@ describe("syncOnce with two devices through the real server handler", () => {
     phone = createDevice(1);
     laptop = createDevice(1);
     credentials = await newCredentials();
-    phoneApi = apiFor(credentials, server);
-    laptopApi = apiFor(credentials, server);
+    phoneApi = apiFor(credentials, server, phone);
+    laptopApi = apiFor(credentials, server, laptop);
   });
   afterEach(() => {
     phone.sqlite.close();
@@ -61,7 +61,12 @@ describe("syncOnce with two devices through the real server handler", () => {
     const first = await sync(phone, phoneApi);
     const joined = await sync(laptop, laptopApi, { requireExisting: true });
 
-    expect(first).toEqual({ pulled: false, pushed: true, version: 1 });
+    expect(first).toEqual({
+      pulled: false,
+      pushed: true,
+      version: 1,
+      clockOffsetMs: null,
+    });
     expect(joined).toMatchObject({ pulled: true, pushed: false, version: 1 });
     expect(laptop.store.getPortfolio()).toEqual(phone.store.getPortfolio());
   });
@@ -244,6 +249,50 @@ describe("syncOnce with two devices through the real server handler", () => {
 
       expect(server.store.vaults.size).toBe(0);
       expect(laptop.store.getPortfolio().trades).toHaveLength(1);
+    });
+  });
+
+  describe("devices with a wrong clock", () => {
+    const YEARS_4 = 2_100_000; // minutes: a phone whose clock is about four years ahead
+
+    it("reports how far this device is from the server, and nothing when the server sends no time", async () => {
+      phone.store.createStock({ name: "Acme" });
+
+      expect((await sync(phone, phoneApi)).clockOffsetMs).toBeNull();
+
+      server.setRealMinute(5);
+      phone.at(65);
+      const outcome = await sync(phone, phoneApi);
+      expect(outcome.clockOffsetMs).toBeGreaterThan(-61 * 60_000 - 2000);
+      expect(outcome.clockOffsetMs).toBeLessThan(-59 * 60_000 + 2000);
+    });
+
+    it("lets a later edit from a correct clock win over an earlier edit from a wrong clock", async () => {
+      const acme = phone.store.createStock({ name: "Acme" });
+      const trade = buy(phone, acme.id, "1", "2026-10-01");
+      server.setRealMinute(1);
+      await sync(phone, phoneApi);
+      await sync(laptop, laptopApi);
+
+      phone.at(YEARS_4 + 2);
+      phone.store.updateTrade(trade.id, { price: "99" });
+      server.setRealMinute(5);
+      phone.at(YEARS_4 + 5);
+      await sync(phone, phoneApi);
+      laptop.at(5);
+      await sync(laptop, laptopApi);
+      expect(laptop.store.getPortfolio().trades[0]!.price).toBe("99");
+
+      laptop.at(10);
+      laptop.store.updateTrade(trade.id, { price: "12" });
+      server.setRealMinute(10);
+      await sync(laptop, laptopApi);
+      server.setRealMinute(11);
+      phone.at(YEARS_4 + 11);
+      await sync(phone, phoneApi);
+
+      expect(phone.store.getPortfolio().trades[0]!.price).toBe("12");
+      expect(laptop.store.getPortfolio().trades[0]!.price).toBe("12");
     });
   });
 

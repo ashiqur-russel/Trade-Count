@@ -7,6 +7,8 @@ import type { VaultApi } from './vault-api.js';
 /** The local database as the engine sees it. */
 export interface SyncDevice {
   exportVault(): Promise<VaultSnapshot>;
+  /** Told how far this device's clock is from the server's, before anything is merged. */
+  setClockOffset?(offsetMs: number): Promise<void> | void;
   /** Merges remote data into local storage and returns the merged result; throws if the merge is refused. */
   syncWith(remote: unknown): Promise<VaultSnapshot>;
 }
@@ -17,6 +19,8 @@ export interface SyncOutcome {
   /** This device uploaded a new version. */
   pushed: boolean;
   version: number;
+  /** Server time minus this device's clock, from the latest response; null if the server sent no time. */
+  clockOffsetMs: number | null;
 }
 
 export interface SyncOptions {
@@ -42,9 +46,14 @@ export async function syncOnce(
   options: SyncOptions = {},
 ): Promise<SyncOutcome> {
   let pulled = false;
+  let clockOffsetMs: number | null = null;
 
   for (let attempt = 0; attempt < MAX_ATTEMPTS; attempt++) {
-    const remote = await api.get();
+    const { vault: remote, clockOffsetMs: offset } = await api.get();
+    if (offset !== null) {
+      clockOffsetMs = offset;
+      await device.setClockOffset?.(offset);
+    }
     if (!remote && options.wasSynced) throw new VaultGoneError();
     if (!remote && options.requireExisting) throw new VaultNotFoundError();
 
@@ -56,14 +65,14 @@ export async function syncOnce(
       const remoteSnapshot = parseVaultSnapshot(JSON.parse(await decryptVault(remote.envelope, credentials)));
       merged = await device.syncWith(remoteSnapshot);
       pulled ||= fingerprint(merged) !== before;
-      if (fingerprint(merged) === fingerprint(remoteSnapshot)) return { pulled, pushed: false, version: remote.version };
+      if (fingerprint(merged) === fingerprint(remoteSnapshot)) return { pulled, pushed: false, version: remote.version, clockOffsetMs };
       baseVersion = remote.version;
     } else {
       merged = await device.exportVault();
     }
 
     const result = await putVault(api, baseVersion, await encryptVault(JSON.stringify(merged), credentials));
-    if (result.ok) return { pulled, pushed: true, version: result.version };
+    if (result.ok) return { pulled, pushed: true, version: result.version, clockOffsetMs };
   }
   throw new SyncBusyError();
 }
