@@ -1,5 +1,6 @@
 import type { Portfolio, Stock, Trade } from '@trade-count/ledger';
 import type {
+  ConflictChoice,
   NewStock,
   NewTrade,
   PortfolioBackup,
@@ -24,6 +25,7 @@ export interface PortfolioDbMethods {
   restoreBackup(input: unknown): Portfolio;
   exportVault(): VaultSnapshot;
   syncWith(remote: unknown): VaultSnapshot;
+  resolveConflict(remote: unknown, choice: ConflictChoice): VaultSnapshot;
   syncKey(): string | null;
   setSyncKey(key: string | null): void;
   forgetStoredSyncKey(): void;

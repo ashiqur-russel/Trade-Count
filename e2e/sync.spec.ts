@@ -1,5 +1,5 @@
 import { expect, test } from './fixtures';
-import { addBuy, addStockWithBuy, joinWithKey, syncButton, syncPanel, turnOnSync } from './portfolio-page';
+import { addBuy, addSale, addStockWithBuy, joinWithKey, syncButton, syncPanel, turnOnSync } from './portfolio-page';
 
 const summary = (page: import('@playwright/test').Page) => page.locator('tc-portfolio-summary');
 
@@ -112,5 +112,59 @@ test.describe('two tabs of the same device', () => {
     await page.reload();
 
     await expect(page.locator('tc-stocks-panel')).toContainText('Reload Co');
+  });
+});
+
+test.describe('changes that cannot be merged', () => {
+  /** Both devices sell from the same 3 shares while offline, so together they would sell more than they hold. */
+  async function twoDevicesWithConflictingSales(openDevice: () => Promise<import('@playwright/test').Page>) {
+    const phone = await openDevice();
+    await addStockWithBuy(phone, 'Acme', '3', '10');
+    const key = await turnOnSync(phone, { rememberKey: true });
+    const laptop = await openDevice();
+    await joinWithKey(laptop, key);
+    await expect(laptop.locator('tc-stocks-panel')).toContainText('Acme');
+
+    await phone.context().setOffline(true);
+    await laptop.context().setOffline(true);
+    await addSale(phone, '3', '11');
+    await addSale(laptop, '2', '12');
+    await expect(summary(phone)).toContainText('Shares sold3');
+    await expect(summary(laptop)).toContainText('Shares sold2');
+
+    await phone.context().setOffline(false);
+    await syncButton(phone, 'Sync now').click();
+    await expect(syncPanel(phone)).toContainText('Synced');
+    await laptop.context().setOffline(false);
+    await syncButton(laptop, 'Sync now').click();
+    await expect(syncPanel(laptop)).toContainText('Choose which version to keep');
+    return { phone, laptop };
+  }
+
+  test('shows what each side changed and lets this device\'s version win everywhere', async ({ openDevice }) => {
+    const { phone, laptop } = await twoDevicesWithConflictingSales(openDevice);
+
+    await expect(syncPanel(laptop)).toContainText('Sale 2 × Acme @ 12');
+    await expect(syncPanel(laptop)).toContainText('Sale 3 × Acme @ 11');
+
+    await syncButton(laptop, "Keep this device's version").click();
+    await syncButton(laptop, 'Replace the synced copy?').click();
+    await expect(syncPanel(laptop)).toContainText('Synced');
+    await expect(summary(laptop)).toContainText('Shares sold2');
+
+    await syncButton(phone, 'Sync now').click();
+    await expect(summary(phone)).toContainText('Shares sold2');
+  });
+
+  test('using the synced copy saves a backup first, then adopts the other version', async ({ openDevice }) => {
+    const { laptop } = await twoDevicesWithConflictingSales(openDevice);
+    const download = laptop.waitForEvent('download');
+
+    await syncButton(laptop, 'Use the synced copy').click();
+    await syncButton(laptop, 'Replace this device').click();
+
+    expect((await download).suggestedFilename()).toMatch(/^trade-count-backup-.*\.json$/);
+    await expect(syncPanel(laptop)).toContainText('Synced');
+    await expect(summary(laptop)).toContainText('Shares sold3');
   });
 });

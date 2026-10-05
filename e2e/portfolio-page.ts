@@ -13,6 +13,11 @@ export async function addBuy(page: Page, quantity: string, price: string): Promi
   await page.locator('tc-trade-form button[type=submit]').click();
 }
 
+export async function addSale(page: Page, quantity: string, price: string): Promise<void> {
+  await page.locator('tc-trade-form').getByText('Sell', { exact: true }).click();
+  await addBuy(page, quantity, price);
+}
+
 export const syncPanel = (page: Page) => page.locator('tc-sync-panel');
 
 export const syncButton = (page: Page, name: string) =>

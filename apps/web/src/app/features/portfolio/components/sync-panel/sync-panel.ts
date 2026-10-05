@@ -1,5 +1,6 @@
 import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
+import { saveBackupFile } from '../../../../core/files/save-backup-file';
 import { saveTextFile } from '../../../../core/files/save-text-file';
 import {
   Alert,
@@ -10,7 +11,10 @@ import {
   Pill,
   type PillTone,
 } from '../../../../shared/ui';
+import { PortfolioStore } from '../../data/portfolio-store';
 import { PortfolioSync, type SyncStatus } from '../../data/portfolio-sync';
+
+const MAX_LISTED_CHANGES = 8;
 
 type View = 'overview' | 'create' | 'join';
 
@@ -35,6 +39,7 @@ const timeFormat = new Intl.DateTimeFormat('de-DE', { hour: '2-digit', minute: '
 })
 export class SyncPanel {
   protected readonly sync = inject(PortfolioSync);
+  private readonly store = inject(PortfolioStore);
 
   protected readonly view = signal<View>('overview');
   protected readonly newKey = signal('');
@@ -50,6 +55,15 @@ export class SyncPanel {
   protected readonly lastSynced = computed(() => {
     const at = this.sync.lastSyncedAt();
     return at ? timeFormat.format(new Date(at)) : null;
+  });
+  protected readonly conflictSides = computed(() => {
+    const conflict = this.sync.conflict();
+    if (!conflict) return null;
+    const side = (lines: string[]) => ({
+      shown: lines.slice(0, MAX_LISTED_CHANGES),
+      hidden: Math.max(0, lines.length - MAX_LISTED_CHANGES),
+    });
+    return { thisDevice: side(conflict.onThisDevice), syncedCopy: side(conflict.onSyncedCopy) };
   });
   protected readonly showProblem = computed(() =>
     ['error', 'conflict', 'offline'].includes(this.sync.status()),
@@ -99,6 +113,21 @@ export class SyncPanel {
     this.busy.set(true);
     await this.sync.sync();
     this.busy.set(false);
+  }
+
+  protected async keepThisDevice(): Promise<void> {
+    await this.run(() => this.sync.resolveConflict('keep-this-device'));
+  }
+
+  /** The synced copy replaces this device's data, so a backup of it is saved first. */
+  protected async useSyncedCopy(): Promise<void> {
+    const backup = await this.store.exportBackup();
+    if (!backup.ok) {
+      this.error.set(`Couldn't save a backup first, so nothing was changed. ${backup.message}`);
+      return;
+    }
+    saveBackupFile(backup.backup);
+    await this.run(() => this.sync.resolveConflict('use-synced-copy'));
   }
 
   protected async turnOff(): Promise<void> {

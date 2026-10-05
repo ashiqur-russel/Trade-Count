@@ -24,6 +24,7 @@ class FakeDb {
   clockOffset: number | null = null;
   mergeFailure: PortfolioDbError | null = null;
   readonly calls: string[] = [];
+  readonly resolutions: string[] = [];
 
   /** A simple union by id, enough to tell "local data survives a sync" from "local data is overwritten". */
   private merge(local: VaultSnapshot, remote: VaultSnapshot): VaultSnapshot {
@@ -39,6 +40,11 @@ class FakeDb {
       case 'syncWith':
         if (this.mergeFailure) throw this.mergeFailure;
         this.snapshot = this.merge(this.snapshot, args[0] as VaultSnapshot);
+        return this.snapshot;
+      case 'resolveConflict':
+        this.mergeFailure = null;
+        this.resolutions.push(args[1] as string);
+        if (args[1] === 'use-synced-copy') this.snapshot = args[0] as VaultSnapshot;
         return this.snapshot;
       case 'syncKey':
         return this.syncKeyValue;
@@ -279,6 +285,48 @@ describe('PortfolioSync', () => {
     expect(result.ok).toBe(false);
     expect(sync.status()).toBe('conflict');
     expect(sync.message()).toBe('Changes from your other device conflict with this one.');
+  });
+
+  describe('after a refused merge', () => {
+    async function refusedMerge() {
+      await sync.turnOn(await sync.newKey());
+      db.snapshot = {
+        ...emptySnapshot(),
+        stocks: [{ id: 's1', name: 'Acme', symbol: null, updatedAt: '2026-10-05T10:00:00.000Z' }],
+      };
+      await sync.sync();
+      db.snapshot = emptySnapshot();
+      db.mergeFailure = new PortfolioDbError({ code: 'CONFLICT', message: 'These changes conflict.' });
+      await sync.sync();
+    }
+
+    it('shows what each side holds, taken from the synced copy and this device', async () => {
+      await refusedMerge();
+
+      expect(sync.conflict()).toEqual({ onThisDevice: [], onSyncedCopy: ['Added stock Acme'] });
+    });
+
+    it('using the synced copy adopts it, clears the conflict and goes back to synced', async () => {
+      await refusedMerge();
+
+      const result = await sync.resolveConflict('use-synced-copy');
+
+      expect(result).toEqual({ ok: true });
+      expect(db.resolutions).toEqual(['use-synced-copy']);
+      expect(db.snapshot.stocks.map((s) => s.name)).toEqual(['Acme']);
+      expect(sync.status()).toBe('idle');
+      expect(sync.conflict()).toBeNull();
+    });
+
+    it('keeping this device resolves once, and later syncs go back to ordinary merging', async () => {
+      await refusedMerge();
+
+      await sync.resolveConflict('keep-this-device');
+      await sync.sync();
+
+      expect(db.resolutions).toEqual(['keep-this-device']);
+      expect(sync.status()).toBe('idle');
+    });
   });
 
   describe('when sync is turned off from another device', () => {

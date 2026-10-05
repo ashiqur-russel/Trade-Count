@@ -1,11 +1,10 @@
 import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
 import {
   StoreError,
-  backupFileName,
   parseBackup,
   type PortfolioBackup,
 } from '@trade-count/local-store';
-import { saveTextFile } from '../../../../core/files/save-text-file';
+import { saveBackupFile } from '../../../../core/files/save-backup-file';
 import { formatIsoDate } from '../../../../shared/dates/iso-date';
 import { Button, Panel, Pill, type PillTone } from '../../../../shared/ui';
 import { PortfolioStore } from '../../data/portfolio-store';
@@ -58,11 +57,10 @@ export class BackupPanel {
       this.message.set({ tone: 'loss', text: result.message });
       return;
     }
-    const exportedAt = new Date(result.backup.exportedAt);
-    saveTextFile(backupFileName(exportedAt), JSON.stringify(result.backup, null, 2));
+    const fileName = saveBackupFile(result.backup);
     this.message.set({
       tone: 'gain',
-      text: `Saved ${backupFileName(exportedAt)}. Keep it somewhere safe, like iCloud Drive or Google Drive.`,
+      text: `Saved ${fileName}. Keep it somewhere safe, like iCloud Drive or Google Drive.`,
     });
   }
 

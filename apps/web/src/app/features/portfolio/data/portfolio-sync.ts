@@ -9,16 +9,20 @@ import {
   signal,
   untracked,
 } from '@angular/core';
+import type { ConflictChoice, VaultDifference } from '@trade-count/local-store';
+import { diffVaults } from '@trade-count/local-store';
 import {
   SyncNetworkError,
   VaultGoneError,
   createFetchVaultApi,
+  fetchRemoteSnapshot,
   syncOnce,
   type SyncDevice,
   type SyncOptions,
   type VaultApi,
 } from '@trade-count/sync-client';
 import { deriveCredentials, generateSyncKey, type SyncCredentials } from '@trade-count/sync-crypto';
+import { formatIsoDate } from '../../../shared/dates/iso-date';
 import { clockWarningMessage } from './clock-warning';
 import { PortfolioDb, PortfolioDbError } from './portfolio-db';
 import { PortfolioStore } from './portfolio-store';
@@ -59,6 +63,8 @@ export class PortfolioSync {
   readonly clockOffsetMs = signal<number | null>(null);
   readonly clockWarning = computed(() => clockWarningMessage(this.clockOffsetMs()));
   /** Sync is set up and running; false while off or while waiting for the user to enter the key again. */
+  /** What each side holds when the last sync was refused; null while there is nothing to decide. */
+  readonly conflict = signal<VaultDifference | null>(null);
   readonly enabled = computed(() => this.status() !== 'off' && this.status() !== 'locked');
   /** Whether the sync key is saved on this device (otherwise it lives in memory until the app closes). */
   readonly keyStored = signal(false);
@@ -76,6 +82,7 @@ export class PortfolioSync {
   private readonly device: SyncDevice = {
     exportVault: () => this.db.call('exportVault'),
     syncWith: (remote) => this.db.call('syncWith', remote),
+    resolveConflict: (remote, choice) => this.db.call('resolveConflict', remote, choice),
     setClockOffset: (offsetMs) => this.db.call('setClockOffset', offsetMs),
   };
 
@@ -185,6 +192,11 @@ export class PortfolioSync {
     return this.syncKey;
   }
 
+  /** Settles a refused merge by letting one side win outright. */
+  resolveConflict(choice: ConflictChoice): Promise<SyncResult> {
+    return this.sync({ resolveConflict: choice });
+  }
+
   sync(options: SyncOptions = {}): Promise<SyncResult> {
     if (this.inflight) {
       this.runAgain = true;
@@ -192,9 +204,11 @@ export class PortfolioSync {
     }
     const run = (async () => {
       let result: SyncResult;
+      let runOptions = options;
       do {
         this.runAgain = false;
-        result = await this.runOnce(options);
+        result = await this.runOnce(runOptions);
+        runOptions = {};
       } while (this.runAgain && result.ok);
       return result;
     })().finally(() => (this.inflight = null));
@@ -242,6 +256,7 @@ export class PortfolioSync {
     this.establishedVaultId = null;
     this.keyStored.set(false);
     this.clockOffsetMs.set(null);
+    this.conflict.set(null);
     this.lastSyncedAt.set(null);
     this.message.set(null);
     this.status.set('off');
@@ -262,6 +277,7 @@ export class PortfolioSync {
       if (outcome.pulled) await this.store.refresh();
       this.lastSyncedAt.set(new Date().toISOString());
       this.message.set(null);
+      this.conflict.set(null);
       this.status.set('idle');
       return { ok: true };
     } catch (error) {
@@ -273,7 +289,18 @@ export class PortfolioSync {
       const message = errorMessage(error);
       this.message.set(message);
       this.status.set(statusFor(error));
+      if (this.status() === 'conflict') await this.describeConflict();
       return { ok: false, message };
+    }
+  }
+
+  private async describeConflict(): Promise<void> {
+    try {
+      const synced = await fetchRemoteSnapshot(this.api!, this.credentials!);
+      const local = await this.db.call('exportVault');
+      this.conflict.set(synced ? diffVaults(local, synced, formatIsoDate) : null);
+    } catch {
+      this.conflict.set(null);
     }
   }
 

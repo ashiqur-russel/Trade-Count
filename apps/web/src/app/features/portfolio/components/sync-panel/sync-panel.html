@@ -56,6 +56,61 @@
       <p class="problem" role="status">{{ message }}</p>
     }
 
+    @if (conflictSides(); as sides) {
+      <section class="conflict" aria-label="Choose which version to keep">
+        <p class="explain">
+          <strong>Choose which version to keep.</strong> Both versions stay as they are until you
+          decide. The version you don't choose is discarded on every device.
+        </p>
+        <div class="sides">
+          <div class="side">
+            <h3 class="side-heading">On this device</h3>
+            <ul class="changes">
+              @for (line of sides.thisDevice.shown; track $index) {
+                <li>{{ line }}</li>
+              } @empty {
+                <li class="muted">Nothing the synced copy lacks.</li>
+              }
+              @if (sides.thisDevice.hidden) {
+                <li class="muted">and {{ sides.thisDevice.hidden }} more</li>
+              }
+            </ul>
+          </div>
+          <div class="side">
+            <h3 class="side-heading">On the synced copy</h3>
+            <ul class="changes">
+              @for (line of sides.syncedCopy.shown; track $index) {
+                <li>{{ line }}</li>
+              } @empty {
+                <li class="muted">Nothing this device lacks.</li>
+              }
+              @if (sides.syncedCopy.hidden) {
+                <li class="muted">and {{ sides.syncedCopy.hidden }} more</li>
+              }
+            </ul>
+          </div>
+        </div>
+        <div class="actions">
+          <button
+            tc-confirm-button
+            confirmLabel="Replace the synced copy?"
+            [disabled]="busy()"
+            (confirmed)="keepThisDevice()"
+          >
+            Keep this device's version
+          </button>
+          <button
+            tc-confirm-button
+            confirmLabel="Replace this device's data? A backup is saved first."
+            [disabled]="busy()"
+            (confirmed)="useSyncedCopy()"
+          >
+            Use the synced copy
+          </button>
+        </div>
+      </section>
+    }
+
     @if (revealedKey(); as key) {
       <div class="key-box">
         <code class="key" aria-label="Your sync key">{{ key }}</code>
