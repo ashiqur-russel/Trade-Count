@@ -39,5 +39,12 @@
 
   --tc-rule-width: 1px;
   --tc-content-max-width: 1240px;
+  --tc-page-gutter: var(--tc-space-5);
+
+  /* Width of the page column inside its gutters; rules drawn on it line up with the content edges. */
+  --tc-page-width: min(
+    calc(100% - 2 * var(--tc-page-gutter)),
+    calc(var(--tc-content-max-width) - 2 * var(--tc-page-gutter))
+  );
   --tc-duration-fast: 150ms;
 }

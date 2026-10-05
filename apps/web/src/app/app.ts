@@ -5,6 +5,7 @@ import { filter, map } from 'rxjs';
 // Direct imports keep the rest of shared/ui (CDK overlays, forms) out of the initial bundle.
 import { BrandMark } from './shared/ui/brand-mark/brand-mark';
 import { Backdrop } from './shell/backdrop';
+import { IntroBanner } from './shell/intro-banner';
 import { SettingsLink } from './shell/settings-link';
 import { SiteFooter } from './shell/site-footer';
 import { InstallHint } from './shell/install-hint';
@@ -21,6 +22,7 @@ import { UpdateBanner } from './shell/update-banner';
     InstallHint,
     SiteFooter,
     SettingsLink,
+    IntroBanner,
   ],
   templateUrl: './app.html',
   styleUrl: './app.scss',

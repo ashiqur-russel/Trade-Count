@@ -7,18 +7,7 @@
   <tc-settings-link />
 </header>
 @if (isHome()) {
-  <section class="banner" aria-labelledby="app-title">
-    <h1 id="app-title" class="tc-visually-hidden">Trade Count</h1>
-    <p class="lead">
-      Every sale is matched against your oldest open buys first (FIFO) to work out your profit and
-      loss.
-    </p>
-    <p class="privacy">
-      Your trades are saved in this browser on this device. Nothing leaves it unless you turn on
-      sync, and then only an encrypted copy does. No one else, including the people who run this
-      site, can read it.
-    </p>
-  </section>
+  <tc-intro-banner />
 }
 <main>
   <tc-update-banner />
