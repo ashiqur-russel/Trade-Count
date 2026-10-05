@@ -8,11 +8,10 @@ import {
 } from '@angular/core';
 import type { Trade } from '@trade-count/ledger';
 import { Alert, Button, EmptyState, Panel } from '../../../shared/ui';
-import { BackupPanel } from '../components/backup-panel/backup-panel';
+import { DataPanel } from '../components/data-panel/data-panel';
 import { LedgerPanel } from '../components/ledger-panel/ledger-panel';
 import { PortfolioSummary } from '../components/portfolio-summary/portfolio-summary';
 import { StocksPanel } from '../components/stocks-panel/stocks-panel';
-import { SyncPanel } from '../components/sync-panel/sync-panel';
 import { TradeForm } from '../components/trade-form/trade-form';
 import { NO_FILTER, type LedgerFilter } from '../data/ledger-filter';
 import { PortfolioDb } from '../data/portfolio-db';
@@ -30,8 +29,7 @@ import { PortfolioSync } from '../data/portfolio-sync';
     TradeForm,
     StocksPanel,
     LedgerPanel,
-    BackupPanel,
-    SyncPanel,
+    DataPanel,
   ],
   providers: [PortfolioDb, PortfolioStore, PortfolioSync],
   templateUrl: './portfolio-page.html',

@@ -1,12 +1,9 @@
 import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
-import {
-  StoreError,
-  parseBackup,
-  type PortfolioBackup,
-} from '@trade-count/local-store';
+import { StoreError, parseBackup, type PortfolioBackup } from '@trade-count/local-store';
 import { saveBackupFile } from '../../../../core/files/save-backup-file';
 import { formatIsoDate } from '../../../../shared/dates/iso-date';
-import { Button, Panel, Pill, type PillTone } from '../../../../shared/ui';
+import { Button, Pill, type PillTone } from '../../../../shared/ui';
+import { DataSection } from '../data-panel/data-section';
 import { PortfolioStore } from '../../data/portfolio-store';
 
 const STALE_AFTER_DAYS = 14;
@@ -20,7 +17,7 @@ interface Message {
 
 @Component({
   selector: 'tc-backup-panel',
-  imports: [Panel, Pill, Button],
+  imports: [DataSection, Pill, Button],
   templateUrl: './backup-panel.html',
   styleUrl: './backup-panel.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,

@@ -1,5 +1,5 @@
-<tc-panel heading="Sync">
-  <tc-pill panel-actions [tone]="badge().tone">{{ badge().label }}</tc-pill>
+<tc-data-section heading="Sync">
+  <tc-pill section-status [tone]="badge().tone">{{ badge().label }}</tc-pill>
 
   @if (sync.notice(); as notice) {
     <tc-alert tone="warn" (dismissed)="sync.notice.set(null)">{{ notice }}</tc-alert>
@@ -30,10 +30,9 @@
     </div>
   } @else if (sync.enabled()) {
     <p class="explain">
-      Your portfolio is encrypted on this device and synced to an encrypted copy in the EU. Open
-      Trade Count with your sync key on another device to continue there.
+      Encrypted copy in the EU, opened with your sync key on your other devices.
       @if (lastSynced(); as time) {
-        <span class="muted">Last synced at {{ time }}.</span>
+        Last synced at {{ time }}.
       }
     </p>
 
@@ -144,11 +143,16 @@
     @switch (view()) {
       @case ('overview') {
         <p class="explain">
-          Sync keeps an <strong>encrypted copy</strong> of your portfolio in the EU, so you can use
-          it on other devices and restore it if this browser's data is ever cleared. It is encrypted
-          here with a key only you hold. No one else can read it, including us. If you lose the key
-          and every device, the copy cannot be recovered.
+          Use your portfolio on other devices, and recover it if this browser's data is cleared.
         </p>
+        <details class="tc-more">
+          <summary>How sync works</summary>
+          <p>
+            Sync keeps an <strong>encrypted copy</strong> of your portfolio in the EU. It is
+            encrypted here with a key only you hold. No one else can read it, including us. If you
+            lose the key and every device, the copy cannot be recovered.
+          </p>
+        </details>
         <div class="actions">
           <button tc-button variant="primary" type="button" (click)="startCreating()">
             Turn on sync
@@ -219,4 +223,4 @@
       }
     }
   }
-</tc-panel>
+</tc-data-section>

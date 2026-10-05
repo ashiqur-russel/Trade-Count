@@ -2,16 +2,10 @@ import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@a
 import { FormControl } from '@angular/forms';
 import { saveBackupFile } from '../../../../core/files/save-backup-file';
 import { saveTextFile } from '../../../../core/files/save-text-file';
-import {
-  Alert,
-  Button,
-  ConfirmButton,
-  Panel,
-  Pill,
-  type PillTone,
-} from '../../../../shared/ui';
+import { Alert, Button, ConfirmButton, Pill, type PillTone } from '../../../../shared/ui';
 import { PortfolioStore } from '../../data/portfolio-store';
 import { PortfolioSync, type SyncStatus } from '../../data/portfolio-sync';
+import { DataSection } from '../data-panel/data-section';
 import { CheckRow } from './check-row';
 import { RememberKeyOption } from './remember-key-option';
 import { SyncKeyField } from './sync-key-field';
@@ -34,7 +28,16 @@ const timeFormat = new Intl.DateTimeFormat('de-DE', { hour: '2-digit', minute: '
 
 @Component({
   selector: 'tc-sync-panel',
-  imports: [Panel, Pill, Button, ConfirmButton, Alert, CheckRow, RememberKeyOption, SyncKeyField],
+  imports: [
+    DataSection,
+    Pill,
+    Button,
+    ConfirmButton,
+    Alert,
+    CheckRow,
+    RememberKeyOption,
+    SyncKeyField,
+  ],
   templateUrl: './sync-panel.html',
   styleUrl: './sync-panel.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,

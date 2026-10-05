@@ -1,9 +1,9 @@
-<tc-panel heading="Backup">
-  <tc-pill panel-actions [tone]="status().tone">{{ status().label }}</tc-pill>
+<tc-data-section heading="Backup">
+  <tc-pill section-status [tone]="status().tone">{{ status().label }}</tc-pill>
 
   <p class="explain">
-    Your trades exist only in this browser. Export a backup file to keep a copy in your Files app,
-    iCloud Drive or Google Drive. Import it to restore, or to move your data to another device.
+    Keep a file copy in your Files app, iCloud Drive or Google Drive. Import it to restore, or to
+    move to another device.
   </p>
 
   @if (preview(); as backup) {
@@ -65,4 +65,4 @@
   @if (message(); as note) {
     <p class="message" [attr.data-tone]="note.tone" role="status">{{ note.text }}</p>
   }
-</tc-panel>
+</tc-data-section>
