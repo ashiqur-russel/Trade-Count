@@ -1,0 +1,43 @@
+generator client {
+  provider     = "prisma-client"
+  output       = "../src/generated/prisma"
+  moduleFormat = "esm"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+enum TradeSide {
+  buy
+  sell
+
+  @@map("trade_side")
+}
+
+model Stock {
+  id        String   @id @default(uuid(7)) @db.Uuid
+  name      String   @db.VarChar(60)
+  symbol    String?  @db.VarChar(12)
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz(3)
+  updatedAt DateTime @updatedAt @map("updated_at") @db.Timestamptz(3)
+  trades    Trade[]
+
+  @@map("stocks")
+}
+
+model Trade {
+  id        String    @id @default(uuid(7)) @db.Uuid
+  stockId   String    @map("stock_id") @db.Uuid
+  stock     Stock     @relation(fields: [stockId], references: [id], onDelete: Restrict)
+  side      TradeSide
+  quantity  Decimal   @db.Decimal(18, 6)
+  price     Decimal   @db.Decimal(14, 4)
+  tradedOn  DateTime  @map("traded_on") @db.Date
+  createdAt DateTime  @default(now()) @map("created_at") @db.Timestamptz(3)
+  updatedAt DateTime  @updatedAt @map("updated_at") @db.Timestamptz(3)
+
+  // FIFO order within a stock: trade date, then entry time
+  @@index([stockId, tradedOn, createdAt])
+  @@map("trades")
+}
