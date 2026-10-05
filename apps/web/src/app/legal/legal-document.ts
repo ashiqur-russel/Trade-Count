@@ -12,6 +12,18 @@ export type LegalBlock =
 export interface LegalSection {
   heading: string;
   blocks: LegalBlock[];
+  /** Shown as a highlighted summary card at the top, e.g. "The short version". */
+  summary?: true;
+}
+
+/** The in-page anchor for a section, used by the table of contents. */
+export function sectionId(heading: string): string {
+  return heading
+    .toLowerCase()
+    .normalize('NFKD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/^-|-$/g, '');
 }
 
 export interface LegalDocument {

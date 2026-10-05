@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { ActivatedRoute, RouterLink } from '@angular/router';
-import type { LegalKind, LegalLanguage } from './legal-document';
+import { sectionId, type LegalKind, type LegalLanguage } from './legal-document';
 import { buildLegalDocument } from './legal-documents';
 import { legalLink } from './legal-paths';
 import { OPERATOR } from './operator';
@@ -27,6 +27,22 @@ export class LegalPage {
     lang: this.route.language === 'de' ? 'en' : 'de',
     link: legalLink(this.route.kind, this.route.language === 'de' ? 'en' : 'de'),
   };
-  protected readonly backLabel =
-    this.route.language === 'de' ? '← Zurück zu Trade Count' : '← Back to Trade Count';
+  protected readonly pagePath = legalLink(this.route.kind, this.route.language);
+  /** Short documents (the imprint) read fine without a table of contents. */
+  protected readonly showContents = this.doc.sections.length > 4;
+  protected readonly sectionId = sectionId;
+  protected readonly labels =
+    this.route.language === 'de'
+      ? {
+          back: '← Zurück zu Trade Count',
+          contents: 'Inhalt',
+          pageNavigation: 'Seitennavigation',
+          currentLanguage: 'Deutsch',
+        }
+      : {
+          back: '← Back to Trade Count',
+          contents: 'Contents',
+          pageNavigation: 'Page navigation',
+          currentLanguage: 'English',
+        };
 }

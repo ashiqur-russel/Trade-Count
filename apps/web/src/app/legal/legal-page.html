@@ -1,47 +1,67 @@
-<article [attr.lang]="language">
-  <nav class="top" aria-label="Page navigation">
-    <a routerLink="/">{{ backLabel }}</a>
-    <a
-      [routerLink]="otherLanguage.link"
-      [attr.hreflang]="otherLanguage.lang"
-      [attr.lang]="otherLanguage.lang"
-    >
-      {{ otherLanguage.label }}
-    </a>
-  </nav>
+<div class="layout" [class.with-contents]="showContents">
+  @if (showContents) {
+    <nav class="contents" [attr.lang]="language" [attr.aria-label]="labels.contents">
+      <p class="contents-title">{{ labels.contents }}</p>
+      <ol>
+        @for (section of doc.sections; track section.heading) {
+          <li>
+            <a [routerLink]="pagePath" [fragment]="sectionId(section.heading)">{{
+              section.heading
+            }}</a>
+          </li>
+        }
+      </ol>
+    </nav>
+  }
 
-  <h1>{{ doc.title }}</h1>
-  <p class="updated">{{ doc.updated }}</p>
+  <article [attr.lang]="language">
+    <header class="head">
+      <nav class="top" [attr.aria-label]="labels.pageNavigation">
+        <a class="back" routerLink="/">{{ labels.back }}</a>
+        <span class="languages">
+          <span class="current" aria-current="true">{{ labels.currentLanguage }}</span>
+          <a
+            [routerLink]="otherLanguage.link"
+            [attr.hreflang]="otherLanguage.lang"
+            [attr.lang]="otherLanguage.lang"
+            >{{ otherLanguage.label }}</a
+          >
+        </span>
+      </nav>
+      <h1>{{ doc.title }}</h1>
+      <p class="updated">{{ doc.updated }}</p>
+    </header>
 
-  @for (section of doc.sections; track section.heading) {
-    <section>
-      <h2>{{ section.heading }}</h2>
-      @for (block of section.blocks; track $index) {
-        @switch (block.type) {
-          @case ('p') {
-            <p>{{ block.text }}</p>
-          }
-          @case ('list') {
-            <ul>
-              @for (item of block.items; track item) {
-                <li>{{ item }}</li>
-              }
-            </ul>
-          }
-          @case ('address') {
-            <address>
-              @for (line of block.lines; track $index) {
-                <span>{{ line }}</span>
-              }
-            </address>
-          }
-          @case ('email') {
-            <p>
-              <a [href]="'mailto:' + block.address">{{ block.address }}</a>
-            </p>
+    @for (section of doc.sections; track section.heading) {
+      <section [id]="sectionId(section.heading)" [class.summary]="section.summary">
+        <h2>{{ section.heading }}</h2>
+        @for (block of section.blocks; track $index) {
+          @switch (block.type) {
+            @case ('p') {
+              <p>{{ block.text }}</p>
+            }
+            @case ('list') {
+              <ul>
+                @for (item of block.items; track item) {
+                  <li>{{ item }}</li>
+                }
+              </ul>
+            }
+            @case ('address') {
+              <address>
+                @for (line of block.lines; track $index) {
+                  <span>{{ line }}</span>
+                }
+              </address>
+            }
+            @case ('email') {
+              <p>
+                <a [href]="'mailto:' + block.address">{{ block.address }}</a>
+              </p>
+            }
           }
         }
-      }
-    </section>
-  }
-</article>
+      </section>
+    }
+  </article>
+</div>

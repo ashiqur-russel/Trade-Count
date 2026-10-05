@@ -13,6 +13,7 @@ function english(o: Operator): LegalDocument {
     sections: [
       {
         heading: 'The short version',
+        summary: true,
         blocks: [
           {
             type: 'list',
@@ -177,6 +178,7 @@ function german(o: Operator): LegalDocument {
     sections: [
       {
         heading: 'Kurz zusammengefasst',
+        summary: true,
         blocks: [
           {
             type: 'list',

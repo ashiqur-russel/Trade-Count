@@ -2,39 +2,190 @@
   display: block;
 }
 
+.layout {
+  display: grid;
+  gap: var(--tc-space-6);
+  justify-content: center;
+  grid-template-columns: minmax(0, 72ch);
+}
+
+@media (width >= 64rem) {
+  .layout.with-contents {
+    grid-template-columns: 15rem minmax(0, 72ch);
+    align-items: start;
+  }
+}
+
+.contents {
+  display: none;
+}
+
+@media (width >= 64rem) {
+  .contents {
+    position: sticky;
+    top: var(--tc-space-6);
+    display: grid;
+    gap: var(--tc-space-3);
+  }
+}
+
+.contents-title {
+  font-family: var(--tc-font-numeric);
+  font-size: var(--tc-text-xs);
+  font-weight: var(--tc-weight-semibold);
+  letter-spacing: var(--tc-tracking-label);
+  text-transform: uppercase;
+  color: var(--tc-color-text-muted);
+}
+
+.contents ol {
+  display: grid;
+  gap: var(--tc-space-1);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  counter-reset: section;
+}
+
+.contents li {
+  counter-increment: section;
+}
+
+.contents a {
+  display: flex;
+  gap: var(--tc-space-2);
+  padding: var(--tc-space-1) var(--tc-space-2);
+  border-radius: var(--tc-radius-sm);
+  color: var(--tc-color-text-muted);
+  font-size: var(--tc-text-sm);
+  text-decoration: none;
+}
+
+.contents a::before {
+  content: counter(section, decimal-leading-zero);
+  font-family: var(--tc-font-numeric);
+  color: var(--tc-color-text-muted);
+}
+
+.contents a:hover {
+  background: var(--tc-color-surface-sunken);
+  color: var(--tc-color-text);
+}
+
 article {
   display: grid;
-  gap: var(--tc-space-4);
-  max-width: 70ch;
-  padding: var(--tc-space-6);
+  gap: var(--tc-space-6);
+  min-width: 0;
+  padding: var(--tc-space-8) var(--tc-space-6);
   border: var(--tc-rule-width) solid var(--tc-color-rule);
+  border-radius: var(--tc-radius-lg);
   background: var(--tc-color-surface);
+  line-height: 1.65;
+  overflow-wrap: break-word;
+  hyphens: auto;
+}
+
+@media (width <= 40rem) {
+  article {
+    padding: var(--tc-space-6) var(--tc-space-5);
+  }
+}
+
+.head {
+  display: grid;
+  gap: var(--tc-space-2);
+  padding-bottom: var(--tc-space-5);
+  border-bottom: var(--tc-rule-width) solid var(--tc-color-rule);
 }
 
 .top {
   display: flex;
   flex-wrap: wrap;
   gap: var(--tc-space-3);
+  align-items: center;
   justify-content: space-between;
+  margin-bottom: var(--tc-space-3);
   font-size: var(--tc-text-sm);
 }
 
-a {
-  color: var(--tc-color-accent);
+.back {
+  color: var(--tc-color-text-muted);
+  text-decoration: none;
+}
+
+.back:hover {
+  color: var(--tc-color-text);
+}
+
+.languages {
+  display: inline-flex;
+  padding: 2px;
+  border: var(--tc-rule-width) solid var(--tc-color-rule);
+  border-radius: var(--tc-radius-sm);
+  font-size: var(--tc-text-xs);
+  font-weight: var(--tc-weight-semibold);
+}
+
+.languages > * {
+  padding: var(--tc-space-1) var(--tc-space-3);
+  border-radius: calc(var(--tc-radius-sm) - 2px);
+  text-decoration: none;
+}
+
+.languages .current {
+  background: var(--tc-color-surface-sunken);
+  color: var(--tc-color-text);
+}
+
+.languages a {
+  color: var(--tc-color-text-muted);
+}
+
+.languages a:hover {
+  color: var(--tc-color-text);
+}
+
+h1 {
+  font-size: var(--tc-text-xl);
+  line-height: 1.1;
+  hyphens: manual;
 }
 
 .updated {
   color: var(--tc-color-text-muted);
-  font-size: var(--tc-text-sm);
+  font-family: var(--tc-font-numeric);
+  font-size: var(--tc-text-xs);
+  letter-spacing: var(--tc-tracking-label);
+  text-transform: uppercase;
 }
 
 section {
   display: grid;
-  gap: var(--tc-space-2);
+  gap: var(--tc-space-3);
+  scroll-margin-top: var(--tc-space-6);
+}
+
+section + section:not(.summary) {
+  padding-top: var(--tc-space-6);
+  border-top: var(--tc-rule-width) solid var(--tc-color-rule);
 }
 
 h2 {
-  margin-top: var(--tc-space-3);
+  font-size: var(--tc-text-md);
+  hyphens: manual;
+}
+
+.summary {
+  padding: var(--tc-space-5);
+  border-left: 3px solid var(--tc-color-accent);
+  border-radius: var(--tc-radius-sm);
+  background: var(--tc-color-accent-subtle);
+}
+
+.summary ul {
+  gap: var(--tc-space-2);
+  padding-left: var(--tc-space-5);
+  font-weight: var(--tc-weight-medium);
 }
 
 ul {
@@ -47,4 +198,8 @@ ul {
 address {
   display: grid;
   font-style: normal;
+}
+
+a {
+  color: var(--tc-color-accent);
 }

@@ -3,6 +3,7 @@
 }
 
 .masthead,
+.bar,
 main {
   max-width: var(--tc-content-max-width);
   margin: 0 auto;
@@ -75,4 +76,30 @@ main {
   gap: var(--tc-space-6);
   min-width: 0;
   padding-block: var(--tc-space-6) var(--tc-space-12);
+}
+
+.bar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--tc-space-3);
+  align-items: center;
+  justify-content: space-between;
+  padding-block: var(--tc-space-5) var(--tc-space-3);
+  border-bottom: var(--tc-rule-width) solid var(--tc-color-rule);
+}
+
+.brand {
+  display: inline-flex;
+  gap: var(--tc-space-2);
+  align-items: center;
+  color: var(--tc-color-text);
+  font-size: var(--tc-text-md);
+  font-weight: var(--tc-weight-black);
+  letter-spacing: var(--tc-tracking-display);
+  text-decoration: none;
+  text-transform: uppercase;
+}
+
+.brand-mark {
+  font-size: 1.6em;
 }
