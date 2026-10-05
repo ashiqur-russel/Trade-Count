@@ -17,13 +17,14 @@ interface VaultRow {
   version: number;
   envelope: string;
   updated_at: string;
+  last_seen_at: string;
 }
 
 export function createD1VaultStore(db: D1Like): VaultStore {
   return {
     async get(vaultId) {
       const row = await db
-        .prepare('SELECT vault_id, token_hash, version, envelope, updated_at FROM vaults WHERE vault_id = ?')
+        .prepare('SELECT vault_id, token_hash, version, envelope, updated_at, last_seen_at FROM vaults WHERE vault_id = ?')
         .bind(vaultId)
         .first<VaultRow>();
       return row ? toRecord(row) : null;
@@ -32,23 +33,40 @@ export function createD1VaultStore(db: D1Like): VaultStore {
     async create(record) {
       const result = await db
         .prepare(
-          'INSERT INTO vaults (vault_id, token_hash, version, envelope, updated_at) VALUES (?, ?, 1, ?, ?) ON CONFLICT (vault_id) DO NOTHING',
+          'INSERT INTO vaults (vault_id, token_hash, version, envelope, updated_at, last_seen_at) VALUES (?, ?, 1, ?, ?, ?) ON CONFLICT (vault_id) DO NOTHING',
         )
-        .bind(record.vaultId, record.tokenHash, record.envelope, record.updatedAt)
+        .bind(record.vaultId, record.tokenHash, record.envelope, record.updatedAt, record.lastSeenAt)
         .run();
       return result.meta.changes === 1;
     },
 
     async update(vaultId, expectedVersion, envelope, updatedAt) {
       const result = await db
-        .prepare('UPDATE vaults SET version = version + 1, envelope = ?, updated_at = ? WHERE vault_id = ? AND version = ?')
-        .bind(envelope, updatedAt, vaultId, expectedVersion)
+        .prepare('UPDATE vaults SET version = version + 1, envelope = ?, updated_at = ?, last_seen_at = ? WHERE vault_id = ? AND version = ?')
+        .bind(envelope, updatedAt, updatedAt, vaultId, expectedVersion)
         .run();
       return result.meta.changes === 1;
     },
 
     async delete(vaultId) {
       await db.prepare('DELETE FROM vaults WHERE vault_id = ?').bind(vaultId).run();
+    },
+
+    async touch(vaultId, seenAt) {
+      await db.prepare('UPDATE vaults SET last_seen_at = ? WHERE vault_id = ?').bind(seenAt, vaultId).run();
+    },
+
+    async usedBytes() {
+      const row = await db.prepare('SELECT COALESCE(SUM(length(envelope)), 0) AS bytes FROM vaults').first<{ bytes: number }>();
+      return row?.bytes ?? 0;
+    },
+
+    async deleteStale(neverResyncedBefore, inactiveBefore) {
+      const result = await db
+        .prepare('DELETE FROM vaults WHERE (version = 1 AND last_seen_at < ?) OR last_seen_at < ?')
+        .bind(neverResyncedBefore, inactiveBefore)
+        .run();
+      return result.meta.changes;
     },
   };
 }
@@ -78,5 +96,6 @@ function toRecord(row: VaultRow): VaultRecord {
     version: row.version,
     envelope: row.envelope,
     updatedAt: row.updated_at,
+    lastSeenAt: row.last_seen_at,
   };
 }

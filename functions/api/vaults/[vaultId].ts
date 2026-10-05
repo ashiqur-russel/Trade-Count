@@ -10,6 +10,8 @@ interface Env {
   DB?: D1Like;
   /** Secret that salts rate-limit keys; set with `wrangler pages secret put RATE_LIMIT_SALT`. */
   RATE_LIMIT_SALT?: string;
+  /** Optional override of the storage budget in bytes for new vaults. */
+  VAULT_BUDGET_BYTES?: string;
 }
 
 interface Context {
@@ -36,5 +38,6 @@ export const onRequest = async ({ request, params, env }: Context): Promise<Resp
     requestLimiter,
     writeLimiter: createD1RateLimiter(env.DB),
     rateLimitSalt: env.RATE_LIMIT_SALT,
+    vaultBudgetBytes: env.VAULT_BUDGET_BYTES ? Number(env.VAULT_BUDGET_BYTES) : undefined,
   });
 };

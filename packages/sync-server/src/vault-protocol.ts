@@ -33,6 +33,7 @@ export type ApiErrorCode =
   | 'VERSION_CONFLICT'
   | 'TOO_LARGE'
   | 'RATE_LIMITED'
+  | 'CAPACITY'
   | 'SERVER_ERROR';
 
 export interface ApiError {

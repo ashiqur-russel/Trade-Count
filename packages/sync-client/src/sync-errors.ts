@@ -52,7 +52,7 @@ export class SyncBusyError extends SyncError {
 export class VaultGoneError extends SyncError {
   constructor() {
     super(
-      'Sync was turned off on another device, so this device stopped syncing. Your data here is unchanged. ' +
+      'The synced copy no longer exists (sync was turned off on another device, or the copy was removed after a long time unused), so this device stopped syncing. Your data here is unchanged. ' +
         'Turn on sync again to create a new synced copy.',
     );
   }

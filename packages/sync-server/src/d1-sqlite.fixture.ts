@@ -3,7 +3,7 @@ import { readFileSync } from 'node:fs';
 import type { D1Like, D1StatementLike } from './d1-adapters.js';
 
 const sqlite3 = await sqlite3InitModule();
-const MIGRATIONS = ['0001_create_vaults.sql'];
+const MIGRATIONS = ['0001_create_vaults.sql', '0002_vault_activity.sql'];
 
 /** Real SQLite (D1's engine) behind D1's prepare/bind/first/run API, with the production migrations applied. */
 export function openD1Stand(): { db: D1Like; sqlite: Database } {
@@ -14,7 +14,7 @@ export function openD1Stand(): { db: D1Like; sqlite: Database } {
 
   const statement = (sql: string, values: SqlValue[] = []): D1StatementLike => ({
     bind: (...next) => statement(sql, next as SqlValue[]),
-    first: async <T>() => (sqlite.selectObject(sql, values) as T | undefined) ?? null,
+    first: async <T>() => (sqlite.selectObject(sql, values.length ? values : undefined) as T | undefined) ?? null,
     run: async () => {
       const before = sqlite.changes(true, false);
       sqlite.exec(sql, { bind: values });

@@ -20,9 +20,13 @@ describe("vault API", () => {
   let writeLimiter: MemoryRateLimiter;
   let alice: SyncCredentials;
   let bob: SyncCredentials;
+  let clockIso: string;
+  let vaultBudgetBytes: number | undefined;
 
   beforeEach(async () => {
     store = new MemoryVaultStore();
+    clockIso = "2026-10-05T12:00:00.000Z";
+    vaultBudgetBytes = undefined;
     requestLimiter = new MemoryRateLimiter();
     writeLimiter = new MemoryRateLimiter();
     [alice, bob] = await Promise.all([
@@ -58,7 +62,8 @@ describe("vault API", () => {
         requestLimiter,
         writeLimiter,
         rateLimitSalt: "test-salt",
-        now: () => new Date("2026-10-05T12:00:00.000Z"),
+        vaultBudgetBytes,
+        now: () => new Date(clockIso),
       },
     );
 
@@ -361,6 +366,57 @@ describe("vault API", () => {
       });
 
       expect(writeLimiter.counts.size).toBe(0);
+    });
+  });
+
+  describe("storage budget and clean-up", () => {
+    const daysLater = (days: number) =>
+      new Date(Date.parse("2026-10-05T12:00:00.000Z") + days * 86_400_000).toISOString();
+
+    it("refuses new vaults with 503 once stored envelopes fill the budget, but keeps serving existing ones", async () => {
+      await put(alice, 0);
+      vaultBudgetBytes = store.vaults.get(alice.vaultId)!.envelope.length;
+
+      const refused = await put(bob, 0);
+
+      expect(refused.status).toBe(503);
+      expect((await errorOf(refused)).error).toBe("CAPACITY");
+      expect((await call("GET", alice)).status).toBe(200);
+      expect((await put(alice, 1)).status).toBe(200);
+    });
+
+    it("removes abandoned vaults to make room before refusing a new one", async () => {
+      await put(alice, 0);
+      vaultBudgetBytes = store.vaults.get(alice.vaultId)!.envelope.length;
+      clockIso = daysLater(8);
+
+      expect((await put(bob, 0)).status).toBe(201);
+      expect(store.vaults.has(alice.vaultId)).toBe(false);
+    });
+
+    it("keeps a vault that was synced again until a year of inactivity, and drops it after", async () => {
+      await put(alice, 0);
+      clockIso = daysLater(1);
+      await put(alice, 1);
+      clockIso = daysLater(100);
+      await put(bob, 0);
+      expect(store.vaults.has(alice.vaultId)).toBe(true);
+
+      clockIso = daysLater(1 + 366);
+      const carol = await generateSyncKey().then(deriveCredentials);
+      await put(carol, 0);
+      expect(store.vaults.has(alice.vaultId)).toBe(false);
+    });
+
+    it("records a visit at most once a day, so reads cost almost no writes", async () => {
+      await put(alice, 0);
+      clockIso = daysLater(0.5);
+      await call("GET", alice);
+      expect(store.vaults.get(alice.vaultId)!.lastSeenAt).toBe("2026-10-05T12:00:00.000Z");
+
+      clockIso = daysLater(2);
+      await call("GET", alice);
+      expect(store.vaults.get(alice.vaultId)!.lastSeenAt).toBe(daysLater(2));
     });
   });
 

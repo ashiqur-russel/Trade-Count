@@ -22,6 +22,8 @@ export interface VaultApiDeps {
   writeLimiter: RateLimiter;
   /** Secret that salts rate-limit keys, so stored keys can't be reversed into IP addresses. */
   rateLimitSalt: string;
+  /** New vaults are refused once stored envelopes add up to this many bytes, keeping the database under its size limit. */
+  vaultBudgetBytes?: number;
   now?: () => Date;
 }
 
@@ -35,6 +37,12 @@ export const LIMITS = {
 } as const;
 const HOUR_SECONDS = 3600;
 
+export const DEFAULT_VAULT_BUDGET_BYTES = 300 * 1024 * 1024;
+const DAY_MS = 24 * HOUR_SECONDS * 1000;
+/** A vault that was uploaded once and never opened again is almost certainly abandoned. */
+export const NEVER_RESYNCED_RETENTION_DAYS = 7;
+export const INACTIVE_RETENTION_DAYS = 365;
+
 const STATUS: Record<ApiErrorCode, number> = {
   BAD_REQUEST: 400,
   UNAUTHORIZED: 401,
@@ -43,6 +51,7 @@ const STATUS: Record<ApiErrorCode, number> = {
   VERSION_CONFLICT: 409,
   TOO_LARGE: 413,
   RATE_LIMITED: 429,
+  CAPACITY: 503,
   SERVER_ERROR: 500,
 };
 
@@ -85,6 +94,9 @@ async function getVault(vaultId: string, token: string, deps: VaultApiDeps): Pro
   if (!record) return fail('NOT_FOUND', 'No synced data exists for this key yet.');
   if (!(await isOwner(record, token))) return fail('UNAUTHORIZED', "These sync credentials don't match.");
 
+  const now = clock(deps);
+  if (Date.parse(now) - Date.parse(record.lastSeenAt) > DAY_MS) await deps.store.touch(vaultId, now);
+
   const state: VaultState = { version: record.version, updatedAt: record.updatedAt, envelope: JSON.parse(record.envelope) };
   return json(state, 200);
 }
@@ -99,7 +111,7 @@ async function putVault(
   const body = await readBody(request);
   if (body instanceof Response) return body;
 
-  const now = (deps.now ?? (() => new Date()))().toISOString();
+  const now = clock(deps);
   const envelope = JSON.stringify(body.envelope);
   const record = await deps.store.get(vaultId);
 
@@ -108,7 +120,16 @@ async function putVault(
     const limited = await checkCreationLimits(network, deps);
     if (limited) return limited;
 
-    const created = await deps.store.create({ vaultId, tokenHash: await sha256Hex(token), envelope, updatedAt: now });
+    const full = await checkCapacity(envelope.length, now, deps);
+    if (full) return full;
+
+    const created = await deps.store.create({
+      vaultId,
+      tokenHash: await sha256Hex(token),
+      envelope,
+      updatedAt: now,
+      lastSeenAt: now,
+    });
     if (created) return json<PutVaultResult>({ version: 1 }, 201);
     return fail('VERSION_CONFLICT', 'Another device created this vault first. Sync again.', {}, 1);
   }
@@ -132,6 +153,21 @@ async function deleteVault(vaultId: string, token: string, deps: VaultApiDeps): 
 
   await deps.store.delete(vaultId);
   return new Response(null, { status: 204, headers: baseHeaders() });
+}
+
+/** Makes room by removing abandoned vaults first, then refuses new ones if storage is still over budget. */
+async function checkCapacity(newBytes: number, now: string, deps: VaultApiDeps): Promise<Response | null> {
+  const ago = (days: number) => new Date(Date.parse(now) - days * DAY_MS).toISOString();
+  await deps.store.deleteStale(ago(NEVER_RESYNCED_RETENTION_DAYS), ago(INACTIVE_RETENTION_DAYS));
+  const budget = deps.vaultBudgetBytes ?? DEFAULT_VAULT_BUDGET_BYTES;
+  if ((await deps.store.usedBytes()) + newBytes <= budget) return null;
+  return fail('CAPACITY', 'The sync service is full right now. Your data on this device is safe. Try again later.', {
+    'Retry-After': '3600',
+  });
+}
+
+function clock(deps: VaultApiDeps): string {
+  return (deps.now ?? (() => new Date()))().toISOString();
 }
 
 /** Reads the body as a stream and stops as soon as it is too big, instead of buffering whatever arrives. */

@@ -109,8 +109,10 @@ function english(o: Operator): LegalDocument {
             type: 'p',
             text:
               'Purpose: to provide the sync you requested (Art. 6(1)(b) GDPR). We keep the encrypted copy until you turn sync ' +
-              'off in the app, which deletes it immediately. Your other devices notice this and stop syncing; they do not ' +
-              'create a new copy on their own. If you lose your key, nobody, including us, can decrypt or recover it.',
+              'off in the app, which deletes it immediately. We also delete copies that were uploaded once and never opened ' +
+              'again after 7 days, and copies that no device has opened for a year. Your other devices notice a deleted ' +
+              'copy and stop syncing; they do not create a new one on their own. If you lose your key, nobody, including ' +
+              'us, can decrypt or recover it.',
           },
         ],
       },
@@ -269,9 +271,10 @@ function german(o: Operator): LegalDocument {
             text:
               'Zweck: Bereitstellung der von Ihnen gewünschten Synchronisierung (Art. 6 Abs. 1 lit. b DSGVO). Wir bewahren die ' +
               'verschlüsselte Kopie auf, bis Sie die Synchronisierung in der App ausschalten; dabei wird sie sofort gelöscht. ' +
-              'Ihre anderen Geräte bemerken das und hören auf zu synchronisieren; sie legen nicht von selbst eine neue Kopie ' +
-              'an. Wenn Sie Ihren Schlüssel verlieren, kann niemand, auch wir nicht, die Daten entschlüsseln oder ' +
-              'wiederherstellen.',
+              'Außerdem löschen wir Kopien, die einmal hochgeladen und nach 7 Tagen nie wieder geöffnet wurden, sowie Kopien, ' +
+              'die ein Jahr lang von keinem Gerät geöffnet wurden. Ihre anderen Geräte bemerken eine gelöschte Kopie und ' +
+              'hören auf zu synchronisieren; sie legen nicht von selbst eine neue an. Wenn Sie Ihren Schlüssel verlieren, ' +
+              'kann niemand, auch wir nicht, die Daten entschlüsseln oder wiederherstellen.',
           },
         ],
       },

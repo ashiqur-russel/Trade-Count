@@ -6,6 +6,8 @@ export interface VaultRecord {
   /** The VaultEnvelope as JSON text. */
   envelope: string;
   updatedAt: string;
+  /** ISO time a device last opened this vault; drives clean-up of abandoned copies. */
+  lastSeenAt: string;
 }
 
 /** Where vaults live; implemented over Cloudflare D1 in production and in memory in tests. */
@@ -16,6 +18,11 @@ export interface VaultStore {
   /** Replaces the envelope only if the stored version is still `expectedVersion`. */
   update(vaultId: string, expectedVersion: number, envelope: string, updatedAt: string): Promise<boolean>;
   delete(vaultId: string): Promise<void>;
+  touch(vaultId: string, seenAt: string): Promise<void>;
+  /** Total size of all stored envelopes. */
+  usedBytes(): Promise<number>;
+  /** Removes vaults never synced a second time and unseen since `neverResyncedBefore`, and any unseen since `inactiveBefore`. */
+  deleteStale(neverResyncedBefore: string, inactiveBefore: string): Promise<number>;
 }
 
 /** Counts events per key and window; keys are salted hashes, never raw IP addresses. */
