@@ -9,13 +9,14 @@
     "packages/*"
   ],
   "scripts": {
-    "postinstall": "npm run build -w @trade-count/ledger -w @trade-count/local-store -w @trade-count/sync-crypto",
+    "postinstall": "npm run build -w @trade-count/ledger -w @trade-count/local-store -w @trade-count/sync-crypto -w @trade-count/sync-server",
     "start": "npm start -w @trade-count/web",
     "build": "npm run build -w @trade-count/web",
     "test": "npm test --workspaces --if-present",
     "lint": "npm run lint -w @trade-count/web",
     "deploy": "npm run build && wrangler pages deploy apps/web/dist/web/browser --project-name trade-count --branch main",
-    "preview:prod": "npm run build && wrangler pages dev apps/web/dist/web/browser --port 8788"
+    "preview:prod": "npm run build && wrangler pages dev apps/web/dist/web/browser --port 8788",
+    "typecheck:functions": "tsc -p functions/tsconfig.json"
   },
   "allowScripts": {
     "lmdb@3.5.6": true,
@@ -25,6 +26,7 @@
     "esbuild@0.28.1": true
   },
   "devDependencies": {
+    "typescript": "6.0.3",
     "wrangler": "4.147.0"
   }
 }

@@ -1,0 +1,9 @@
+name = "trade-count"
+pages_build_output_dir = "apps/web/dist/web/browser"
+compatibility_date = "2026-10-01"
+
+# Encrypted vault storage (see migrations/). Created with: wrangler d1 create trade-count-vaults --jurisdiction eu
+[[d1_databases]]
+binding = "DB"
+database_name = "trade-count-vaults"
+database_id = "1f6f7e00-a13b-4b76-970b-fd19b7e14c55"

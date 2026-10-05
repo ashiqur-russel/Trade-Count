@@ -1,0 +1,10 @@
+{
+  "extends": "../packages/sync-server/tsconfig.json",
+  "compilerOptions": {
+    "module": "ESNext",
+    "moduleResolution": "bundler",
+    "rootDir": "..",
+    "noEmit": true
+  },
+  "include": ["./**/*.ts"]
+}
