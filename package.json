@@ -9,7 +9,7 @@
     "packages/*"
   ],
   "scripts": {
-    "postinstall": "npm run build -w @trade-count/ledger -w @trade-count/local-store",
+    "postinstall": "npm run build -w @trade-count/ledger -w @trade-count/local-store -w @trade-count/sync-crypto",
     "start": "npm start -w @trade-count/web",
     "build": "npm run build -w @trade-count/web",
     "test": "npm test --workspaces --if-present",

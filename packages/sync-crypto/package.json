@@ -1,0 +1,28 @@
+{
+  "name": "@trade-count/sync-crypto",
+  "version": "0.0.1",
+  "private": true,
+  "description": "Sync key and end-to-end encryption for the Trade Count vault",
+  "type": "module",
+  "sideEffects": false,
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
+    }
+  },
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "tsc -p tsconfig.build.json",
+    "typecheck": "tsc -p tsconfig.json --noEmit",
+    "test": "vitest run",
+    "test:watch": "vitest"
+  },
+  "devDependencies": {
+    "@types/node": "24.19.1",
+    "typescript": "6.0.3",
+    "vitest": "4.1.11"
+  }
+}
