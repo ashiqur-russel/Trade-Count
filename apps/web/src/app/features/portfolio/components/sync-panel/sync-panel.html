@@ -14,18 +14,7 @@
       Sync is set up on this device, but it doesn't store your sync key. Enter the key to continue
       syncing. Your local data is unchanged.
     </p>
-    <tc-field label="Sync key" controlId="sync-unlock-key">
-      <input
-        id="sync-unlock-key"
-        class="key-input"
-        [formControl]="joinKey"
-        autocomplete="off"
-        autocapitalize="characters"
-        spellcheck="false"
-        placeholder="XXXX-XXXX-XXXX-XXXX-XXXX-XXXX-XXXX-XXXX"
-        (keydown.enter)="unlock()"
-      />
-    </tc-field>
+    <tc-sync-key-field controlId="sync-unlock-key" [control]="joinKey" (submitted)="unlock()" />
     <div class="actions">
       <button tc-button variant="primary" type="button" [disabled]="busy()" (click)="unlock()">
         {{ busy() ? 'Unlocking…' : 'Continue syncing' }}
@@ -183,28 +172,11 @@
             </button>
           </div>
         </div>
-        <label class="confirm-row">
-          <input
-            type="checkbox"
-            [checked]="keySaved()"
-            (change)="keySaved.set($any($event.target).checked)"
-          />
-          <span>
-            I saved my sync key somewhere safe. Without it, nobody, including the people who run
-            this site, can recover the synced data.
-          </span>
-        </label>
-        <label class="confirm-row">
-          <input
-            type="checkbox"
-            [checked]="rememberKey()"
-            (change)="rememberKey.set($any($event.target).checked)"
-          />
-          <span>
-            Remember the key on this device. Untick on a shared computer: you will then enter the key
-            again after each restart.
-          </span>
-        </label>
+        <tc-check-row [(checked)]="keySaved">
+          I saved my sync key somewhere safe. Without it, nobody, including the people who run this
+          site, can recover the synced data.
+        </tc-check-row>
+        <tc-remember-key-option [(remember)]="rememberKey" />
         <div class="actions">
           <button
             tc-button
@@ -223,33 +195,13 @@
 
       @case ('join') {
         <p class="explain">Enter the sync key from the device that already has your data.</p>
-        <tc-field
-          label="Sync key"
+        <tc-sync-key-field
           controlId="sync-join-key"
           hint="8 groups of 4 characters. Dashes and capitals don't matter."
-        >
-          <input
-            id="sync-join-key"
-            class="key-input"
-            [formControl]="joinKey"
-            autocomplete="off"
-            autocapitalize="characters"
-            spellcheck="false"
-            placeholder="XXXX-XXXX-XXXX-XXXX-XXXX-XXXX-XXXX-XXXX"
-            (keydown.enter)="confirmJoin()"
-          />
-        </tc-field>
-        <label class="confirm-row">
-          <input
-            type="checkbox"
-            [checked]="rememberKey()"
-            (change)="rememberKey.set($any($event.target).checked)"
-          />
-          <span>
-            Remember the key on this device. Untick on a shared computer: you will then enter the key
-            again after each restart.
-          </span>
-        </label>
+          [control]="joinKey"
+          (submitted)="confirmJoin()"
+        />
+        <tc-remember-key-option [(remember)]="rememberKey" />
         <div class="actions">
           <button
             tc-button
