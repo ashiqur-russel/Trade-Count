@@ -12,6 +12,8 @@ export { PortfolioDatabase, type PortfolioDatabaseOptions } from './portfolio-da
 export { SCHEMA_VERSION, migrate } from './schema.js';
 export { StoreError, isStoreFailure, type StoreErrorCode, type StoreFailure } from './store-error.js';
 export type { NewStock, NewTrade, StockChanges, TradeChanges } from './store-inputs.js';
+export type { ConflictChoice } from './vault-conflict.js';
+export { diffVaults, type VaultDifference } from './vault-diff.js';
 export { mergeVaults } from './vault-merge.js';
 export {
   VAULT_DATA_FORMAT,

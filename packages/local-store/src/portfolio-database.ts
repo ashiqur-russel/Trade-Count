@@ -11,10 +11,12 @@ import {
 import { createBackup, parseBackup, type PortfolioBackup } from './backup.js';
 import { CLOCK_TOLERANCE_MS, MIN_CLOCK_OFFSET_MS, clampStamps, latestStamp } from './clock.js';
 import { mergeVaults } from './vault-merge.js';
+import { EMPTY_SNAPSHOT, type ConflictChoice } from './vault-conflict.js';
 import {
   VAULT_DATA_FORMAT,
   VAULT_DATA_VERSION,
   parseVaultSnapshot,
+  type Deletion,
   type VaultSnapshot,
 } from './vault-snapshot.js';
 import { validName, validSymbol, validTradeFields } from './record-validation.js';
@@ -232,6 +234,42 @@ export class PortfolioDatabase {
       clampStamps(parseVaultSnapshot(remote), new Date(now + CLOCK_TOLERANCE_MS).toISOString()),
       this.formatDate,
     );
+    this.replaceAllData(merged);
+    return merged;
+  }
+
+  /**
+   * Settles a refused merge by letting one side win outright. `keep-this-device` makes every record here
+   * newer than anything synced and deletes what only the synced copy had; `use-synced-copy` replaces this
+   * device's data with the synced copy. Either way the result is what other devices converge to.
+   */
+  resolveConflict(remote: unknown, choice: ConflictChoice): VaultSnapshot {
+    const now = this.trustedNow();
+    const there = clampStamps(parseVaultSnapshot(remote), new Date(now + CLOCK_TOLERANCE_MS).toISOString());
+    const winner = choice === 'use-synced-copy' ? there : this.thisDeviceWinsOver(there);
+    const resolved = mergeVaults(winner, EMPTY_SNAPSHOT, this.formatDate);
+    this.replaceAllData(resolved);
+    return resolved;
+  }
+
+  private thisDeviceWinsOver(there: VaultSnapshot): VaultSnapshot {
+    const here = this.exportVault();
+    const at = new Date(Math.max(Date.parse(this.stamp()), latestStamp(there) + 1)).toISOString();
+    const keptIds = new Set([...here.stocks, ...here.trades].map((r) => r.id));
+    const removedByUs: Deletion[] = [
+      ...there.stocks.filter((s) => !keptIds.has(s.id)).map((s) => ({ kind: 'stock' as const, id: s.id, deletedAt: at })),
+      ...there.trades.filter((t) => !keptIds.has(t.id)).map((t) => ({ kind: 'trade' as const, id: t.id, deletedAt: at })),
+    ];
+    const carried = [...here.deletions, ...there.deletions].filter((d) => !keptIds.has(d.id));
+    return {
+      ...here,
+      stocks: here.stocks.map((s) => ({ ...s, updatedAt: at })),
+      trades: here.trades.map((t) => ({ ...t, updatedAt: at })),
+      deletions: [...carried, ...removedByUs],
+    };
+  }
+
+  private replaceAllData(merged: VaultSnapshot): void {
     this.db.transaction('IMMEDIATE', () => {
       this.db.exec('DELETE FROM trades');
       this.db.exec('DELETE FROM stocks');
@@ -255,7 +293,6 @@ export class PortfolioDatabase {
     });
     this.lastCreatedAt = Math.max(this.lastCreatedAt, ...merged.trades.map((t) => Date.parse(t.createdAt)));
     this.lastStamp = latestStamp(merged);
-    return merged;
   }
 
   private recordDeletion(kind: 'stock' | 'trade', id: string): void {

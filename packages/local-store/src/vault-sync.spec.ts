@@ -1,22 +1,8 @@
 import type { Database } from '@sqlite.org/sqlite-wasm';
 import { afterEach, beforeEach, describe, expect, it } from 'vitest';
-import { openMemoryDatabase } from './memory-database.fixture.js';
-import { PortfolioDatabase } from './portfolio-database.js';
+import { device, sync } from './device.fixture.js';
 import { StoreError } from './store-error.js';
 import { VAULT_DATA_FORMAT, parseVaultSnapshot } from './vault-snapshot.js';
-
-/** A device whose clock only moves when told to, so "newest edit wins" is deterministic. */
-function device(startMinute: number) {
-  const sqlite = openMemoryDatabase();
-  let minute = startMinute;
-  const store = new PortfolioDatabase(sqlite, { now: () => new Date(Date.UTC(2026, 9, 5, 10, minute)) });
-  return { sqlite, store, at: (m: number) => void (minute = m) };
-}
-
-/** Pushes `from`'s data to `to` the way the app will: snapshot → (encrypted) → merge on the receiver. */
-function sync(from: PortfolioDatabase, to: PortfolioDatabase) {
-  return to.syncWith(JSON.parse(JSON.stringify(from.exportVault())));
-}
 
 describe('syncing two devices', () => {
   let phone: ReturnType<typeof device>;
