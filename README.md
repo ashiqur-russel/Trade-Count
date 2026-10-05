@@ -18,4 +18,23 @@ cp .env.example .env   # then set POSTGRES_PASSWORD (and the same value in DATAB
 npm install            # also generates the Prisma client
 npm run db:up          # starts Postgres on 127.0.0.1:5434
 npm run db:migrate -w @trade-count/api
+npm run start:dev -w @trade-count/api   # http://localhost:3000/api
+```
+
+## API
+
+| Method | Path | |
+|---|---|---|
+| GET | `/api/portfolio` | All stocks and trades in one response |
+| POST / PATCH / DELETE | `/api/stocks[/:id]` | Name is unique ignoring case; a stock with trades can't be deleted |
+| POST / PATCH / DELETE | `/api/trades[/:id]` | Quantities and prices are decimal strings; returns `409 OVERSELL` when a change would sell shares not held |
+| GET | `/api/health` | Checks the database connection |
+
+Trade writes lock the affected stock row, so concurrent sales can't oversell.
+
+## Tests
+
+```bash
+npm test -w @trade-count/ledger         # FIFO unit tests
+npm run test:e2e -w @trade-count/api    # API against a separate <db>_test database (created and migrated automatically)
 ```

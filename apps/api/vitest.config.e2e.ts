@@ -1,11 +1,15 @@
 import { defineConfig } from 'vitest/config';
-import tsconfigPaths from 'vite-tsconfig-paths';
+import { testDatabaseUrl } from './test/test-database-url.js';
 
 export default defineConfig({
-  plugins: [tsconfigPaths()],
+  resolve: { tsconfigPaths: true },
   test: {
     globals: true,
     root: './',
-    include: ['**/*.e2e-spec.ts'],
+    include: ['test/**/*.e2e-spec.ts'],
+    globalSetup: ['./test/global-setup.ts'],
+    env: { NODE_ENV: 'test', DATABASE_URL: testDatabaseUrl() },
+    // The suites share one database and truncate it between tests.
+    fileParallelism: false,
   },
 });
