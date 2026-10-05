@@ -14,10 +14,11 @@
     "build": "npm run build -w @trade-count/web",
     "test": "npm test --workspaces --if-present",
     "lint": "npm run lint -w @trade-count/web",
-    "deploy": "npm run build && wrangler pages deploy apps/web/dist/web/browser --project-name trade-count --branch main",
+    "deploy": "node scripts/check-operator.mjs && npm run build && wrangler pages deploy apps/web/dist/web/browser --project-name trade-count --branch main",
     "preview:prod": "npm run build && wrangler pages dev --port 8788 --binding RATE_LIMIT_SALT=local-dev-only-salt",
     "typecheck:functions": "tsc -p functions/tsconfig.json",
-    "db:migrate:local": "wrangler d1 migrations apply DB --local"
+    "db:migrate:local": "wrangler d1 migrations apply DB --local",
+    "check:operator": "node scripts/check-operator.mjs"
   },
   "allowScripts": {
     "lmdb@3.5.6": true,

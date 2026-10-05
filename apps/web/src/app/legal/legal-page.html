@@ -1,0 +1,47 @@
+<article [attr.lang]="language">
+  <nav class="top" aria-label="Page navigation">
+    <a routerLink="/">{{ backLabel }}</a>
+    <a
+      [routerLink]="otherLanguage.link"
+      [attr.hreflang]="otherLanguage.lang"
+      [attr.lang]="otherLanguage.lang"
+    >
+      {{ otherLanguage.label }}
+    </a>
+  </nav>
+
+  <h1>{{ doc.title }}</h1>
+  <p class="updated">{{ doc.updated }}</p>
+
+  @for (section of doc.sections; track section.heading) {
+    <section>
+      <h2>{{ section.heading }}</h2>
+      @for (block of section.blocks; track $index) {
+        @switch (block.type) {
+          @case ('p') {
+            <p>{{ block.text }}</p>
+          }
+          @case ('list') {
+            <ul>
+              @for (item of block.items; track item) {
+                <li>{{ item }}</li>
+              }
+            </ul>
+          }
+          @case ('address') {
+            <address>
+              @for (line of block.lines; track $index) {
+                <span>{{ line }}</span>
+              }
+            </address>
+          }
+          @case ('email') {
+            <p>
+              <a [href]="'mailto:' + block.address">{{ block.address }}</a>
+            </p>
+          }
+        }
+      }
+    </section>
+  }
+</article>

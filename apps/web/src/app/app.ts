@@ -9,12 +9,21 @@ import {
   type SegmentOption,
 } from './shared/ui/segmented-control/segmented-control';
 import { Backdrop } from './shell/backdrop';
+import { SiteFooter } from './shell/site-footer';
 import { InstallHint } from './shell/install-hint';
 import { UpdateBanner } from './shell/update-banner';
 
 @Component({
   selector: 'tc-root',
-  imports: [RouterOutlet, Backdrop, BrandMark, SegmentedControl, UpdateBanner, InstallHint],
+  imports: [
+    RouterOutlet,
+    Backdrop,
+    BrandMark,
+    SegmentedControl,
+    UpdateBanner,
+    InstallHint,
+    SiteFooter,
+  ],
   templateUrl: './app.html',
   styleUrl: './app.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
