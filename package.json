@@ -28,6 +28,7 @@
     "esbuild@0.28.1": true
   },
   "devDependencies": {
+    "@playwright/test": "^1.63.0",
     "typescript": "6.0.3",
     "wrangler": "4.147.0"
   },

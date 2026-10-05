@@ -9,3 +9,7 @@ coverage/
 .DS_Store
 *.tsbuildinfo
 .wrangler/
+
+# Playwright
+/test-results/
+/playwright-report/
