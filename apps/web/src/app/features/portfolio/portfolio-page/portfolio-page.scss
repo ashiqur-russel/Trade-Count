@@ -11,6 +11,14 @@
   align-items: start;
 }
 
+/* The stock list doesn't set the row height: the panel takes the trade form's height and scrolls inside. */
+@media (width > 880px) {
+  .bench > tc-stocks-panel {
+    align-self: stretch;
+    contain: size;
+  }
+}
+
 @media (width <= 880px) {
   .bench {
     grid-template-columns: minmax(0, 1fr);

@@ -1,6 +1,38 @@
 @use 'mixins/data-table';
 @include data-table.data-table;
 
+:host {
+  display: flex;
+  flex-direction: column;
+}
+
+tc-panel {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  min-height: 0;
+}
+
+/* Long lists scroll inside the panel, with the column headings kept in view. */
+.table-scroll {
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow-y: auto;
+}
+
+thead th {
+  position: sticky;
+  top: 0;
+  z-index: 1;
+  background: var(--tc-color-surface);
+}
+
+@media (width <= 880px) {
+  .table-scroll {
+    max-height: 28rem;
+  }
+}
+
 .hint {
   color: var(--tc-color-text-muted);
   font-size: var(--tc-text-sm);
