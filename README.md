@@ -2,6 +2,8 @@
 
 Stock portfolio tracker that matches every sale to the oldest open shares first (FIFO) to calculate profit and loss.
 
+Live: https://trade-count.pages.dev · Source: https://github.com/ashiqur-russel/Trade-Count · License: AGPL-3.0
+
 **Local-first:** each user's stocks and trades are stored in SQLite inside their own browser (Origin Private File System). There are no accounts and no readable data on any server. Users protect and move their data with **Export / Import backup** (a JSON file) or with **opt-in end-to-end encrypted sync**: an encrypted copy is kept in a Cloudflare D1 database (EU jurisdiction) that only the user's **sync key** can decrypt.
 
 ## Structure
@@ -74,3 +76,10 @@ npm run deploy         # build + upload; prints the https://<hash>.trade-count.p
 ## Changing the look
 
 Raw colours live only in `apps/web/src/styles/tokens`; themes map them to semantic `--tc-*` tokens; components use only those tokens (enforced by stylelint). Icons are generated from `apps/web/brand/mark.svg` with `npm run icons -w @trade-count/web`.
+
+## License
+
+Trade Count is free software under the [GNU Affero General Public License v3.0](LICENSE) (`AGPL-3.0-only`). You may use, study, change and share it. If you run a modified version as a network service, the AGPL requires you to offer its users the corresponding source code under the same license. All dependencies shipped in the app are permissively licensed (MIT, BSD, Apache-2.0, 0BSD, OFL-1.1 for the Geist fonts) and compatible with it.
+
+The Imprint and Privacy policy pages describe the operator of https://trade-count.pages.dev. If you deploy your own copy, put your own details in `apps/web/src/app/legal/operator.ts` (and review the texts for your situation).
+
