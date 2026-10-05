@@ -20,6 +20,9 @@ interface VaultRow {
   last_seen_at: string;
 }
 
+/** Rows written before last_seen_at existed hold '' and count as last active when they were last updated. */
+const LAST_ACTIVE = "COALESCE(NULLIF(last_seen_at, ''), updated_at)";
+
 export function createD1VaultStore(db: D1Like): VaultStore {
   return {
     async get(vaultId) {
@@ -63,7 +66,7 @@ export function createD1VaultStore(db: D1Like): VaultStore {
 
     async deleteStale(neverResyncedBefore, inactiveBefore) {
       const result = await db
-        .prepare('DELETE FROM vaults WHERE (version = 1 AND last_seen_at < ?) OR last_seen_at < ?')
+        .prepare(`DELETE FROM vaults WHERE (version = 1 AND ${LAST_ACTIVE} < ?) OR ${LAST_ACTIVE} < ?`)
         .bind(neverResyncedBefore, inactiveBefore)
         .run();
       return result.meta.changes;

@@ -80,6 +80,15 @@ describe('D1 vault activity', () => {
     expect((await store.get(ID))?.lastSeenAt).toBe('2026-02-01');
   });
 
+  it('never treats a vault without a recorded visit as ancient: it counts from its last update', async () => {
+    const store = createD1VaultStore(stand.db);
+    await store.create(record(ID, '2026-10-05'));
+    stand.sqlite.exec("UPDATE vaults SET last_seen_at = ''");
+
+    expect(await store.deleteStale('2026-09-28', '2025-10-05')).toBe(0);
+    expect(await store.get(ID)).not.toBeNull();
+  });
+
   it('deletes never-resynced vaults unseen since the first cut-off and any vault unseen since the second', async () => {
     const store = createD1VaultStore(stand.db);
     const fresh = 'a'.repeat(32);
