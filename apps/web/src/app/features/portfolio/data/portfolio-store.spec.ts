@@ -1,7 +1,8 @@
-import { provideHttpClient } from '@angular/common/http';
-import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
 import { TestBed } from '@angular/core/testing';
 import type { Portfolio, Trade } from '@trade-count/ledger';
+import { PersistentStorage } from '../../../core/storage/persistent-storage';
+import { PortfolioDb, PortfolioDbError } from './portfolio-db';
+import type { PortfolioDbMethod } from './portfolio-db-protocol';
 import { PortfolioStore } from './portfolio-store';
 
 const acme = { id: 'acme', name: 'Acme', symbol: null };
@@ -15,25 +16,53 @@ const buy: Trade = {
   createdAt: '2026-10-01T10:00:00.000Z',
 };
 
+/** Stands in for the worker: each call waits until the test settles it. */
+class FakeDb {
+  readonly calls: {
+    method: PortfolioDbMethod;
+    args: unknown[];
+    settle: (outcome: unknown) => void;
+  }[] = [];
+
+  call(method: PortfolioDbMethod, ...args: unknown[]): Promise<unknown> {
+    return new Promise((resolve, reject) => {
+      this.calls.push({
+        method,
+        args,
+        settle: (outcome) =>
+          outcome instanceof PortfolioDbError ? reject(outcome) : resolve(outcome),
+      });
+    });
+  }
+
+  last() {
+    return this.calls.at(-1)!;
+  }
+}
+
 describe('PortfolioStore', () => {
   let store: PortfolioStore;
-  let http: HttpTestingController;
+  let db: FakeDb;
+  let persistRequests: number;
 
   async function loadWith(portfolio: Portfolio): Promise<void> {
     const loading = store.load();
-    http.expectOne('/api/portfolio').flush(portfolio);
+    db.last().settle(portfolio);
     await loading;
   }
 
   beforeEach(() => {
+    db = new FakeDb();
+    persistRequests = 0;
     TestBed.configureTestingModule({
-      providers: [PortfolioStore, provideHttpClient(), provideHttpClientTesting()],
+      providers: [
+        PortfolioStore,
+        { provide: PortfolioDb, useValue: db },
+        { provide: PersistentStorage, useValue: { request: async () => void persistRequests++ } },
+      ],
     });
     store = TestBed.inject(PortfolioStore);
-    http = TestBed.inject(HttpTestingController);
   });
-
-  afterEach(() => http.verify());
 
   it('loads the portfolio and derives FIFO totals from it', async () => {
     await loadWith({ stocks: [acme], trades: [buy] });
@@ -43,7 +72,21 @@ describe('PortfolioStore', () => {
     expect(store.totals().openCost.toString()).toBe('1680');
   });
 
-  it('shows a new trade immediately and swaps in the saved one when the API confirms', async () => {
+  it('shows the storage problem when the database cannot be opened', async () => {
+    const loading = store.load();
+    db.last().settle(
+      new PortfolioDbError({
+        code: 'UNAVAILABLE',
+        message: "Couldn't open your data on this device.",
+      }),
+    );
+    await loading;
+
+    expect(store.loadStatus()).toBe('error');
+    expect(store.loadError()).toBe("Couldn't open your data on this device.");
+  });
+
+  it('shows a new trade immediately, swaps in the saved one and asks to keep storage', async () => {
     await loadWith({ stocks: [acme], trades: [buy] });
 
     const saving = store.addTrade({
@@ -55,15 +98,15 @@ describe('PortfolioStore', () => {
     });
     expect(store.trades()).toHaveLength(2);
     expect(store.totals().realizedProfit.toString()).toBe('80');
+    expect(db.last().method).toBe('createTrade');
 
-    http
-      .expectOne({ method: 'POST', url: '/api/trades' })
-      .flush({ ...buy, id: 's1', side: 'sell', quantity: '2', price: '600' });
+    db.last().settle({ ...buy, id: 's1', side: 'sell', quantity: '2', price: '600' });
     expect(await saving).toEqual({ ok: true });
     expect(store.trades().map((t) => t.id)).toEqual(['b1', 's1']);
+    expect(persistRequests).toBe(1);
   });
 
-  it('removes the optimistic trade and returns the API message when the save is rejected', async () => {
+  it('removes the optimistic trade and returns the database message when the save is refused', async () => {
     await loadWith({ stocks: [acme], trades: [buy] });
 
     const saving = store.addTrade({
@@ -73,22 +116,17 @@ describe('PortfolioStore', () => {
       price: '600',
       tradedOn: '2026-10-02',
     });
-    http
-      .expectOne('/api/trades')
-      .flush(
-        { message: 'You only hold 0 Acme share(s) on 2026-10-02.' },
-        { status: 409, statusText: 'Conflict' },
-      );
+    db.last().settle(
+      new PortfolioDbError({ code: 'CONFLICT', message: 'You only hold 0 Acme share(s).' }),
+    );
 
-    expect(await saving).toEqual({
-      ok: false,
-      message: 'You only hold 0 Acme share(s) on 2026-10-02.',
-    });
+    expect(await saving).toEqual({ ok: false, message: 'You only hold 0 Acme share(s).' });
     expect(store.trades()).toEqual([buy]);
   });
 
-  it('refuses an oversell locally without calling the API', async () => {
+  it('refuses an oversell before touching the database', async () => {
     await loadWith({ stocks: [acme], trades: [buy] });
+    const callsBefore = db.calls.length;
 
     const result = await store.addTrade({
       stockId: 'acme',
@@ -102,7 +140,7 @@ describe('PortfolioStore', () => {
       ok: false,
       message: "You only hold 3 Acme share(s) on 02.10.2026, so you can't sell 4.",
     });
-    http.expectNone('/api/trades');
+    expect(db.calls.length).toBe(callsBefore);
   });
 
   it('puts a deleted trade back in its place when the delete fails', async () => {
@@ -111,32 +149,31 @@ describe('PortfolioStore', () => {
 
     const deleting = store.deleteTrade('b1');
     expect(store.trades()).toEqual([second]);
-    http.expectOne('/api/trades/b1').flush(null, { status: 500, statusText: 'Server Error' });
+    db.last().settle(new PortfolioDbError({ code: 'NOT_FOUND', message: 'Trade not found.' }));
 
     expect((await deleting).ok).toBe(false);
     expect(store.trades()).toEqual([buy, second]);
   });
 
-  it('restores the previous values when an edit is rejected', async () => {
+  it('restores the previous values when an edit is refused', async () => {
     await loadWith({ stocks: [acme], trades: [buy] });
 
     const saving = store.updateTrade('b1', { price: '500' });
     expect(store.trades()[0].price).toBe('500');
-    http
-      .expectOne('/api/trades/b1')
-      .flush({ message: 'nope' }, { status: 400, statusText: 'Bad Request' });
+    db.last().settle(new PortfolioDbError({ code: 'INVALID', message: 'nope' }));
 
     await saving;
     expect(store.trades()[0].price).toBe('560');
   });
 
-  it('rejects a stock name that only differs in case without calling the API', async () => {
+  it('rejects a stock name that only differs in case without touching the database', async () => {
     await loadWith({ stocks: [acme], trades: [] });
+    const callsBefore = db.calls.length;
 
     expect(await store.addStock({ name: ' ACME ' })).toEqual({
       ok: false,
       message: 'ACME is already in your list.',
     });
-    http.expectNone('/api/stocks');
+    expect(db.calls.length).toBe(callsBefore);
   });
 });

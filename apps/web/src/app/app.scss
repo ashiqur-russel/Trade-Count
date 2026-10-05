@@ -39,9 +39,19 @@ main {
   text-transform: none;
 }
 
-.tagline p {
+.intro {
+  display: grid;
+  gap: var(--tc-space-1);
   max-width: 62ch;
+}
+
+.intro p {
   color: var(--tc-color-text-muted);
+}
+
+.intro .privacy {
+  color: var(--tc-color-text);
+  font-weight: var(--tc-weight-medium);
 }
 
 .wordmark {

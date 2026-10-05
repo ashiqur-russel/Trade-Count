@@ -9,16 +9,10 @@ import {
   type Trade,
   type TradeChange,
 } from '@trade-count/ledger';
-import { firstValueFrom, type Observable } from 'rxjs';
-import { apiErrorMessage } from '../../../core/api/api-error-message';
-import {
-  PortfolioApi,
-  type NewStock,
-  type NewTrade,
-  type StockChanges,
-  type TradeChanges,
-} from '../../../core/api/portfolio-api';
+import type { NewStock, NewTrade, StockChanges, TradeChanges } from '@trade-count/local-store';
+import { PersistentStorage } from '../../../core/storage/persistent-storage';
 import { formatIsoDate } from '../../../shared/dates/iso-date';
+import { PortfolioDb, PortfolioDbError } from './portfolio-db';
 
 export type MutationResult = { ok: true } | { ok: false; message: string };
 
@@ -31,12 +25,13 @@ let pendingSequence = 0;
 const nextPendingId = () => `pending-${pendingSequence++}`;
 
 /**
- * Single source of portfolio state for the page. Writes apply locally first and roll back
- * just the affected item if the API rejects them.
+ * Single source of portfolio state for the page. Writes show immediately and roll back
+ * just the affected item if the on-device database rejects them.
  */
 @Injectable()
 export class PortfolioStore {
-  private readonly api = inject(PortfolioApi);
+  private readonly db = inject(PortfolioDb);
+  private readonly persistentStorage = inject(PersistentStorage);
 
   private readonly stockList = signal<Stock[]>([]);
   private readonly tradeList = signal<Trade[]>([]);
@@ -62,17 +57,17 @@ export class PortfolioStore {
   async load(): Promise<void> {
     this.loadStatus.set('loading');
     try {
-      const portfolio = await firstValueFrom(this.api.getPortfolio());
+      const portfolio = await this.db.call('getPortfolio');
       this.stockList.set(portfolio.stocks);
       this.tradeList.set(portfolio.trades);
       this.loadStatus.set('ready');
     } catch (error) {
-      this.loadError.set(apiErrorMessage(error));
+      this.loadError.set(failureMessage(error));
       this.loadStatus.set('error');
     }
   }
 
-  /** The FIFO check the API will also run, answered before any request is sent. */
+  /** The FIFO check the database will also run, answered before anything is written. */
   findOversellMessage(change: TradeChange, changedTradeId: string): string | null {
     const oversell = findOversellCausedBy(this.stockList(), this.tradeList(), change);
     return oversell ? describeOversell(oversell, changedTradeId, formatIsoDate) : null;
@@ -88,7 +83,9 @@ export class PortfolioStore {
       name,
       symbol: input.symbol?.trim().toUpperCase() || null,
     };
-    return this.create(this.stockList, draft, this.api.createStock({ name, symbol: input.symbol }));
+    return this.create(this.stockList, draft, () =>
+      this.db.call('createStock', { name, symbol: input.symbol }),
+    );
   }
 
   updateStock(id: string, changes: StockChanges): Promise<MutationResult> {
@@ -99,7 +96,9 @@ export class PortfolioStore {
     ) {
       return Promise.resolve({ ok: false, message: `${name} is already in your list.` });
     }
-    return this.update<Stock>(this.stockList, id, changes, this.api.updateStock(id, changes));
+    return this.update<Stock>(this.stockList, id, changes, () =>
+      this.db.call('updateStock', id, changes),
+    );
   }
 
   deleteStock(id: string): Promise<MutationResult> {
@@ -109,14 +108,14 @@ export class PortfolioStore {
         message: 'This stock still has trades. Delete its trades first.',
       });
     }
-    return this.remove(this.stockList, id, this.api.deleteStock(id));
+    return this.remove(this.stockList, id, () => this.db.call('deleteStock', id));
   }
 
   addTrade(input: NewTrade): Promise<MutationResult> {
     const draft: Trade = { ...input, id: nextPendingId(), createdAt: new Date().toISOString() };
     const oversell = this.findOversellMessage({ type: 'add', trade: draft }, draft.id);
     if (oversell) return Promise.resolve({ ok: false, message: oversell });
-    return this.create(this.tradeList, draft, this.api.createTrade(input));
+    return this.create(this.tradeList, draft, () => this.db.call('createTrade', input));
   }
 
   updateTrade(id: string, changes: TradeChanges): Promise<MutationResult> {
@@ -127,22 +126,24 @@ export class PortfolioStore {
       id,
     );
     if (oversell) return Promise.resolve({ ok: false, message: oversell });
-    return this.update<Trade>(this.tradeList, id, changes, this.api.updateTrade(id, changes));
+    return this.update<Trade>(this.tradeList, id, changes, () =>
+      this.db.call('updateTrade', id, changes),
+    );
   }
 
   deleteTrade(id: string): Promise<MutationResult> {
     const oversell = this.findOversellMessage({ type: 'remove', tradeId: id }, id);
     if (oversell) return Promise.resolve({ ok: false, message: oversell });
-    return this.remove(this.tradeList, id, this.api.deleteTrade(id));
+    return this.remove(this.tradeList, id, () => this.db.call('deleteTrade', id));
   }
 
   private async create<T extends Identified>(
     list: WritableSignal<T[]>,
     draft: T,
-    request: Observable<T>,
+    write: () => Promise<T>,
   ): Promise<MutationResult> {
     list.update((items) => [...items, draft]);
-    return this.settle(draft.id, request, {
+    return this.settle(draft.id, write, {
       saved: (saved) => list.update((items) => items.map((i) => (i.id === draft.id ? saved : i))),
       failed: () => list.update((items) => items.filter((i) => i.id !== draft.id)),
     });
@@ -152,13 +153,13 @@ export class PortfolioStore {
     list: WritableSignal<T[]>,
     id: string,
     changes: Partial<T>,
-    request: Observable<T>,
+    write: () => Promise<T>,
   ): Promise<MutationResult> {
     const previous = list().find((i) => i.id === id);
     if (!previous) return { ok: false, message: 'That item no longer exists.' };
     const optimistic = { ...previous, ...changes };
     list.update((items) => items.map((i) => (i.id === id ? optimistic : i)));
-    return this.settle(id, request, {
+    return this.settle(id, write, {
       saved: (saved) => list.update((items) => items.map((i) => (i.id === id ? saved : i))),
       failed: () => list.update((items) => items.map((i) => (i === optimistic ? previous : i))),
     });
@@ -167,13 +168,13 @@ export class PortfolioStore {
   private async remove<T extends Identified>(
     list: WritableSignal<T[]>,
     id: string,
-    request: Observable<unknown>,
+    write: () => Promise<unknown>,
   ): Promise<MutationResult> {
     const index = list().findIndex((i) => i.id === id);
     if (index === -1) return { ok: true };
     const removed = list()[index];
     list.update((items) => items.filter((i) => i.id !== id));
-    return this.settle(id, request, {
+    return this.settle(id, write, {
       saved: () => undefined,
       failed: () =>
         list.update((items) => [...items.slice(0, index), removed, ...items.slice(index)]),
@@ -182,16 +183,17 @@ export class PortfolioStore {
 
   private async settle<R>(
     id: string,
-    request: Observable<R>,
+    write: () => Promise<R>,
     on: { saved: (result: R) => void; failed: () => void },
   ): Promise<MutationResult> {
     this.pendingIds.update((ids) => new Set(ids).add(id));
     try {
-      on.saved(await firstValueFrom(request));
+      on.saved(await write());
+      void this.persistentStorage.request();
       return { ok: true };
     } catch (error) {
       on.failed();
-      return { ok: false, message: apiErrorMessage(error) };
+      return { ok: false, message: failureMessage(error) };
     } finally {
       this.pendingIds.update((ids) => {
         const next = new Set(ids);
@@ -200,4 +202,10 @@ export class PortfolioStore {
       });
     }
   }
+}
+
+function failureMessage(error: unknown): string {
+  if (error instanceof PortfolioDbError) return error.message;
+  console.error(error);
+  return 'Something went wrong while saving. Try again.';
 }

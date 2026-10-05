@@ -13,6 +13,7 @@ import { PortfolioSummary } from '../components/portfolio-summary/portfolio-summ
 import { StocksPanel } from '../components/stocks-panel/stocks-panel';
 import { TradeForm } from '../components/trade-form/trade-form';
 import { NO_FILTER, type LedgerFilter } from '../data/ledger-filter';
+import { PortfolioDb } from '../data/portfolio-db';
 import { PortfolioStore } from '../data/portfolio-store';
 
 @Component({
@@ -27,7 +28,7 @@ import { PortfolioStore } from '../data/portfolio-store';
     StocksPanel,
     LedgerPanel,
   ],
-  providers: [PortfolioStore],
+  providers: [PortfolioDb, PortfolioStore],
   templateUrl: './portfolio-page.html',
   styleUrl: './portfolio-page.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
