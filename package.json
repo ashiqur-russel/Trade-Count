@@ -11,7 +11,8 @@
   "scripts": {
     "db:up": "docker compose up -d --wait db",
     "db:down": "docker compose down",
-    "db:logs": "docker compose logs -f db"
+    "db:logs": "docker compose logs -f db",
+    "postinstall": "npm run build -w @trade-count/ledger"
   },
   "allowScripts": {
     "prisma@7.10.0": true,
