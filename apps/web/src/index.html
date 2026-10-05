@@ -6,6 +6,12 @@
     <base href="/" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="color-scheme" content="light dark" />
+    <meta name="theme-color" content="#ffffe3" media="(prefers-color-scheme: light)" />
+    <meta name="theme-color" content="#282828" media="(prefers-color-scheme: dark)" />
+    <meta
+      name="description"
+      content="FIFO profit and loss for your stock trades, stored only on your device."
+    />
     <link rel="icon" href="favicon.ico" sizes="32x32" />
     <link rel="icon" href="favicon.svg" type="image/svg+xml" />
     <link rel="apple-touch-icon" href="apple-touch-icon.png" />
@@ -16,8 +22,10 @@
         if (theme === 'light' || theme === 'dark') document.documentElement.dataset.theme = theme;
       } catch (e) {}
     </script>
+    <link rel="manifest" href="manifest.webmanifest" />
   </head>
   <body>
     <tc-root></tc-root>
+    <noscript>Trade Count needs JavaScript to run.</noscript>
   </body>
 </html>

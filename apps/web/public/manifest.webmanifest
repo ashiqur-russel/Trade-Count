@@ -1,0 +1,23 @@
+{
+  "id": "./",
+  "name": "Trade Count",
+  "short_name": "Trade Count",
+  "description": "FIFO profit and loss for your stock trades, stored only on your device.",
+  "lang": "en",
+  "categories": ["finance", "productivity"],
+  "display": "standalone",
+  "scope": "./",
+  "start_url": "./",
+  "background_color": "#ffffe3",
+  "theme_color": "#ffffe3",
+  "icons": [
+    { "src": "icons/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "icons/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    {
+      "src": "icons/icon-maskable-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ]
+}

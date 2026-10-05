@@ -1,0 +1,20 @@
+.banner {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--tc-space-3);
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--tc-space-3) var(--tc-space-4);
+  border: var(--tc-rule-width) solid var(--tc-color-rule);
+  background: var(--tc-color-accent-subtle);
+  font-size: var(--tc-text-sm);
+}
+
+.banner p {
+  max-width: 70ch;
+}
+
+.actions {
+  display: flex;
+  gap: var(--tc-space-2);
+}
