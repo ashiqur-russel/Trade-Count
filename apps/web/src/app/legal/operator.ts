@@ -13,7 +13,7 @@ export interface Operator {
 
 export const OPERATOR: Operator = {
   name: 'Mohammad Ashiqur Rahman',
-  street: 'Kohelnhof Str. 4',
+  street: 'Kohlenhofstraße 4',
   postalCode: '90443',
   city: 'Nürnberg',
   country: 'Germany',
