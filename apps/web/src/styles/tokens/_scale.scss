@@ -1,22 +1,26 @@
 // Theme-independent tokens: type, spacing, shape, motion.
 @mixin scale-tokens {
-  --tc-font-display: 'Bricolage Grotesque Variable', 'Avenir Next', system-ui, sans-serif;
-  --tc-font-body: 'Instrument Sans', 'Helvetica Neue', system-ui, sans-serif;
-  --tc-font-numeric: 'IBM Plex Mono', ui-monospace, 'SF Mono', menlo, monospace;
+  --tc-font-display: 'Geist Variable', 'Helvetica Neue', arial, sans-serif;
+  --tc-font-body: 'Geist Variable', 'Helvetica Neue', arial, sans-serif;
+  --tc-font-numeric: 'Geist Mono Variable', ui-monospace, 'SF Mono', menlo, monospace;
 
   --tc-text-xs: 0.72rem;
-  --tc-text-sm: 0.82rem;
-  --tc-text-base: 0.94rem;
-  --tc-text-md: 1.15rem;
-  --tc-text-lg: 1.35rem;
-  --tc-text-xl: clamp(1.6rem, 3.4vw, 2.2rem);
+  --tc-text-sm: 0.84rem;
+  --tc-text-base: 0.95rem;
+  --tc-text-md: 1.2rem;
+  --tc-text-lg: 1.5rem;
+  --tc-text-xl: clamp(1.9rem, 4vw, 2.6rem);
+  --tc-text-display: clamp(3rem, 10vw, 7.5rem);
 
   --tc-weight-regular: 400;
   --tc-weight-medium: 500;
   --tc-weight-semibold: 600;
   --tc-weight-bold: 700;
+  --tc-weight-black: 800;
 
   --tc-tracking-label: 0.08em;
+  --tc-tracking-tight: -0.03em;
+  --tc-tracking-display: -0.055em;
   --tc-leading-body: 1.5;
 
   --tc-space-1: 0.25rem;
@@ -28,11 +32,12 @@
   --tc-space-8: 2rem;
   --tc-space-12: 3rem;
 
-  --tc-radius-sm: 6px;
-  --tc-radius-md: 8px;
-  --tc-radius-lg: 10px;
+  --tc-radius-sm: 2px;
+  --tc-radius-md: 2px;
+  --tc-radius-lg: 0;
   --tc-radius-pill: 999px;
 
-  --tc-content-max-width: 1180px;
+  --tc-rule-width: 1px;
+  --tc-content-max-width: 1240px;
   --tc-duration-fast: 150ms;
 }

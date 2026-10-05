@@ -1,0 +1,98 @@
+<div class="field">
+  <button
+    #trigger
+    cdkOverlayOrigin
+    #origin="cdkOverlayOrigin"
+    type="button"
+    class="trigger"
+    aria-haspopup="dialog"
+    [id]="inputId()"
+    [attr.aria-label]="ariaLabel()"
+    [attr.aria-expanded]="open()"
+    [disabled]="disabled()"
+    (click)="toggle()"
+  >
+    <span [class.placeholder]="!display()">{{ display() ?? placeholder() }}</span>
+    <svg class="icon" viewBox="0 0 16 16" aria-hidden="true">
+      <rect x="2.5" y="3.5" width="11" height="10" rx="1" />
+      <path d="M2.5 6.5h11M5.5 2v3M10.5 2v3" />
+    </svg>
+  </button>
+  @if (clearable() && value()) {
+    <button
+      type="button"
+      class="clear"
+      [attr.aria-label]="'Clear ' + (ariaLabel() ?? 'date')"
+      (click)="clear()"
+    >
+      ✕
+    </button>
+  }
+</div>
+
+<ng-template
+  cdkConnectedOverlay
+  [cdkConnectedOverlayOrigin]="origin"
+  [cdkConnectedOverlayOpen]="open()"
+  [cdkConnectedOverlayPositions]="positions"
+  [cdkConnectedOverlayHasBackdrop]="true"
+  cdkConnectedOverlayBackdropClass="cdk-overlay-transparent-backdrop"
+  (backdropClick)="close()"
+  (detach)="close()"
+  (overlayKeydown)="$event.key === 'Escape' && close()"
+>
+  <div
+    class="calendar"
+    role="dialog"
+    [attr.aria-label]="ariaLabel() ?? 'Choose a date'"
+    cdkTrapFocus
+  >
+    <header>
+      <button type="button" class="nav" aria-label="Previous month" (click)="showMonth(-1)">
+        ←
+      </button>
+      <span class="title" aria-live="polite">{{ title() }}</span>
+      <button type="button" class="nav" aria-label="Next month" (click)="showMonth(1)">→</button>
+    </header>
+
+    <table #grid role="grid" [attr.aria-label]="title()">
+      <thead>
+        <tr>
+          @for (weekday of weekdays; track weekday) {
+            <th scope="col">{{ weekday }}</th>
+          }
+        </tr>
+      </thead>
+      <tbody>
+        @for (week of weeks(); track week[0].iso) {
+          <tr>
+            @for (day of week; track day.iso) {
+              <td>
+                <button
+                  type="button"
+                  class="day"
+                  [attr.data-iso]="day.iso"
+                  [class.outside]="!day.inMonth"
+                  [attr.aria-selected]="day.iso === value()"
+                  [attr.aria-current]="day.iso === today ? 'date' : null"
+                  [attr.tabindex]="day.iso === active() ? 0 : -1"
+                  [disabled]="isDisabled(day.iso)"
+                  (click)="choose(day.iso)"
+                  (keydown)="moveFocus($event)"
+                >
+                  {{ day.day }}
+                </button>
+              </td>
+            }
+          </tr>
+        }
+      </tbody>
+    </table>
+
+    <footer>
+      <button type="button" class="today" [disabled]="isDisabled(today)" (click)="choose(today)">
+        Today
+      </button>
+    </footer>
+  </div>
+</ng-template>

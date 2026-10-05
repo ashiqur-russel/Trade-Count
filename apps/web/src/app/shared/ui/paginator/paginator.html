@@ -1,0 +1,52 @@
+<nav aria-label="Pagination">
+  <div class="size">
+    <label [for]="sizeSelectId">Rows</label>
+    <tc-select
+      size="sm"
+      [inputId]="sizeSelectId"
+      [options]="sizeOptions()"
+      [value]="pageSize()"
+      (valueChange)="changePageSize($event)"
+    />
+  </div>
+
+  <span class="range" aria-live="polite">{{ range() }}</span>
+
+  @if (count() > 1) {
+    <div class="pages">
+      <button
+        type="button"
+        class="step"
+        [disabled]="page() === 1"
+        (click)="goTo(page() - 1)"
+        aria-label="Previous page"
+      >
+        ←
+      </button>
+      @for (link of links(); track $index) {
+        @if (link === 'gap') {
+          <span class="gap" aria-hidden="true">…</span>
+        } @else {
+          <button
+            type="button"
+            class="number"
+            [attr.aria-current]="link === page() ? 'page' : null"
+            [attr.aria-label]="'Page ' + link"
+            (click)="goTo(link)"
+          >
+            {{ link }}
+          </button>
+        }
+      }
+      <button
+        type="button"
+        class="step"
+        [disabled]="page() === count()"
+        (click)="goTo(page() + 1)"
+        aria-label="Next page"
+      >
+        →
+      </button>
+    </div>
+  }
+</nav>

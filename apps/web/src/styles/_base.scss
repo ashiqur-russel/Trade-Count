@@ -12,7 +12,8 @@
 
 body {
   margin: 0;
-  background: var(--tc-color-bg);
+  background-color: var(--tc-color-bg);
+  background-image: var(--tc-texture-grain);
   color: var(--tc-color-text);
   font-family: var(--tc-font-body);
   font-size: var(--tc-text-base);
@@ -25,18 +26,18 @@ h2,
 h3 {
   margin: 0;
   font-family: var(--tc-font-display);
-  letter-spacing: -0.01em;
+  letter-spacing: var(--tc-tracking-tight);
   text-wrap: balance;
 }
 
 h1 {
   font-size: var(--tc-text-xl);
-  font-weight: var(--tc-weight-bold);
+  font-weight: var(--tc-weight-black);
 }
 
 h2 {
   font-size: var(--tc-text-md);
-  font-weight: var(--tc-weight-semibold);
+  font-weight: var(--tc-weight-bold);
 }
 
 p {

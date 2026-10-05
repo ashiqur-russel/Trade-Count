@@ -23,7 +23,7 @@
 }
 
 :host([data-variant='secondary']) {
-  border-color: var(--tc-color-border);
+  border-color: var(--tc-color-rule);
 }
 
 :host([data-variant='secondary']:hover) {

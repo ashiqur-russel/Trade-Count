@@ -1,0 +1,100 @@
+:host {
+  display: block;
+  min-width: 0;
+}
+
+.trigger {
+  display: flex;
+  gap: var(--tc-space-2);
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  padding: var(--tc-space-2) var(--tc-space-3);
+  border: var(--tc-rule-width) solid var(--tc-color-border);
+  border-radius: var(--tc-radius-sm);
+  background: var(--tc-color-bg);
+  color: var(--tc-color-text);
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+
+.trigger:hover:not(:disabled),
+.trigger[aria-expanded='true'] {
+  border-color: var(--tc-color-rule);
+}
+
+.trigger:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+:host([data-size='sm']) .trigger {
+  padding: var(--tc-space-1) var(--tc-space-2);
+  font-family: var(--tc-font-numeric);
+  font-size: var(--tc-text-xs);
+}
+
+.text {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.placeholder {
+  color: var(--tc-color-text-muted);
+}
+
+.chevron,
+.check {
+  flex-shrink: 0;
+  width: 0.75rem;
+  height: 0.75rem;
+  fill: none;
+  stroke: currentcolor;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-width: 1.6;
+}
+
+.panel {
+  max-height: 18rem;
+  margin: 0;
+  padding: var(--tc-space-1);
+  overflow-y: auto;
+  border: var(--tc-rule-width) solid var(--tc-color-rule);
+  border-radius: var(--tc-radius-sm);
+  background: var(--tc-color-surface);
+  box-shadow: var(--tc-shadow-raised);
+  color: var(--tc-color-text);
+  font-family: var(--tc-font-body);
+  font-size: var(--tc-text-base);
+  list-style: none;
+}
+
+.panel:focus {
+  outline: none;
+}
+
+.option {
+  display: flex;
+  gap: var(--tc-space-3);
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--tc-space-2) var(--tc-space-3);
+  border-radius: var(--tc-radius-sm);
+  cursor: pointer;
+}
+
+.option:hover,
+.option.cdk-option-active {
+  background: var(--tc-color-surface-sunken);
+}
+
+.option[aria-selected='true'] {
+  font-weight: var(--tc-weight-semibold);
+}
+
+.check {
+  color: var(--tc-color-accent);
+}

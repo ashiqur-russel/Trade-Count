@@ -1,0 +1,58 @@
+<tc-tabs label="Ledgers" [tabs]="tabs()" [(selected)]="tab" />
+
+<tc-ledger-filters [tab]="tab()" [(filter)]="filter" />
+
+<div role="tabpanel" [attr.aria-label]="tab()">
+  @if (rowCount() === 0) {
+    @if (isFiltered()) {
+      <tc-empty-state heading="Nothing matches these filters">
+        Change the stock, dates or status above, or clear the filters.
+      </tc-empty-state>
+    } @else {
+      @switch (tab()) {
+        @case ('sheet') {
+          <tc-empty-state heading="Nothing to show yet">
+            Every share you buy gets its own row here, with the price it sold at and its profit or
+            loss.
+          </tc-empty-state>
+        }
+        @case ('lots') {
+          <tc-empty-state heading="No open shares">
+            Shares you buy appear here until they are sold. The oldest lot of each stock is marked
+            as next to sell.
+          </tc-empty-state>
+        }
+        @case ('sales') {
+          <tc-empty-state heading="No sales yet">
+            Each sale is listed with the buy lots it used, oldest first, and the profit on each.
+          </tc-empty-state>
+        }
+        @case ('history') {
+          <tc-empty-state heading="No trades recorded"
+            >Every buy and sale you enter is listed here, newest first.</tc-empty-state
+          >
+        }
+      }
+    }
+  } @else {
+    @switch (tab()) {
+      @case ('sheet') {
+        <tc-sheet-table [lines]="sheetPage()" [grandTotal]="sheetGrandTotal()" />
+      }
+      @case ('lots') {
+        <tc-open-lots-table [rows]="lotsPage()" />
+      }
+      @case ('sales') {
+        <tc-sales-table [rows]="salesPage()" />
+      }
+      @case ('history') {
+        <tc-trade-history-table
+          [rows]="historyPage()"
+          [editingId]="editingTradeId()"
+          (edit)="editTrade.emit($event)"
+        />
+      }
+    }
+    <tc-paginator [total]="rowCount()" [(page)]="page" [(pageSize)]="pageSize" />
+  }
+</div>

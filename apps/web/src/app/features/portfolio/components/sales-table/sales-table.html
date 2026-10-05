@@ -1,0 +1,58 @@
+<div class="table-scroll">
+  <table>
+    <thead>
+      <tr>
+        <th>Stock / lots used</th>
+        <th>Date</th>
+        <th class="end">Qty</th>
+        <th class="end">Sale price</th>
+        <th class="end">Buy price</th>
+        <th class="end">Proceeds</th>
+        <th class="end">P/L</th>
+        <th class="end">%</th>
+      </tr>
+    </thead>
+    <tbody>
+      @for (row of rows(); track row.sale.sell.id) {
+        @let sale = row.sale;
+        <tr class="sale">
+          <td class="cell-title">
+            <tc-stock-label [stock]="row.stock" />
+            @if (sale.uncovered.gt(0)) {
+              <tc-pill tone="loss">{{ sale.uncovered | quantity }} not covered</tc-pill>
+            }
+          </td>
+          <td class="num" data-label="Sold on">{{ sale.sell.tradedOn | displayDate }}</td>
+          <td class="end num" data-label="Qty">{{ sale.sell.quantity | quantity }}</td>
+          <td class="end num" data-label="Sale price">{{ sale.sell.price | euro }}</td>
+          <td class="end num" data-label="Buy price">
+            @if (sale.matched.gt(0)) {
+              {{ sale.cost.div(sale.matched) | euro }} <span class="muted">avg</span>
+            } @else {
+              –
+            }
+          </td>
+          <td class="end num" data-label="Proceeds">{{ sale.proceeds | euro }}</td>
+          <td class="end" data-label="P/L"><tc-profit-amount [value]="sale.profit" /></td>
+          <td class="end" data-label="Change">
+            @if (sale.cost.gt(0)) {
+              <tc-profit-amount unit="percent" [value]="sale.profit.div(sale.cost)" />
+            }
+          </td>
+        </tr>
+        @for (allocation of sale.allocations; track allocation.buy.id; let last = $last) {
+          <tr class="allocation" [class.last]="last">
+            <td class="lot-title">↳ lot bought {{ allocation.buy.tradedOn | displayDate }}</td>
+            <td></td>
+            <td class="end num" data-label="Shares">{{ allocation.quantity | quantity }}</td>
+            <td></td>
+            <td class="end num" data-label="Bought at">{{ allocation.buyPrice | euro }}</td>
+            <td></td>
+            <td class="end" data-label="P/L"><tc-profit-amount [value]="allocation.profit" /></td>
+            <td></td>
+          </tr>
+        }
+      }
+    </tbody>
+  </table>
+</div>

@@ -1,0 +1,27 @@
+.bar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--tc-space-3);
+  align-items: end;
+}
+
+.control {
+  display: grid;
+  flex: 1 1 10rem;
+  gap: var(--tc-space-1);
+  min-width: 0;
+}
+
+.control > label,
+.control > .label {
+  color: var(--tc-color-text-muted);
+  font-family: var(--tc-font-numeric);
+  font-size: var(--tc-text-xs);
+  font-weight: var(--tc-weight-semibold);
+  letter-spacing: var(--tc-tracking-label);
+  text-transform: uppercase;
+}
+
+.reset {
+  align-self: center;
+}

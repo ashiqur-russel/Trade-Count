@@ -1,0 +1,68 @@
+@let current = filter();
+<div class="bar" role="group" aria-label="Filter ledgers">
+  <div class="control">
+    <label for="filter-stock">Stock</label>
+    <tc-select
+      inputId="filter-stock"
+      [options]="stockOptions()"
+      [value]="current.stockId ?? ''"
+      (valueChange)="set('stockId', $event || null)"
+    />
+  </div>
+
+  <div class="control">
+    <label for="filter-from">From</label>
+    <tc-date-picker
+      inputId="filter-from"
+      ariaLabel="From date"
+      placeholder="Any date"
+      [clearable]="true"
+      [max]="current.to"
+      [value]="current.from"
+      (valueChange)="set('from', $event)"
+    />
+  </div>
+
+  <div class="control">
+    <label for="filter-to">To</label>
+    <tc-date-picker
+      inputId="filter-to"
+      ariaLabel="To date"
+      placeholder="Any date"
+      [clearable]="true"
+      [min]="current.from"
+      [value]="current.to"
+      (valueChange)="set('to', $event)"
+    />
+  </div>
+
+  @if (tab() === 'sheet') {
+    <div class="control">
+      <span class="label">Status</span>
+      <tc-segmented-control
+        label="Share status"
+        [options]="statusOptions"
+        [value]="current.status"
+        (valueChange)="set('status', $event)"
+      />
+    </div>
+  }
+
+  @if (tab() === 'history') {
+    <div class="control">
+      <span class="label">Type</span>
+      <tc-segmented-control
+        label="Trade type"
+        [options]="sideOptions"
+        [value]="current.side"
+        (valueChange)="set('side', $event)"
+      />
+    </div>
+  }
+
+  @if (filtered()) {
+    <button tc-button variant="quiet" size="sm" type="button" class="reset" (click)="reset()">
+      Clear filters
+    </button>
+  }
+</div>

@@ -1,0 +1,18 @@
+:host {
+  display: grid;
+  gap: var(--tc-space-6);
+  min-width: 0;
+}
+
+.bench {
+  display: grid;
+  grid-template-columns: 340px minmax(0, 1fr);
+  gap: var(--tc-space-6);
+  align-items: start;
+}
+
+@media (width <= 880px) {
+  .bench {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}

@@ -1,39 +1,54 @@
-import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import type { Portfolio } from '@trade-count/ledger';
-import { apiErrorMessage } from '../../../core/api/api-error-message';
-import { PortfolioApi } from '../../../core/api/portfolio-api';
-import { EmptyState, Panel, Pill, type PillTone } from '../../../shared/ui';
-
-type LoadState =
-  | { status: 'loading' }
-  | { status: 'ready'; portfolio: Portfolio }
-  | { status: 'error'; message: string };
-
-const STATUS_BADGES: Record<LoadState['status'], { tone: PillTone; label: string }> = {
-  loading: { tone: 'neutral', label: 'Loading…' },
-  ready: { tone: 'gain', label: 'Connected' },
-  error: { tone: 'loss', label: 'Offline' },
-};
+import {
+  ChangeDetectionStrategy,
+  Component,
+  ElementRef,
+  inject,
+  signal,
+  viewChild,
+} from '@angular/core';
+import type { Trade } from '@trade-count/ledger';
+import { Alert, Button, EmptyState, Panel } from '../../../shared/ui';
+import { LedgerPanel } from '../components/ledger-panel/ledger-panel';
+import { PortfolioSummary } from '../components/portfolio-summary/portfolio-summary';
+import { StocksPanel } from '../components/stocks-panel/stocks-panel';
+import { TradeForm } from '../components/trade-form/trade-form';
+import { NO_FILTER, type LedgerFilter } from '../data/ledger-filter';
+import { PortfolioStore } from '../data/portfolio-store';
 
 @Component({
   selector: 'tc-portfolio-page',
-  imports: [Panel, Pill, EmptyState],
+  imports: [
+    Alert,
+    Button,
+    EmptyState,
+    Panel,
+    PortfolioSummary,
+    TradeForm,
+    StocksPanel,
+    LedgerPanel,
+  ],
+  providers: [PortfolioStore],
   templateUrl: './portfolio-page.html',
+  styleUrl: './portfolio-page.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class PortfolioPage {
-  protected readonly state = signal<LoadState>({ status: 'loading' });
-  protected readonly statusBadges = STATUS_BADGES;
+  protected readonly store = inject(PortfolioStore);
+  protected readonly filter = signal<LedgerFilter>(NO_FILTER);
+  protected readonly editingTrade = signal<Trade | null>(null);
+
+  private readonly tradeForm = viewChild(TradeForm, { read: ElementRef });
 
   constructor() {
-    inject(PortfolioApi)
-      .getPortfolio()
-      .pipe(takeUntilDestroyed())
-      .subscribe({
-        next: (portfolio) => this.state.set({ status: 'ready', portfolio }),
-        error: (error: unknown) =>
-          this.state.set({ status: 'error', message: apiErrorMessage(error) }),
-      });
+    void this.store.load();
+  }
+
+  protected selectStock(stockId: string | null): void {
+    this.filter.update((current) => ({ ...current, stockId }));
+  }
+
+  protected startEdit(trade: Trade): void {
+    this.editingTrade.set(trade);
+    this.tradeForm()?.nativeElement.scrollIntoView({ block: 'start' });
   }
 }

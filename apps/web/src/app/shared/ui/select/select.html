@@ -1,0 +1,55 @@
+<button
+  #trigger
+  cdkOverlayOrigin
+  #origin="cdkOverlayOrigin"
+  type="button"
+  class="trigger"
+  aria-haspopup="listbox"
+  [id]="inputId()"
+  [attr.aria-label]="ariaLabel()"
+  [attr.aria-expanded]="open()"
+  [disabled]="disabled()"
+  (click)="toggle()"
+  (keydown.arrowDown)="open.set(true); $event.preventDefault()"
+>
+  <span class="text" [class.placeholder]="!selected()">{{
+    selected()?.label ?? placeholder()
+  }}</span>
+  <svg class="chevron" viewBox="0 0 12 12" aria-hidden="true">
+    <path d="M2.5 4.5 6 8l3.5-3.5" />
+  </svg>
+</button>
+
+<ng-template
+  cdkConnectedOverlay
+  [cdkConnectedOverlayOrigin]="origin"
+  [cdkConnectedOverlayOpen]="open()"
+  [cdkConnectedOverlayPositions]="positions"
+  [cdkConnectedOverlayMinWidth]="triggerWidth()"
+  [cdkConnectedOverlayHasBackdrop]="true"
+  cdkConnectedOverlayBackdropClass="cdk-overlay-transparent-backdrop"
+  (backdropClick)="close()"
+  (detach)="close()"
+  (overlayKeydown)="$event.key === 'Escape' && close()"
+>
+  <ul
+    class="panel"
+    cdkListbox
+    cdkTrapFocus
+    cdkTrapFocusAutoCapture
+    [attr.aria-label]="ariaLabel() ?? placeholder()"
+    [cdkListboxValue]="value() === null ? [] : [value()!]"
+    (cdkListboxValueChange)="choose($event)"
+  >
+    @for (option of options(); track option.value) {
+      <li class="option" [cdkOption]="option.value">
+        <span>{{ option.label }}</span>
+        @if (option.value === value()) {
+          <svg class="check" viewBox="0 0 12 12" aria-hidden="true">
+            <path d="m2.5 6.5 2.5 2.5 4.5-6" />
+          </svg>
+        }
+      </li>
+    }
+  </ul>
+</ng-template>

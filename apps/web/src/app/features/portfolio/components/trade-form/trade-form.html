@@ -1,0 +1,103 @@
+@let errors = fieldErrors();
+@let editingTrade = editing();
+<form [formGroup]="form" (ngSubmit)="submit()" (input)="clearMessages()" novalidate>
+  <h2>{{ editingTrade ? 'Edit trade' : 'Record a trade' }}</h2>
+
+  <tc-segmented-control label="Trade type" [options]="sideOptions" [(value)]="side" />
+
+  <tc-field label="Stock" controlId="trade-stock" [error]="errors.stockId ?? null">
+    <tc-select
+      inputId="trade-stock"
+      formControlName="stockId"
+      placeholder="Add a stock first"
+      [options]="stockOptions()"
+    />
+  </tc-field>
+
+  <div class="pair">
+    <tc-field label="Quantity" controlId="trade-quantity" [error]="errors.quantity ?? null">
+      <input
+        id="trade-quantity"
+        formControlName="quantity"
+        inputmode="decimal"
+        autocomplete="off"
+        placeholder="3"
+        [attr.aria-invalid]="!!errors.quantity"
+      />
+    </tc-field>
+    <tc-field label="Price per share (€)" controlId="trade-price" [error]="errors.price ?? null">
+      <input
+        id="trade-price"
+        formControlName="price"
+        inputmode="decimal"
+        autocomplete="off"
+        placeholder="560,00"
+        [attr.aria-invalid]="!!errors.price"
+      />
+    </tc-field>
+  </div>
+
+  <tc-field label="Date" controlId="trade-date">
+    <tc-date-picker inputId="trade-date" formControlName="tradedOn" ariaLabel="Trade date" />
+  </tc-field>
+
+  @if (buyTotal(); as total) {
+    <div class="preview" aria-live="polite">
+      <div class="line">
+        <span>Total cost</span><span class="num">{{ total | euro }}</span>
+      </div>
+      <span class="muted">Adds one lot of {{ draft()!.quantity | quantity }} share(s).</span>
+    </div>
+  }
+
+  @if (salePreview(); as sale) {
+    <div class="preview" aria-live="polite">
+      <span class="label">Sells these lots, oldest first</span>
+      @for (allocation of sale.allocations; track allocation.buy.id) {
+        <div class="line">
+          <span>
+            {{ allocation.quantity | quantity }} × lot
+            {{ allocation.buy.tradedOn | displayDate }} &#64;
+            {{ allocation.buyPrice | euro }}
+          </span>
+          <tc-profit-amount [value]="allocation.profit" />
+        </div>
+      }
+      @if (sale.uncovered.gt(0)) {
+        <span class="short">{{ sale.uncovered | quantity }} share(s) not covered by open lots</span>
+      }
+      <div class="line total">
+        <strong>Profit / loss</strong>
+        <tc-profit-amount [value]="sale.profit" />
+      </div>
+    </div>
+  }
+
+  @if (formError()) {
+    <p class="error" role="alert">{{ formError() }}</p>
+  }
+
+  <div class="actions">
+    <button
+      tc-button
+      variant="primary"
+      type="submit"
+      [disabled]="saving() || stocks().length === 0"
+    >
+      {{ editingTrade ? 'Save changes' : side() === 'buy' ? 'Add buy' : 'Add sale' }}
+    </button>
+    @if (editingTrade) {
+      <button tc-button variant="quiet" type="button" (click)="cancelEdit()">Cancel</button>
+    }
+  </div>
+
+  @if (!editingTrade) {
+    <div class="how">
+      <p><b>Batch buy:</b> quantity 3 at €560 is stored as one lot of 3 shares.</p>
+      <p>
+        <b>Batch sale:</b> quantity 5 sells the 5 oldest open shares of that stock, across as many
+        lots as needed.
+      </p>
+    </div>
+  }
+</form>

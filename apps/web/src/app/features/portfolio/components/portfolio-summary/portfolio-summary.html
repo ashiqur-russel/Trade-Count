@@ -1,0 +1,19 @@
+@let totals = store.totals();
+<section aria-label="Portfolio totals">
+  <div>
+    <span class="label">Realized P/L</span>
+    <tc-profit-amount class="value" [value]="totals.realizedProfit" />
+  </div>
+  <div>
+    <span class="label">Open investment</span>
+    <span class="value">{{ totals.openCost | euro }}</span>
+  </div>
+  <div>
+    <span class="label">Shares held</span>
+    <span class="value">{{ totals.held | quantity }}</span>
+  </div>
+  <div>
+    <span class="label">Shares sold</span>
+    <span class="value">{{ totals.sold | quantity }}</span>
+  </div>
+</section>

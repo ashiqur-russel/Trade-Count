@@ -2,11 +2,17 @@ import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
 import type { ThemePreference } from './core/theme/theme';
 import { ThemeService } from './core/theme/theme.service';
-import { SegmentedControl, type SegmentOption } from './shared/ui';
+// Direct imports keep the rest of shared/ui (CDK overlays, forms) out of the initial bundle.
+import { BrandMark } from './shared/ui/brand-mark/brand-mark';
+import {
+  SegmentedControl,
+  type SegmentOption,
+} from './shared/ui/segmented-control/segmented-control';
+import { Backdrop } from './shell/backdrop';
 
 @Component({
   selector: 'tc-root',
-  imports: [RouterOutlet, SegmentedControl],
+  imports: [RouterOutlet, Backdrop, BrandMark, SegmentedControl],
   templateUrl: './app.html',
   styleUrl: './app.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -18,4 +24,5 @@ export class App {
     { value: 'light', label: 'Light' },
     { value: 'dark', label: 'Dark' },
   ];
+  protected readonly today = new Intl.DateTimeFormat('de-DE').format(new Date());
 }

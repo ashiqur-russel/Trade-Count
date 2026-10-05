@@ -1,0 +1,128 @@
+<tc-panel heading="Stocks">
+  <span panel-actions class="hint">Pick a stock to filter the ledgers below</span>
+
+  <form class="add" (ngSubmit)="addStock()" [formGroup]="addForm" novalidate>
+    <input formControlName="name" placeholder="Stock name" aria-label="Stock name" maxlength="60" />
+    <input
+      formControlName="symbol"
+      placeholder="Symbol (optional)"
+      aria-label="Symbol"
+      maxlength="12"
+    />
+    <button tc-button type="submit">Add stock</button>
+  </form>
+  @if (addError()) {
+    <p class="error" role="alert">{{ addError() }}</p>
+  }
+
+  @if (rows().length === 0) {
+    <tc-empty-state heading="No stocks yet">
+      Add a stock by name above, then record its buys and sales.
+    </tc-empty-state>
+  } @else {
+    <div class="table-scroll">
+      <table>
+        <thead>
+          <tr>
+            <th>Stock</th>
+            <th class="end">Held</th>
+            <th class="end">Avg buy (open)</th>
+            <th class="end">Open investment</th>
+            <th class="end">Sold</th>
+            <th class="end">Realized P/L</th>
+            <th><span class="tc-visually-hidden">Actions</span></th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (row of rows(); track row.stock.id) {
+            @let pending = store.isPending(row.stock.id);
+            <tr [class.selected]="row.stock.id === selectedStockId()" [class.pending]="pending">
+              <td class="cell-title">
+                @if (renamingId() === row.stock.id) {
+                  <form class="rename" (ngSubmit)="saveRename(row.stock.id)">
+                    <input
+                      [formControl]="renameControl"
+                      aria-label="New stock name"
+                      maxlength="60"
+                      (keydown.escape)="renamingId.set(null)"
+                    />
+                    <button tc-button size="sm" variant="primary" type="submit">Save</button>
+                    <button
+                      tc-button
+                      size="sm"
+                      variant="quiet"
+                      type="button"
+                      (click)="renamingId.set(null)"
+                    >
+                      Cancel
+                    </button>
+                  </form>
+                  @if (renameError()) {
+                    <p class="error" role="alert">{{ renameError() }}</p>
+                  }
+                } @else {
+                  <button
+                    type="button"
+                    class="stock"
+                    [attr.aria-pressed]="row.stock.id === selectedStockId()"
+                    [disabled]="pending"
+                    (click)="toggleFilter(row.stock.id)"
+                  >
+                    <span class="name">{{ row.stock.name }}</span>
+                    @if (row.stock.symbol) {
+                      <span class="symbol">{{ row.stock.symbol }}</span>
+                    }
+                  </button>
+                }
+              </td>
+              <td class="end num" data-label="Held">{{ row.entry.held | quantity }}</td>
+              <td class="end num" data-label="Avg buy (open)">
+                @if (row.entry.averageOpenPrice; as average) {
+                  {{ average | euro }}
+                } @else {
+                  <span class="muted">–</span>
+                }
+              </td>
+              <td class="end num" data-label="Open investment">{{ row.entry.openCost | euro }}</td>
+              <td class="end num" data-label="Sold">{{ row.entry.sold | quantity }}</td>
+              <td class="end" data-label="Realized P/L">
+                @if (row.entry.sold.gt(0)) {
+                  <tc-profit-amount [value]="row.entry.realizedProfit" />
+                } @else {
+                  <span class="muted">–</span>
+                }
+              </td>
+              <td class="end cell-badge">
+                @if (!pending && renamingId() !== row.stock.id) {
+                  <div class="actions">
+                    <button
+                      tc-button
+                      size="sm"
+                      variant="quiet"
+                      type="button"
+                      title="Rename"
+                      [attr.aria-label]="'Rename ' + row.stock.name"
+                      (click)="startRename(row.stock.id, row.stock.name)"
+                    >
+                      ✎
+                    </button>
+                    @if (row.canDelete) {
+                      <button
+                        tc-confirm-button
+                        title="Delete"
+                        [attr.aria-label]="'Delete ' + row.stock.name"
+                        (confirmed)="deleteStock(row.stock.id)"
+                      >
+                        ✕
+                      </button>
+                    }
+                  </div>
+                }
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  }
+</tc-panel>

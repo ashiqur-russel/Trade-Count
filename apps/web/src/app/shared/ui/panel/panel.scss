@@ -3,7 +3,7 @@
   gap: var(--tc-space-4);
   min-width: 0;
   padding: var(--tc-space-5);
-  border: 1px solid var(--tc-color-border);
+  border: var(--tc-rule-width) solid var(--tc-color-rule);
   border-radius: var(--tc-radius-lg);
   background: var(--tc-color-surface);
 }

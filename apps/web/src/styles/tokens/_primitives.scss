@@ -1,44 +1,49 @@
-// Layer 1: raw values. Only theme files read these; components use the semantic --tc-* tokens.
+// Layer 1: raw values ("Ink wash" palette). Only theme files read these.
 @use 'sass:map';
 
 $palette: (
-  sage: (
-    0: #fff,
-    50: #f2f5f4,
-    100: #e8eeec,
-    150: #e4ece9,
-    200: #d3ddda,
-    400: #93a39e,
-    600: #5b6b66,
-    700: #2c3936,
-    800: #1d2725,
-    850: #161e1c,
-    900: #14211d,
-    950: #0e1413,
+  ivory: (
+    50: #fffff2,
+    100: #ffffe3,
+    200: #f3f3d6,
+    300: #e8e8cb,
   ),
-  cobalt: (
-    100: #e3e8fb,
-    300: #93a6ff,
-    600: #2b48c8,
-    900: #232c4f,
+  gray: (
+    300: #cbcbcb,
+    500: #8a8a85,
+    600: #6f6f6b,
+  ),
+  charcoal: (
+    500: #5c5c5c,
+    600: #4a4a4a,
+    700: #3c3c3c,
+    800: #323232,
+    900: #282828,
+  ),
+  slate: (
+    100: #e1e6ec,
+    300: #a9b8c7,
+    600: #6d8196,
+    700: #586b80,
+    800: #3a4552,
   ),
   green: (
-    100: #ddf1e6,
-    400: #4cc58c,
-    700: #12784a,
-    900: #17332a,
+    100: #e3eedf,
+    400: #8cbf8f,
+    700: #3f7a4e,
+    900: #2c3b2f,
   ),
   red: (
-    100: #f8e1de,
-    400: #ff8475,
-    700: #b8352a,
-    900: #3a1f1c,
+    100: #f6e2dc,
+    400: #e6907f,
+    700: #b4473a,
+    900: #4a2f2a,
   ),
   amber: (
-    100: #fbefd5,
-    400: #f0be5a,
-    700: #8a5a00,
-    900: #3a2e14,
+    100: #f5ecd0,
+    400: #dcbb72,
+    700: #8a6a1f,
+    900: #4a3f24,
   ),
 );
 

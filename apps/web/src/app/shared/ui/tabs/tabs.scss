@@ -1,0 +1,33 @@
+.list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--tc-space-1);
+  border-bottom: var(--tc-rule-width) solid var(--tc-color-rule);
+}
+
+button {
+  padding: var(--tc-space-2) var(--tc-space-3);
+  border: 0;
+  border-bottom: 2px solid transparent;
+  background: none;
+  color: var(--tc-color-text-muted);
+  font: inherit;
+  font-weight: var(--tc-weight-semibold);
+  cursor: pointer;
+}
+
+button[aria-selected='true'] {
+  border-bottom-color: var(--tc-color-accent);
+  color: var(--tc-color-text);
+}
+
+button {
+  margin-bottom: calc(var(--tc-rule-width) * -1);
+  border-bottom-width: 3px;
+}
+
+.count {
+  margin-left: var(--tc-space-1);
+  font-family: var(--tc-font-numeric);
+  font-size: var(--tc-text-xs);
+}

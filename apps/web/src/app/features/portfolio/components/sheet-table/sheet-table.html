@@ -1,0 +1,82 @@
+<div class="table-scroll">
+  <table>
+    <thead>
+      <tr>
+        <th>#</th>
+        <th>Stock</th>
+        <th class="end">Qty</th>
+        <th>Bought</th>
+        <th class="end">Buy price</th>
+        <th>Sold</th>
+        <th class="end">Sale price</th>
+        <th class="end">P/L</th>
+        <th class="end">%</th>
+        <th>Status</th>
+      </tr>
+    </thead>
+    <tbody>
+      @for (line of lines(); track $index) {
+        @if (line.kind === 'share') {
+          @let row = line.row;
+          <tr class="share">
+            <td class="num muted hide-on-mobile">{{ line.number }}</td>
+            <td class="cell-title"><tc-stock-label [stock]="line.group.stock" /></td>
+            <td class="end num" data-label="Qty">{{ row.quantity | quantity }}</td>
+            <td class="num" data-label="Bought">{{ row.buy.tradedOn | displayDate }}</td>
+            <td class="end num" data-label="Buy price">{{ row.buy.price | euro }}</td>
+            @if (row.sell; as sell) {
+              <td class="num" data-label="Sold">{{ sell.tradedOn | displayDate }}</td>
+              <td class="end num" data-label="Sale price">{{ sell.price | euro }}</td>
+              <td class="end" data-label="P/L"><tc-profit-amount [value]="row.profit!" /></td>
+              <td class="end" data-label="Change">
+                <tc-profit-amount unit="percent" [value]="changeRatio(row.buy.price, sell.price)" />
+              </td>
+              <td class="cell-badge"><tc-pill tone="gain">Closed</tc-pill></td>
+            } @else {
+              <td class="muted hide-on-mobile">–</td>
+              <td class="end muted hide-on-mobile">–</td>
+              <td class="end muted hide-on-mobile">–</td>
+              <td class="hide-on-mobile"></td>
+              <td class="cell-badge"><tc-pill tone="accent">Open</tc-pill></td>
+            }
+          </tr>
+        } @else {
+          @let group = line.group;
+          <tr class="subtotal">
+            <td></td>
+            <td class="cell-title">{{ group.stock.name }} total</td>
+            <td class="end num" data-label="Shares">
+              {{ group.sold.plus(group.open) | quantity }}
+            </td>
+            <td colspan="4" class="muted" data-label="Split">
+              {{ group.sold | quantity }} sold · {{ group.open | quantity }} open
+              @if (group.open.gt(0)) {
+                ({{ group.openCost | euro }} invested)
+              }
+            </td>
+            <td class="end" data-label="Realized P/L">
+              <tc-profit-amount [value]="group.profit" />
+            </td>
+            <td></td>
+            <td></td>
+          </tr>
+        }
+      }
+    </tbody>
+    @if (grandTotal(); as total) {
+      <tfoot>
+        <tr class="grand">
+          <td></td>
+          <td class="cell-title">All stocks</td>
+          <td class="end num" data-label="Shares">{{ total.sold.plus(total.open) | quantity }}</td>
+          <td colspan="4" class="muted" data-label="Split">
+            {{ total.sold | quantity }} sold · {{ total.open | quantity }} open
+          </td>
+          <td class="end" data-label="Realized P/L"><tc-profit-amount [value]="total.profit" /></td>
+          <td></td>
+          <td></td>
+        </tr>
+      </tfoot>
+    }
+  </table>
+</div>

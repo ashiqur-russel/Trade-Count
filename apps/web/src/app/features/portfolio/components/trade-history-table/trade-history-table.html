@@ -1,0 +1,51 @@
+<div class="table-scroll">
+  <table>
+    <thead>
+      <tr>
+        <th>Date</th>
+        <th>Type</th>
+        <th>Stock</th>
+        <th class="end">Qty</th>
+        <th class="end">Price</th>
+        <th class="end">Total</th>
+        <th><span class="tc-visually-hidden">Actions</span></th>
+      </tr>
+    </thead>
+    <tbody>
+      @for (row of rows(); track row.trade.id) {
+        @let trade = row.trade;
+        @let pending = store.isPending(trade.id);
+        <tr [class.pending]="pending" [class.editing]="trade.id === editingId()">
+          <td class="num" data-label="Date">{{ trade.tradedOn | displayDate }}</td>
+          <td class="cell-badge">
+            <tc-pill [tone]="trade.side === 'buy' ? 'accent' : 'gain'">
+              {{ trade.side === 'buy' ? 'Buy' : 'Sell' }}
+            </tc-pill>
+          </td>
+          <td class="cell-title"><tc-stock-label [stock]="row.stock" /></td>
+          <td class="end num" data-label="Qty">{{ trade.quantity | quantity }}</td>
+          <td class="end num" data-label="Price">{{ trade.price | euro }}</td>
+          <td class="end num" data-label="Total">{{ total(trade) | euro }}</td>
+          <td class="end cell-actions">
+            @if (pending) {
+              <span class="muted">Saving…</span>
+            } @else {
+              <div class="actions">
+                <button
+                  tc-button
+                  size="sm"
+                  variant="quiet"
+                  type="button"
+                  (click)="edit.emit(trade)"
+                >
+                  Edit
+                </button>
+                <button tc-confirm-button (confirmed)="delete(trade)">Delete</button>
+              </div>
+            }
+          </td>
+        </tr>
+      }
+    </tbody>
+  </table>
+</div>

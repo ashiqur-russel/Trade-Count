@@ -1,0 +1,18 @@
+input:not([type='radio'], [type='checkbox']) {
+  width: 100%;
+  min-width: 0;
+  padding: var(--tc-space-2) var(--tc-space-3);
+  border: 1px solid var(--tc-color-border);
+  border-radius: var(--tc-radius-sm);
+  background: var(--tc-color-bg);
+  color: var(--tc-color-text);
+  font: inherit;
+}
+
+input[aria-invalid='true'] {
+  border-color: var(--tc-color-loss);
+}
+
+input:disabled {
+  opacity: 0.6;
+}

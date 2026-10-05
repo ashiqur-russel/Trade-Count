@@ -1,0 +1,49 @@
+@use 'mixins/data-table';
+@include data-table.data-table;
+
+.sale tc-pill {
+  margin-left: var(--tc-space-2);
+}
+
+.allocation td {
+  padding-top: 2px;
+  padding-bottom: 2px;
+  border-bottom: 0;
+  color: var(--tc-color-text-muted);
+  font-size: var(--tc-text-xs);
+}
+
+.allocation td:first-child {
+  padding-left: var(--tc-space-6);
+}
+
+.allocation.last td {
+  padding-bottom: var(--tc-space-2);
+  border-bottom: 1px solid var(--tc-color-border);
+}
+
+@media (width <= 640px) {
+  .sale {
+    border-bottom: 0;
+  }
+
+  .allocation {
+    margin-left: var(--tc-space-3);
+    padding: var(--tc-space-1) 0 var(--tc-space-1) var(--tc-space-3);
+    border-bottom: 0;
+    border-left: 2px solid var(--tc-color-border);
+  }
+
+  .allocation td,
+  .allocation td:first-child {
+    padding: 0;
+  }
+
+  .allocation.last {
+    margin-bottom: var(--tc-space-2);
+  }
+
+  .allocation.last td {
+    border: 0;
+  }
+}

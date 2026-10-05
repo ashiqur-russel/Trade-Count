@@ -1,0 +1,41 @@
+@use 'mixins/data-table';
+@include data-table.data-table;
+
+.share td {
+  padding-top: var(--tc-space-1);
+  padding-bottom: var(--tc-space-1);
+}
+
+.share:nth-child(even) td {
+  background: color-mix(in srgb, var(--tc-color-surface-sunken) 45%, transparent);
+}
+
+.subtotal td {
+  border-bottom: 2px solid var(--tc-color-border);
+  background: var(--tc-color-surface-sunken);
+  font-weight: var(--tc-weight-semibold);
+}
+
+.grand td {
+  padding-top: var(--tc-space-3);
+  border-bottom: 0;
+  font-weight: var(--tc-weight-bold);
+}
+
+@media (width <= 640px) {
+  .share:nth-child(even) td,
+  .subtotal td {
+    background: none;
+  }
+
+  .share:nth-child(even),
+  .subtotal {
+    margin-inline: calc(var(--tc-space-2) * -1);
+    padding-inline: var(--tc-space-2);
+    background: color-mix(in srgb, var(--tc-color-surface-sunken) 45%, transparent);
+  }
+
+  .subtotal {
+    background: var(--tc-color-surface-sunken);
+  }
+}

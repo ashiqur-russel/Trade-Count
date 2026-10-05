@@ -1,0 +1,17 @@
+<div class="list" role="tablist" [attr.aria-label]="label()">
+  @for (tab of tabs(); track tab.id; let i = $index) {
+    <button
+      type="button"
+      role="tab"
+      [attr.aria-selected]="tab.id === selected()"
+      [attr.tabindex]="tab.id === selected() ? 0 : -1"
+      (click)="selected.set(tab.id)"
+      (keydown)="selectByKeyboard($event, i)"
+    >
+      {{ tab.label }}
+      @if (tab.count !== undefined) {
+        <span class="count">{{ tab.count }}</span>
+      }
+    </button>
+  }
+</div>
