@@ -1,7 +1,7 @@
 import { TestBed } from '@angular/core/testing';
 import type { PutOutcome, VaultApi } from '@trade-count/sync-client';
 import { SyncNetworkError, VaultNotFoundError } from '@trade-count/sync-client';
-import { generateSyncKey, type VaultEnvelope } from '@trade-count/sync-crypto';
+import { deriveCredentials, generateSyncKey, type VaultEnvelope } from '@trade-count/sync-crypto';
 import type { VaultSnapshot } from '@trade-count/local-store';
 import { PersistentStorage } from '../../../core/storage/persistent-storage';
 import { PortfolioDb, PortfolioDbError } from './portfolio-db';
@@ -20,6 +20,7 @@ const emptySnapshot = (): VaultSnapshot => ({
 class FakeDb {
   snapshot = emptySnapshot();
   syncKeyValue: string | null = null;
+  establishedVault: string | null = null;
   mergeFailure: PortfolioDbError | null = null;
   readonly calls: string[] = [];
 
@@ -42,6 +43,12 @@ class FakeDb {
         return this.syncKeyValue;
       case 'setSyncKey':
         this.syncKeyValue = args[0] as string | null;
+        if (args[0] === null) this.establishedVault = null;
+        return undefined;
+      case 'syncEstablishedVault':
+        return this.establishedVault;
+      case 'markSyncEstablished':
+        this.establishedVault = args[0] as string;
         return undefined;
       case 'getPortfolio':
         return { stocks: [], trades: [] };
@@ -264,6 +271,58 @@ describe('PortfolioSync', () => {
     expect(result.ok).toBe(false);
     expect(sync.status()).toBe('conflict');
     expect(sync.message()).toBe('Changes from your other device conflict with this one.');
+  });
+
+  describe('when sync is turned off from another device', () => {
+    it('remembers the vault it synced with, and forgets that together with the key', async () => {
+      const key = await sync.newKey();
+
+      await sync.turnOn(key);
+      expect(db.establishedVault).toBe((await deriveCredentials(key)).vaultId);
+
+      await sync.turnOff();
+      expect(db.establishedVault).toBeNull();
+    });
+
+    it('stops syncing, forgets the key and says why, without creating a new vault', async () => {
+      await sync.turnOn(await sync.newKey());
+      const localBefore = db.snapshot;
+      api.state = null;
+
+      const result = await sync.sync();
+
+      expect(result.ok).toBe(false);
+      expect(sync.status()).toBe('off');
+      expect(db.syncKeyValue).toBeNull();
+      expect(sync.currentKey()).toBeNull();
+      expect(sync.notice()).toContain('turned off on another device');
+      expect(api.state).toBeNull();
+      expect(db.snapshot).toBe(localBefore);
+    });
+
+    it('notices at start-up when the vault was removed while the app was closed', async () => {
+      const key = await generateSyncKey();
+      db.syncKeyValue = key;
+      db.establishedVault = (await deriveCredentials(key)).vaultId;
+      api.state = null;
+
+      await sync.start();
+      await vi.waitFor(() => expect(sync.status()).toBe('off'));
+
+      expect(sync.notice()).toContain('turned off on another device');
+      expect(db.syncKeyValue).toBeNull();
+      expect(api.state).toBeNull();
+    });
+
+    it('still creates the vault at start-up for a key that was saved but never synced', async () => {
+      db.syncKeyValue = await generateSyncKey();
+
+      await sync.start();
+      await vi.waitFor(() => expect(sync.status()).toBe('idle'));
+
+      expect(api.state?.version).toBe(1);
+      expect(sync.notice()).toBeNull();
+    });
   });
 
   it('turns off by deleting the server copy first, then forgetting the key', async () => {

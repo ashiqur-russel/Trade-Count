@@ -1,6 +1,10 @@
 <tc-panel heading="Sync">
   <tc-pill panel-actions [tone]="badge().tone">{{ badge().label }}</tc-pill>
 
+  @if (sync.notice(); as notice) {
+    <tc-alert tone="warn" (dismissed)="sync.notice.set(null)">{{ notice }}</tc-alert>
+  }
+
   @if (error(); as message) {
     <tc-alert (dismissed)="error.set(null)">{{ message }}</tc-alert>
   }

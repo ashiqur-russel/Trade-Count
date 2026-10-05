@@ -109,8 +109,8 @@ function english(o: Operator): LegalDocument {
             type: 'p',
             text:
               'Purpose: to provide the sync you requested (Art. 6(1)(b) GDPR). We keep the encrypted copy until you turn sync ' +
-              'off in the app, which deletes it immediately. If you lose your key, nobody, including us, can decrypt or ' +
-              'recover it.',
+              'off in the app, which deletes it immediately. Your other devices notice this and stop syncing; they do not ' +
+              'create a new copy on their own. If you lose your key, nobody, including us, can decrypt or recover it.',
           },
         ],
       },
@@ -269,7 +269,9 @@ function german(o: Operator): LegalDocument {
             text:
               'Zweck: Bereitstellung der von Ihnen gewünschten Synchronisierung (Art. 6 Abs. 1 lit. b DSGVO). Wir bewahren die ' +
               'verschlüsselte Kopie auf, bis Sie die Synchronisierung in der App ausschalten; dabei wird sie sofort gelöscht. ' +
-              'Wenn Sie Ihren Schlüssel verlieren, kann niemand, auch wir nicht, die Daten entschlüsseln oder wiederherstellen.',
+              'Ihre anderen Geräte bemerken das und hören auf zu synchronisieren; sie legen nicht von selbst eine neue Kopie ' +
+              'an. Wenn Sie Ihren Schlüssel verlieren, kann niemand, auch wir nicht, die Daten entschlüsseln oder ' +
+              'wiederherstellen.',
           },
         ],
       },

@@ -256,8 +256,21 @@ export class PortfolioDatabase {
   }
 
   setSyncKey(key: string | null): void {
-    if (key === null) this.db.exec("DELETE FROM app_meta WHERE key = 'sync_key'");
+    if (key === null) this.db.exec("DELETE FROM app_meta WHERE key IN ('sync_key', 'sync_established_vault')");
     else this.setMeta('sync_key', key);
+  }
+
+  /**
+   * The vault this device last synced with successfully. From then on a missing vault means it was
+   * removed elsewhere, not that it was never created.
+   */
+  syncEstablishedVault(): string | null {
+    const value = this.db.selectValue("SELECT value FROM app_meta WHERE key = 'sync_established_vault'");
+    return typeof value === 'string' ? value : null;
+  }
+
+  markSyncEstablished(vaultId: string): void {
+    this.setMeta('sync_established_vault', vaultId);
   }
 
   private setMeta(key: string, value: string): void {

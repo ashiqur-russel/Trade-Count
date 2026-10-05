@@ -11,6 +11,7 @@ import {
 } from '@angular/core';
 import {
   SyncNetworkError,
+  VaultGoneError,
   createFetchVaultApi,
   syncOnce,
   type SyncDevice,
@@ -51,11 +52,15 @@ export class PortfolioSync {
   readonly status = signal<SyncStatus>('off');
   readonly lastSyncedAt = signal<string | null>(null);
   readonly message = signal<string | null>(null);
+  /** Something that happened without the user asking, e.g. sync turned off from another device. */
+  readonly notice = signal<string | null>(null);
   readonly enabled = computed(() => this.status() !== 'off');
 
   private syncKey: string | null = null;
   private credentials: SyncCredentials | null = null;
   private api: VaultApi | null = null;
+  /** The vault this device has already synced with; if it disappears, sync was turned off elsewhere. */
+  private establishedVaultId: string | null = null;
   private inflight: Promise<SyncResult> | null = null;
   private runAgain = false;
   private lastRunAt = 0;
@@ -102,6 +107,7 @@ export class PortfolioSync {
     if (!key) return;
     try {
       await this.activate(key);
+      this.establishedVaultId = await this.db.call('syncEstablishedVault');
     } catch {
       this.status.set('error');
       this.message.set(
@@ -188,6 +194,7 @@ export class PortfolioSync {
     this.syncKey = null;
     this.credentials = null;
     this.api = null;
+    this.establishedVaultId = null;
     this.lastSyncedAt.set(null);
     this.message.set(null);
     this.status.set('off');
@@ -198,18 +205,34 @@ export class PortfolioSync {
     this.lastRunAt = Date.now();
     this.status.set('syncing');
     try {
-      const outcome = await syncOnce(this.device, this.api, this.credentials, options);
+      const wasSynced = this.establishedVaultId === this.credentials.vaultId;
+      const outcome = await syncOnce(this.device, this.api, this.credentials, {
+        ...options,
+        wasSynced,
+      });
+      await this.rememberEstablished(this.credentials.vaultId);
       if (outcome.pulled) await this.store.refresh();
       this.lastSyncedAt.set(new Date().toISOString());
       this.message.set(null);
       this.status.set('idle');
       return { ok: true };
     } catch (error) {
+      if (error instanceof VaultGoneError) {
+        await this.forget();
+        this.notice.set(error.message);
+        return { ok: false, message: error.message };
+      }
       const message = errorMessage(error);
       this.message.set(message);
       this.status.set(statusFor(error));
       return { ok: false, message };
     }
+  }
+
+  private async rememberEstablished(vaultId: string): Promise<void> {
+    if (this.establishedVaultId === vaultId) return;
+    this.establishedVaultId = vaultId;
+    await this.db.call('markSyncEstablished', vaultId);
   }
 
   private schedule(delayMs: number): void {

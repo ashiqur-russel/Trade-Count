@@ -47,3 +47,13 @@ export class SyncBusyError extends SyncError {
     super('Other devices are syncing at the same time. Try again in a moment.');
   }
 }
+
+/** This device synced before, and the vault is gone: sync was turned off on another device. */
+export class VaultGoneError extends SyncError {
+  constructor() {
+    super(
+      'Sync was turned off on another device, so this device stopped syncing. Your data here is unchanged. ' +
+        'Turn on sync again to create a new synced copy.',
+    );
+  }
+}

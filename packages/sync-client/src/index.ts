@@ -7,6 +7,7 @@ export {
   SyncNetworkError,
   SyncRateLimitedError,
   SyncUnavailableError,
+  VaultGoneError,
   VaultNotFoundError,
 } from './sync-errors.js';
 export { createFetchVaultApi, type FetchVaultApiOptions, type PutOutcome, type VaultApi } from './vault-api.js';

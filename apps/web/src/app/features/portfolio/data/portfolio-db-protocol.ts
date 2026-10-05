@@ -26,6 +26,8 @@ export interface PortfolioDbMethods {
   syncWith(remote: unknown): VaultSnapshot;
   syncKey(): string | null;
   setSyncKey(key: string | null): void;
+  syncEstablishedVault(): string | null;
+  markSyncEstablished(vaultId: string): void;
 }
 
 export type PortfolioDbMethod = keyof PortfolioDbMethods;

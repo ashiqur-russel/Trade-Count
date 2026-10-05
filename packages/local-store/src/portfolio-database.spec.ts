@@ -192,6 +192,17 @@ describe('PortfolioDatabase', () => {
     expect(store.syncKey()).toBeNull();
   });
 
+  it('remembers which vault this device synced with, keeps that across reopening and forgets it with the key', () => {
+    expect(store.syncEstablishedVault()).toBeNull();
+
+    store.setSyncKey('ABCD-EFGH');
+    store.markSyncEstablished('vault-1');
+    expect(new PortfolioDatabase(sqlite).syncEstablishedVault()).toBe('vault-1');
+
+    store.setSyncKey(null);
+    expect(store.syncEstablishedVault()).toBeNull();
+  });
+
   it('keeps data when the database is reopened', () => {
     const stock = store.createStock({ name: 'Acme' });
     store.createTrade({ stockId: stock.id, side: 'buy', quantity: '2', price: '10', tradedOn: '2026-10-01' });
