@@ -249,6 +249,17 @@ export class PortfolioDatabase {
     );
   }
 
+  /** The sync key of this device, or null when sync is off. It never appears in backups. */
+  syncKey(): string | null {
+    const value = this.db.selectValue("SELECT value FROM app_meta WHERE key = 'sync_key'");
+    return typeof value === 'string' ? value : null;
+  }
+
+  setSyncKey(key: string | null): void {
+    if (key === null) this.db.exec("DELETE FROM app_meta WHERE key = 'sync_key'");
+    else this.setMeta('sync_key', key);
+  }
+
   private setMeta(key: string, value: string): void {
     this.db.exec('INSERT INTO app_meta (key, value) VALUES (?, ?) ON CONFLICT (key) DO UPDATE SET value = excluded.value', {
       bind: [key, value],

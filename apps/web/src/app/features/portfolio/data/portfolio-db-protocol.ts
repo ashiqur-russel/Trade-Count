@@ -6,6 +6,7 @@ import type {
   StockChanges,
   StoreFailure,
   TradeChanges,
+  VaultSnapshot,
 } from '@trade-count/local-store';
 
 /** What the page may ask the database worker to do; mirrors PortfolioDatabase. */
@@ -21,6 +22,10 @@ export interface PortfolioDbMethods {
   lastBackupAt(): string | null;
   /** Takes the parsed file as-is; the worker validates it again before replacing anything. */
   restoreBackup(input: unknown): Portfolio;
+  exportVault(): VaultSnapshot;
+  syncWith(remote: unknown): VaultSnapshot;
+  syncKey(): string | null;
+  setSyncKey(key: string | null): void;
 }
 
 export type PortfolioDbMethod = keyof PortfolioDbMethods;

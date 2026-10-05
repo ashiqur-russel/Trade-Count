@@ -3,3 +3,4 @@ export { LIMITS, handleVaultRequest, type VaultApiDeps } from './vault-handler.j
 export * from './vault-protocol.js';
 export type { RateLimiter, VaultRecord, VaultStore } from './vault-store.js';
 export { createD1RateLimiter, createD1VaultStore, type D1Like, type D1StatementLike } from './d1-adapters.js';
+export { MemoryRateLimiter, MemoryVaultStore } from './memory-adapters.js';

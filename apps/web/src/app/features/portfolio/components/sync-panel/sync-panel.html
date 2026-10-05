@@ -1,0 +1,150 @@
+<tc-panel heading="Sync">
+  <tc-pill panel-actions [tone]="badge().tone">{{ badge().label }}</tc-pill>
+
+  @if (error(); as message) {
+    <tc-alert (dismissed)="error.set(null)">{{ message }}</tc-alert>
+  }
+
+  @if (sync.enabled()) {
+    <p class="explain">
+      Your portfolio is encrypted on this device and synced to an encrypted copy in the EU. Open
+      Trade Count with your sync key on another device to continue there.
+      @if (lastSynced(); as time) {
+        <span class="muted">Last synced at {{ time }}.</span>
+      }
+    </p>
+
+    @if (showProblem() && sync.message(); as message) {
+      <p class="problem" role="status">{{ message }}</p>
+    }
+
+    @if (revealedKey(); as key) {
+      <div class="key-box">
+        <code class="key" aria-label="Your sync key">{{ key }}</code>
+        <div class="actions">
+          <button tc-button size="sm" type="button" (click)="copy(key)">
+            {{ copied() ? 'Copied' : 'Copy' }}
+          </button>
+          <button tc-button size="sm" variant="quiet" type="button" (click)="download(key)">
+            Download
+          </button>
+        </div>
+      </div>
+    }
+
+    <div class="actions">
+      <button
+        tc-button
+        type="button"
+        [disabled]="busy() || sync.status() === 'syncing'"
+        (click)="syncNow()"
+      >
+        Sync now
+      </button>
+      <button tc-button variant="quiet" type="button" (click)="toggleKey()">
+        {{ revealedKey() ? 'Hide key' : 'Show my key' }}
+      </button>
+      <button
+        tc-confirm-button
+        confirmLabel="Delete synced copy?"
+        [disabled]="busy()"
+        (confirmed)="turnOff()"
+      >
+        Turn off sync
+      </button>
+    </div>
+  } @else {
+    @switch (view()) {
+      @case ('overview') {
+        <p class="explain">
+          Sync keeps an <strong>encrypted copy</strong> of your portfolio in the EU, so you can use
+          it on other devices and restore it if this browser's data is ever cleared. It is encrypted
+          here with a key only you hold. No one else can read it, including us. If you lose the key
+          and every device, the copy cannot be recovered.
+        </p>
+        <div class="actions">
+          <button tc-button variant="primary" type="button" (click)="startCreating()">
+            Turn on sync
+          </button>
+          <button tc-button type="button" (click)="startJoining()">Join with a key…</button>
+        </div>
+      }
+
+      @case ('create') {
+        <p class="explain">
+          <strong>This is your sync key.</strong> Save it now; it is shown only here.
+        </p>
+        <div class="key-box">
+          <code class="key" aria-label="Your new sync key">{{ newKey() }}</code>
+          <div class="actions">
+            <button tc-button size="sm" type="button" (click)="copy(newKey())">
+              {{ copied() ? 'Copied' : 'Copy' }}
+            </button>
+            <button tc-button size="sm" variant="quiet" type="button" (click)="download(newKey())">
+              Download
+            </button>
+          </div>
+        </div>
+        <label class="confirm-row">
+          <input
+            type="checkbox"
+            [checked]="keySaved()"
+            (change)="keySaved.set($any($event.target).checked)"
+          />
+          <span>
+            I saved my sync key somewhere safe. Without it, nobody, including the people who run
+            this site, can recover the synced data.
+          </span>
+        </label>
+        <div class="actions">
+          <button
+            tc-button
+            variant="primary"
+            type="button"
+            [disabled]="!keySaved() || busy()"
+            (click)="confirmCreate()"
+          >
+            {{ busy() ? 'Starting…' : 'Start syncing' }}
+          </button>
+          <button tc-button variant="quiet" type="button" [disabled]="busy()" (click)="cancel()">
+            Cancel
+          </button>
+        </div>
+      }
+
+      @case ('join') {
+        <p class="explain">Enter the sync key from the device that already has your data.</p>
+        <tc-field
+          label="Sync key"
+          controlId="sync-join-key"
+          hint="8 groups of 4 characters. Dashes and capitals don't matter."
+        >
+          <input
+            id="sync-join-key"
+            class="key-input"
+            [formControl]="joinKey"
+            autocomplete="off"
+            autocapitalize="characters"
+            spellcheck="false"
+            placeholder="XXXX-XXXX-XXXX-XXXX-XXXX-XXXX-XXXX-XXXX"
+            (keydown.enter)="confirmJoin()"
+          />
+        </tc-field>
+        <div class="actions">
+          <button
+            tc-button
+            variant="primary"
+            type="button"
+            [disabled]="busy()"
+            (click)="confirmJoin()"
+          >
+            {{ busy() ? 'Joining…' : 'Join' }}
+          </button>
+          <button tc-button variant="quiet" type="button" [disabled]="busy()" (click)="cancel()">
+            Cancel
+          </button>
+        </div>
+      }
+    }
+  }
+</tc-panel>

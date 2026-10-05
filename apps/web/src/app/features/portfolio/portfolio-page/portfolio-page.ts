@@ -12,10 +12,12 @@ import { BackupPanel } from '../components/backup-panel/backup-panel';
 import { LedgerPanel } from '../components/ledger-panel/ledger-panel';
 import { PortfolioSummary } from '../components/portfolio-summary/portfolio-summary';
 import { StocksPanel } from '../components/stocks-panel/stocks-panel';
+import { SyncPanel } from '../components/sync-panel/sync-panel';
 import { TradeForm } from '../components/trade-form/trade-form';
 import { NO_FILTER, type LedgerFilter } from '../data/ledger-filter';
 import { PortfolioDb } from '../data/portfolio-db';
 import { PortfolioStore } from '../data/portfolio-store';
+import { PortfolioSync } from '../data/portfolio-sync';
 
 @Component({
   selector: 'tc-portfolio-page',
@@ -29,21 +31,23 @@ import { PortfolioStore } from '../data/portfolio-store';
     StocksPanel,
     LedgerPanel,
     BackupPanel,
+    SyncPanel,
   ],
-  providers: [PortfolioDb, PortfolioStore],
+  providers: [PortfolioDb, PortfolioStore, PortfolioSync],
   templateUrl: './portfolio-page.html',
   styleUrl: './portfolio-page.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class PortfolioPage {
   protected readonly store = inject(PortfolioStore);
+  private readonly sync = inject(PortfolioSync);
   protected readonly filter = signal<LedgerFilter>(NO_FILTER);
   protected readonly editingTrade = signal<Trade | null>(null);
 
   private readonly tradeForm = viewChild(TradeForm, { read: ElementRef });
 
   constructor() {
-    void this.store.load();
+    void this.store.load().then(() => this.sync.start());
   }
 
   protected selectStock(stockId: string | null): void {

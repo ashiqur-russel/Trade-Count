@@ -47,6 +47,8 @@ export class PortfolioStore {
   readonly loadError = signal<string | null>(null);
   /** ISO time of the last export or restore; null if this device was never backed up. */
   readonly lastBackupAt = signal<string | null>(null);
+  /** Goes up after every successful change made on this device; sync watches it to know when to upload. */
+  readonly revision = signal(0);
   /** Failures from actions that have no form of their own to show them (table deletes). */
   readonly notice = signal<string | null>(null);
 
@@ -57,6 +59,13 @@ export class PortfolioStore {
   readonly ledger = computed(() => computeLedger(this.stockList(), this.tradeList()));
   readonly totals = computed(() => portfolioTotals(this.ledger()));
   readonly shareRows = computed(() => shareRows(this.stockList(), this.tradeList()));
+
+  /** Re-reads the data after sync merged changes from another device, without a loading state. */
+  async refresh(): Promise<void> {
+    const portfolio = await this.db.call('getPortfolio');
+    this.stockList.set(portfolio.stocks);
+    this.tradeList.set(portfolio.trades);
+  }
 
   isPending(id: string): boolean {
     return this.pendingIds().has(id);
@@ -167,6 +176,7 @@ export class PortfolioStore {
       this.stockList.set(portfolio.stocks);
       this.tradeList.set(portfolio.trades);
       this.lastBackupAt.set(backup.exportedAt);
+      this.revision.update((n) => n + 1);
       void this.persistentStorage.request();
       return { ok: true };
     } catch (error) {
@@ -226,6 +236,7 @@ export class PortfolioStore {
     this.pendingIds.update((ids) => new Set(ids).add(id));
     try {
       on.saved(await write());
+      this.revision.update((n) => n + 1);
       void this.persistentStorage.request();
       return { ok: true };
     } catch (error) {

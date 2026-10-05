@@ -1,0 +1,63 @@
+.explain {
+  color: var(--tc-color-text-muted);
+  font-size: var(--tc-text-sm);
+}
+
+.explain strong {
+  color: var(--tc-color-text);
+}
+
+.muted {
+  color: var(--tc-color-text-muted);
+}
+
+.problem {
+  color: var(--tc-color-loss);
+  font-size: var(--tc-text-sm);
+}
+
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--tc-space-2);
+  align-items: center;
+}
+
+.key-box {
+  display: grid;
+  gap: var(--tc-space-3);
+  padding: var(--tc-space-4);
+  border: var(--tc-rule-width) solid var(--tc-color-rule);
+  border-radius: var(--tc-radius-sm);
+  background: var(--tc-color-surface-sunken);
+}
+
+.key {
+  font-family: var(--tc-font-numeric);
+  font-size: var(--tc-text-md);
+  font-weight: var(--tc-weight-medium);
+  letter-spacing: 0.06em;
+  line-height: 1.6;
+  overflow-wrap: anywhere;
+  user-select: all;
+}
+
+.key-input {
+  font-family: var(--tc-font-numeric);
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.confirm-row {
+  display: flex;
+  gap: var(--tc-space-3);
+  align-items: flex-start;
+  font-size: var(--tc-text-sm);
+  cursor: pointer;
+}
+
+.confirm-row input {
+  flex-shrink: 0;
+  margin-top: 0.2em;
+  accent-color: var(--tc-color-accent);
+}

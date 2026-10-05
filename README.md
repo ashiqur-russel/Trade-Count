@@ -2,7 +2,7 @@
 
 Stock portfolio tracker that matches every sale to the oldest open shares first (FIFO) to calculate profit and loss.
 
-**Local-first:** each user's stocks and trades are stored in SQLite inside their own browser (Origin Private File System). There is no backend and no account. The site is static files only, so whoever hosts it never receives any portfolio data. Users move or protect their data with **Export / Import backup** (a JSON file).
+**Local-first:** each user's stocks and trades are stored in SQLite inside their own browser (Origin Private File System). There are no accounts and no readable data on any server. Users protect and move their data with **Export / Import backup** (a JSON file) or with **opt-in end-to-end encrypted sync**: an encrypted copy is kept in a Cloudflare D1 database (EU jurisdiction) that only the user's **sync key** can decrypt.
 
 ## Structure
 
@@ -12,6 +12,11 @@ Stock portfolio tracker that matches every sale to the oldest open shares first 
 | `apps/web/.../portfolio-db.worker.ts` | Web Worker that runs SQLite (WebAssembly, `opfs-sahpool` VFS) |
 | `packages/local-store` | Schema, migrations, save rules and backup format, framework-free and tested in Node |
 | `packages/ledger` | FIFO matching, oversell checks and totals, shared by the store and the UI |
+| `packages/sync-crypto` | Sync key, HKDF key derivation, AES-256-GCM vault encryption (WebCrypto) |
+| `packages/sync-server` | Storage-agnostic request handler for `/api/vaults/:id`, D1 adapters, rate limiting |
+| `packages/sync-client` | The sync algorithm (pull → decrypt → merge → encrypt → push) and the fetch API client |
+| `functions/` | Cloudflare Pages Function that wires the handler to D1 |
+| `migrations/` | D1 schema (`wrangler d1 migrations`) |
 
 ## Development
 
@@ -27,6 +32,13 @@ npm run build    # static production build in apps/web/dist/web/browser
 
 Only one tab can open the on-device database at a time (a limit of the `opfs-sahpool` VFS).
 
+`npm start` has no API, so the Sync panel shows "sync service is not available" there. To try sync locally run the production build with the Function and a local D1:
+
+```bash
+npm run db:migrate:local   # once, creates the local vault tables
+npm run preview:prod       # http://localhost:8788 (app + /api)
+```
+
 ## Deploying (Cloudflare Pages)
 
 The production build is static files plus `apps/web/public/_headers`, which sets the Content-Security-Policy and other security headers. `connect-src 'self'` is the privacy guarantee: the browser blocks any request to another origin. `wasm-unsafe-eval` is needed for SQLite; inline scripts are not allowed (the theme bootstrap lives in `public/theme-init.js`).
@@ -40,7 +52,17 @@ npm run deploy         # build + upload; prints the https://<hash>.trade-count.p
 
 - **Rollback:** Cloudflare dashboard → Workers & Pages → trade-count → Deployments → "Rollback" on any earlier deployment. Users get it on their next visit; the service worker shows "A new version is ready".
 - **Custom domain:** dashboard → trade-count → Custom domains. No code change needed.
-- **Data safety:** deploys never touch user data; it lives only in each user's browser. Schema changes must be additive migrations (see below), because users may open an old database with a new app version.
+- **Data safety:** deploys never touch user data. Local schema changes must be additive migrations (see below), because users may open an old database with a new app version.
+- **Server schema changes:** add a new file to `migrations/`, run `npx wrangler d1 migrations apply DB --remote`, then deploy. The `RATE_LIMIT_SALT` secret is set once with `wrangler pages secret put RATE_LIMIT_SALT --project-name trade-count`.
+
+## Sync design
+
+- **Key:** a random 128-bit sync key (`XXXX-…`, 8 groups) is the whole account. HKDF-SHA256 splits it into a vault id, an auth token and a non-extractable AES-256-GCM key. Only the vault id and token are sent; the encryption key never leaves the device.
+- **Server stores:** vault id, SHA-256 of the token, ciphertext and a version number. No plaintext, emails or IP addresses (rate limiting uses salted hashes that expire).
+- **Merging:** the newest edit of each stock or trade wins, deletions are remembered, and a merge that would sell shares not held is refused (`packages/local-store/src/vault-merge.ts`).
+- **Conflicts between devices:** writes carry the version they were based on; a stale write gets `409`, and the client re-reads, re-merges and retries.
+- **Turning sync off** deletes the server copy; local data stays.
+- **Lost key:** unrecoverable by design. The app makes users save it before the first upload.
 
 ## Data and privacy
 

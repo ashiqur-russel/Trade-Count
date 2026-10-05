@@ -1,7 +1,7 @@
 import { deriveCredentials, encryptVault, generateSyncKey, type SyncCredentials } from '@trade-count/sync-crypto';
 import { beforeEach, describe, expect, it } from 'vitest';
 import { sha256Hex } from './hashing.js';
-import { MemoryRateLimiter, MemoryVaultStore } from './memory-store.fixture.js';
+import { MemoryRateLimiter, MemoryVaultStore } from './memory-adapters.js';
 import { LIMITS, handleVaultRequest } from './vault-handler.js';
 import { MAX_ENVELOPE_BYTES, type ApiError, type VaultState } from './vault-protocol.js';
 

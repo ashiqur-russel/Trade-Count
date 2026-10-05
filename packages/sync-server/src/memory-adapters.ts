@@ -1,3 +1,4 @@
+/** In-memory vault storage and rate limiting: used by tests and handy for local experiments. */
 import type { RateLimiter, VaultRecord, VaultStore } from './vault-store.js';
 
 export class MemoryVaultStore implements VaultStore {

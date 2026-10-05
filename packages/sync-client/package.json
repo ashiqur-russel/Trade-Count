@@ -1,0 +1,34 @@
+{
+  "name": "@trade-count/sync-client",
+  "version": "0.0.1",
+  "private": true,
+  "description": "Sync algorithm and API client: pull, merge, encrypt, push",
+  "type": "module",
+  "sideEffects": false,
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
+    }
+  },
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "tsc -p tsconfig.build.json",
+    "typecheck": "tsc -p tsconfig.json --noEmit",
+    "test": "vitest run",
+    "test:watch": "vitest"
+  },
+  "dependencies": {
+    "@trade-count/local-store": "0.0.1",
+    "@trade-count/sync-crypto": "0.0.1",
+    "@trade-count/sync-server": "0.0.1"
+  },
+  "devDependencies": {
+    "@sqlite.org/sqlite-wasm": "3.53.4-build2",
+    "@types/node": "24.19.1",
+    "typescript": "6.0.3",
+    "vitest": "4.1.11"
+  }
+}
