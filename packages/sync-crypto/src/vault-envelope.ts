@@ -1,11 +1,14 @@
 import { fromBase64Url, toBase64Url, utf8 } from './bytes.js';
 import type { SyncCredentials } from './credentials.js';
+import { gunzip, gzip } from './gzip.js';
 
 /** What the server stores: ciphertext plus what is needed to decrypt it with the right key. */
 export interface VaultEnvelope {
   format: 'trade-count-vault';
   version: 1;
   algorithm: 'AES-256-GCM';
+  /** Absent on envelopes written before compression existed. */
+  compression?: 'gzip';
   iv: string;
   ciphertext: string;
 }
@@ -29,12 +32,13 @@ export async function encryptVault(plaintext: string, credentials: SyncCredentia
   const ciphertext = await crypto.subtle.encrypt(
     { name: 'AES-GCM', iv, additionalData: additionalData(credentials.vaultId) },
     credentials.encryptionKey,
-    utf8.encode(plaintext),
+    await gzip(utf8.encode(plaintext)),
   );
   return {
     format: 'trade-count-vault',
     version: 1,
     algorithm: 'AES-256-GCM',
+    compression: 'gzip',
     iv: toBase64Url(iv),
     ciphertext: toBase64Url(new Uint8Array(ciphertext)),
   };
@@ -48,7 +52,8 @@ export async function decryptVault(envelope: unknown, credentials: SyncCredentia
       credentials.encryptionKey,
       fromBase64Url(envelope.ciphertext),
     );
-    return utf8.decode(new Uint8Array(plaintext));
+    const bytes = new Uint8Array(plaintext);
+    return utf8.decode(envelope.compression === 'gzip' ? await gunzip(bytes) : bytes);
   } catch {
     throw new VaultDecryptError();
   }
@@ -62,6 +67,7 @@ export function isVaultEnvelope(value: unknown): value is VaultEnvelope {
     v.format === 'trade-count-vault' &&
     v.version === 1 &&
     v.algorithm === 'AES-256-GCM' &&
+    (v.compression === undefined || v.compression === 'gzip') &&
     typeof v.iv === 'string' &&
     typeof v.ciphertext === 'string'
   );

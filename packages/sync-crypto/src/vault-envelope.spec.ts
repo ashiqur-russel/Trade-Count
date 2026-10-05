@@ -2,6 +2,7 @@ import { describe, expect, it } from 'vitest';
 import { fromBase64Url, toBase64Url } from './bytes.js';
 import { deriveCredentials } from './credentials.js';
 import { generateSyncKey } from './sync-key.js';
+import { MAX_DECOMPRESSED_BYTES, gzip } from './gzip.js';
 import { VaultDecryptError, decryptVault, encryptVault } from './vault-envelope.js';
 
 const portfolio = JSON.stringify({ stocks: [{ id: 's1', name: 'Tesla Inc.' }], trades: [] });
@@ -75,5 +76,57 @@ describe('encryptVault / decryptVault', () => {
 
     await expect(decryptVault({ hello: 'world' }, credentials)).rejects.toBeInstanceOf(VaultDecryptError);
     await expect(decryptVault({ format: 'trade-count-vault', version: 1, algorithm: 'AES-256-GCM', iv: '!!', ciphertext: '' }, credentials)).rejects.toBeInstanceOf(VaultDecryptError);
+  });
+});
+
+describe('vault envelope compression', () => {
+  const aad = (vaultId: string) => new TextEncoder().encode(`trade-count-vault/v1/${vaultId}`);
+
+  async function seal(plain: Uint8Array<ArrayBuffer>, credentials: Awaited<ReturnType<typeof deriveCredentials>>) {
+    const iv = crypto.getRandomValues(new Uint8Array(12));
+    const ciphertext = await crypto.subtle.encrypt(
+      { name: 'AES-GCM', iv, additionalData: aad(credentials.vaultId) },
+      credentials.encryptionKey,
+      plain,
+    );
+    return { iv: toBase64Url(iv), ciphertext: toBase64Url(new Uint8Array(ciphertext)) };
+  }
+
+  it('shrinks repetitive portfolio data before it is encrypted', async () => {
+    const credentials = await deriveCredentials(await generateSyncKey());
+    const large = JSON.stringify({
+      trades: Array.from({ length: 2000 }, (_, i) => ({ id: `t${i}`, price: '100.5', quantity: '3' })),
+    });
+    const envelope = await encryptVault(large, credentials);
+
+    expect(envelope.compression).toBe('gzip');
+    expect(envelope.ciphertext.length).toBeLessThan(large.length / 4);
+    expect(await decryptVault(envelope, credentials)).toBe(large);
+  });
+
+  it('still decrypts envelopes written before compression existed', async () => {
+    const credentials = await deriveCredentials(await generateSyncKey());
+    const legacy = {
+      format: 'trade-count-vault',
+      version: 1,
+      algorithm: 'AES-256-GCM',
+      ...(await seal(new TextEncoder().encode(portfolio), credentials)),
+    };
+
+    expect(await decryptVault(legacy, credentials)).toBe(portfolio);
+  });
+
+  it('refuses a compressed payload that expands past the decompression limit', async () => {
+    const credentials = await deriveCredentials(await generateSyncKey());
+    const bomb = await gzip(new Uint8Array(MAX_DECOMPRESSED_BYTES + 1024));
+    const envelope = {
+      format: 'trade-count-vault',
+      version: 1,
+      algorithm: 'AES-256-GCM',
+      compression: 'gzip',
+      ...(await seal(bomb, credentials)),
+    };
+
+    await expect(decryptVault(envelope, credentials)).rejects.toBeInstanceOf(VaultDecryptError);
   });
 });
