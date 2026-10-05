@@ -276,6 +276,11 @@ export class PortfolioDatabase {
     else this.setMeta('sync_key', key);
   }
 
+  /** Removes the key but keeps which vault this device synced with, so it can be unlocked again with the key. */
+  forgetStoredSyncKey(): void {
+    this.db.exec("DELETE FROM app_meta WHERE key = 'sync_key'");
+  }
+
   /**
    * The vault this device last synced with successfully. From then on a missing vault means it was
    * removed elsewhere, not that it was never created.

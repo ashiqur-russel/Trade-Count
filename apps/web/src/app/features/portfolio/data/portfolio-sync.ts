@@ -23,7 +23,7 @@ import { clockWarningMessage } from './clock-warning';
 import { PortfolioDb, PortfolioDbError } from './portfolio-db';
 import { PortfolioStore } from './portfolio-store';
 
-export type SyncStatus = 'off' | 'idle' | 'syncing' | 'offline' | 'conflict' | 'error';
+export type SyncStatus = 'off' | 'locked' | 'idle' | 'syncing' | 'offline' | 'conflict' | 'error';
 export type SyncResult = { ok: true } | { ok: false; message: string };
 
 /** Builds the API client for one sync key; replaceable in tests. */
@@ -58,7 +58,10 @@ export class PortfolioSync {
   /** Server time minus this device's clock, from the latest sync; null if not measured. */
   readonly clockOffsetMs = signal<number | null>(null);
   readonly clockWarning = computed(() => clockWarningMessage(this.clockOffsetMs()));
-  readonly enabled = computed(() => this.status() !== 'off');
+  /** Sync is set up and running; false while off or while waiting for the user to enter the key again. */
+  readonly enabled = computed(() => this.status() !== 'off' && this.status() !== 'locked');
+  /** Whether the sync key is saved on this device (otherwise it lives in memory until the app closes). */
+  readonly keyStored = signal(false);
 
   private syncKey: string | null = null;
   private credentials: SyncCredentials | null = null;
@@ -109,9 +112,13 @@ export class PortfolioSync {
   /** Resumes syncing on start-up if this device already has a sync key. */
   async start(): Promise<void> {
     const key = await this.db.call('syncKey');
-    if (!key) return;
+    if (!key) {
+      await this.lockIfKeyWasNotStored();
+      return;
+    }
     try {
       await this.activate(key);
+      this.keyStored.set(true);
       this.establishedVaultId = await this.db.call('syncEstablishedVault');
     } catch {
       this.status.set('error');
@@ -128,13 +135,38 @@ export class PortfolioSync {
   }
 
   /** Starts syncing with a freshly generated key: uploads this device's data as the first vault. */
-  turnOn(key: string): Promise<SyncResult> {
-    return this.begin(key, {});
+  turnOn(key: string, rememberKey = true): Promise<SyncResult> {
+    return this.begin(key, {}, rememberKey);
   }
 
   /** Starts syncing with a key from another device: downloads and merges that device's data. */
-  join(key: string): Promise<SyncResult> {
-    return this.begin(key, { requireExisting: true });
+  join(key: string, rememberKey = true): Promise<SyncResult> {
+    return this.begin(key, { requireExisting: true }, rememberKey);
+  }
+
+  /** Resumes syncing after a restart on a device that doesn't store the key. */
+  async unlock(key: string): Promise<SyncResult> {
+    try {
+      const credentials = await deriveCredentials(key);
+      if (credentials.vaultId !== this.establishedVaultId) {
+        return { ok: false, message: 'That key belongs to a different synced copy than the one this device uses.' };
+      }
+      await this.activate(key);
+    } catch (error) {
+      return { ok: false, message: errorMessage(error) };
+    }
+    return this.sync();
+  }
+
+  /** Stops syncing on this device without a key; the synced copy stays and local data is untouched. */
+  async leaveWithoutKey(): Promise<void> {
+    await this.forget();
+  }
+
+  /** Deletes the key from this device's storage; syncing continues until the app is closed. */
+  async forgetStoredKey(): Promise<void> {
+    await this.db.call('forgetStoredSyncKey');
+    this.keyStored.set(false);
   }
 
   /** Deletes the encrypted copy on the server, then forgets the key here. Local data stays. */
@@ -170,7 +202,7 @@ export class PortfolioSync {
     return run;
   }
 
-  private async begin(key: string, options: SyncOptions): Promise<SyncResult> {
+  private async begin(key: string, options: SyncOptions, rememberKey: boolean): Promise<SyncResult> {
     try {
       await this.activate(key);
     } catch (error) {
@@ -181,8 +213,16 @@ export class PortfolioSync {
       await this.forget();
       return result;
     }
-    await this.db.call('setSyncKey', key);
+    if (rememberKey) await this.db.call('setSyncKey', key);
+    this.keyStored.set(rememberKey);
     return result;
+  }
+
+  private async lockIfKeyWasNotStored(): Promise<void> {
+    this.establishedVaultId = await this.db.call('syncEstablishedVault');
+    if (!this.establishedVaultId) return;
+    this.status.set('locked');
+    this.message.set('Enter your sync key to continue syncing on this device.');
   }
 
   private async activate(key: string): Promise<void> {
@@ -200,6 +240,7 @@ export class PortfolioSync {
     this.credentials = null;
     this.api = null;
     this.establishedVaultId = null;
+    this.keyStored.set(false);
     this.clockOffsetMs.set(null);
     this.lastSyncedAt.set(null);
     this.message.set(null);

@@ -16,6 +16,7 @@ type View = 'overview' | 'create' | 'join';
 
 const STATUS_BADGES: Record<SyncStatus, { tone: PillTone; label: string }> = {
   off: { tone: 'neutral', label: 'Off' },
+  locked: { tone: 'warn', label: 'Key needed' },
   idle: { tone: 'gain', label: 'Synced' },
   syncing: { tone: 'accent', label: 'Syncing…' },
   offline: { tone: 'warn', label: 'Offline' },
@@ -38,6 +39,7 @@ export class SyncPanel {
   protected readonly view = signal<View>('overview');
   protected readonly newKey = signal('');
   protected readonly keySaved = signal(false);
+  protected readonly rememberKey = signal(true);
   protected readonly revealedKey = signal<string | null>(null);
   protected readonly copied = signal(false);
   protected readonly busy = signal(false);
@@ -70,7 +72,7 @@ export class SyncPanel {
   }
 
   protected async confirmCreate(): Promise<void> {
-    await this.run(() => this.sync.turnOn(this.newKey()));
+    await this.run(() => this.sync.turnOn(this.newKey(), this.rememberKey()));
   }
 
   protected async confirmJoin(): Promise<void> {
@@ -78,7 +80,19 @@ export class SyncPanel {
       this.error.set('Enter the sync key from your other device.');
       return;
     }
-    await this.run(() => this.sync.join(this.joinKey.value));
+    await this.run(() => this.sync.join(this.joinKey.value, this.rememberKey()));
+  }
+
+  protected async unlock(): Promise<void> {
+    if (!this.joinKey.value.trim()) {
+      this.error.set('Enter your sync key.');
+      return;
+    }
+    await this.run(() => this.sync.unlock(this.joinKey.value));
+  }
+
+  protected async leaveWithoutKey(): Promise<void> {
+    await this.sync.leaveWithoutKey();
   }
 
   protected async syncNow(): Promise<void> {
@@ -132,6 +146,7 @@ export class SyncPanel {
   private reset(): void {
     this.newKey.set('');
     this.keySaved.set(false);
+    this.rememberKey.set(true);
     this.revealedKey.set(null);
     this.copied.set(false);
     this.error.set(null);

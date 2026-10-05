@@ -9,7 +9,37 @@
     <tc-alert (dismissed)="error.set(null)">{{ message }}</tc-alert>
   }
 
-  @if (sync.enabled()) {
+  @if (sync.status() === 'locked') {
+    <p class="explain">
+      Sync is set up on this device, but it doesn't store your sync key. Enter the key to continue
+      syncing. Your local data is unchanged.
+    </p>
+    <tc-field label="Sync key" controlId="sync-unlock-key">
+      <input
+        id="sync-unlock-key"
+        class="key-input"
+        [formControl]="joinKey"
+        autocomplete="off"
+        autocapitalize="characters"
+        spellcheck="false"
+        placeholder="XXXX-XXXX-XXXX-XXXX-XXXX-XXXX-XXXX-XXXX"
+        (keydown.enter)="unlock()"
+      />
+    </tc-field>
+    <div class="actions">
+      <button tc-button variant="primary" type="button" [disabled]="busy()" (click)="unlock()">
+        {{ busy() ? 'Unlocking…' : 'Continue syncing' }}
+      </button>
+      <button
+        tc-confirm-button
+        confirmLabel="Stop syncing here?"
+        [disabled]="busy()"
+        (confirmed)="leaveWithoutKey()"
+      >
+        Stop syncing on this device
+      </button>
+    </div>
+  } @else if (sync.enabled()) {
     <p class="explain">
       Your portfolio is encrypted on this device and synced to an encrypted copy in the EU. Open
       Trade Count with your sync key on another device to continue there.
@@ -52,6 +82,11 @@
       <button tc-button variant="quiet" type="button" (click)="toggleKey()">
         {{ revealedKey() ? 'Hide key' : 'Show my key' }}
       </button>
+      @if (sync.keyStored()) {
+        <button tc-button variant="quiet" type="button" (click)="sync.forgetStoredKey()">
+          Forget key on this device
+        </button>
+      }
       <button
         tc-confirm-button
         confirmLabel="Delete synced copy?"
@@ -104,6 +139,17 @@
             this site, can recover the synced data.
           </span>
         </label>
+        <label class="confirm-row">
+          <input
+            type="checkbox"
+            [checked]="rememberKey()"
+            (change)="rememberKey.set($any($event.target).checked)"
+          />
+          <span>
+            Remember the key on this device. Untick on a shared computer: you will then enter the key
+            again after each restart.
+          </span>
+        </label>
         <div class="actions">
           <button
             tc-button
@@ -138,6 +184,17 @@
             (keydown.enter)="confirmJoin()"
           />
         </tc-field>
+        <label class="confirm-row">
+          <input
+            type="checkbox"
+            [checked]="rememberKey()"
+            (change)="rememberKey.set($any($event.target).checked)"
+          />
+          <span>
+            Remember the key on this device. Untick on a shared computer: you will then enter the key
+            again after each restart.
+          </span>
+        </label>
         <div class="actions">
           <button
             tc-button

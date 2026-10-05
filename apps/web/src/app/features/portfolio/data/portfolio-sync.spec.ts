@@ -46,6 +46,9 @@ class FakeDb {
         this.syncKeyValue = args[0] as string | null;
         if (args[0] === null) this.establishedVault = null;
         return undefined;
+      case 'forgetStoredSyncKey':
+        this.syncKeyValue = null;
+        return undefined;
       case 'setClockOffset':
         this.clockOffset = args[0] as number;
         return undefined;
@@ -327,6 +330,69 @@ describe('PortfolioSync', () => {
 
       expect(api.state?.version).toBe(1);
       expect(sync.notice()).toBeNull();
+    });
+  });
+
+  describe('when the key is not stored on this device', () => {
+    it('syncs without writing the key to the database, and keeps which vault it synced with', async () => {
+      const key = await sync.newKey();
+
+      const result = await sync.turnOn(key, false);
+
+      expect(result).toEqual({ ok: true });
+      expect(db.syncKeyValue).toBeNull();
+      expect(sync.keyStored()).toBe(false);
+      expect(db.establishedVault).toBe((await deriveCredentials(key)).vaultId);
+    });
+
+    it('waits for the key after a restart instead of syncing, then resumes with it', async () => {
+      const key = await sync.newKey();
+      await sync.turnOn(key, false);
+      const versionBefore = api.state!.version;
+
+      sync.status.set('off');
+      await sync.start();
+
+      expect(sync.status()).toBe('locked');
+      expect(sync.enabled()).toBe(false);
+      expect(api.state!.version).toBe(versionBefore);
+
+      expect(await sync.unlock(key)).toEqual({ ok: true });
+      expect(sync.status()).toBe('idle');
+    });
+
+    it('refuses a key that belongs to a different synced copy and stays locked', async () => {
+      await sync.turnOn(await sync.newKey(), false);
+      sync.status.set('off');
+      await sync.start();
+
+      const result = await sync.unlock(await generateSyncKey());
+
+      expect(result.ok).toBe(false);
+      expect(sync.status()).toBe('locked');
+    });
+
+    it('stops syncing on this device without touching the synced copy', async () => {
+      await sync.turnOn(await sync.newKey(), false);
+      sync.status.set('off');
+      await sync.start();
+
+      await sync.leaveWithoutKey();
+
+      expect(sync.status()).toBe('off');
+      expect(db.establishedVault).toBeNull();
+      expect(api.deleted).toBe(false);
+      expect(api.state).not.toBeNull();
+    });
+
+    it('can forget a stored key while syncing continues until the app closes', async () => {
+      await sync.turnOn(await sync.newKey());
+
+      await sync.forgetStoredKey();
+
+      expect(db.syncKeyValue).toBeNull();
+      expect(sync.keyStored()).toBe(false);
+      expect(sync.enabled()).toBe(true);
     });
   });
 

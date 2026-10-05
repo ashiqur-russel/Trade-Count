@@ -64,6 +64,13 @@ function english(o: Operator): LegalDocument {
           {
             type: 'p',
             text:
+              'This data, and your sync key if you chose to remember it, is stored unencrypted on your device, like any ' +
+              'other site data. Anyone who can use your browser profile or your device account could read it. Use a device ' +
+              'lock, and untick “Remember the key on this device” when turning on sync on a shared computer.',
+          },
+          {
+            type: 'p',
+            text:
               'This storage is necessary to provide the app you asked for (§ 25(2) no. 2 TDDDG). You can delete it at any time ' +
               'by clearing this site’s data in your browser or removing the installed app. Without a backup or sync, deleted ' +
               'data cannot be recovered.',
@@ -219,6 +226,14 @@ function german(o: Operator): LegalDocument {
               'Dateisystem des Browsers für diese Seite). Zusätzlich speichert die App Ihr Farbschema und ob Sie den ' +
               'Installationshinweis geschlossen haben, und sie legt ihre eigenen Dateien im Zwischenspeicher ab, damit sie ' +
               'offline funktioniert. All das bleibt auf Ihrem Gerät. Wir können es nicht lesen und erhalten es nicht.',
+          },
+          {
+            type: 'p',
+            text:
+              'Diese Daten, und Ihr Synchronisierungsschlüssel, falls Sie sich für das Merken entschieden haben, liegen ' +
+              'unverschlüsselt auf Ihrem Gerät, wie andere Website-Daten auch. Wer Ihr Browserprofil oder Ihr Gerätekonto ' +
+              'nutzen kann, könnte sie lesen. Nutzen Sie eine Gerätesperre und entfernen Sie auf einem gemeinsam genutzten ' +
+              'Computer beim Einschalten der Synchronisierung das Häkchen bei „Schlüssel auf diesem Gerät merken“.',
           },
           {
             type: 'p',
