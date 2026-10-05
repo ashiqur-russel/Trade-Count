@@ -16,7 +16,25 @@ describe('migrate', () => {
     migrate(db);
 
     expect(Number(db.selectValue('PRAGMA user_version'))).toBe(SCHEMA_VERSION);
-    expect(db.selectValues("SELECT name FROM sqlite_master WHERE type = 'table' ORDER BY name")).toEqual(['stocks', 'trades']);
+    expect(db.selectValues("SELECT name FROM sqlite_master WHERE type = 'table' ORDER BY name")).toEqual(['app_meta', 'stocks', 'trades']);
+  });
+
+  it('upgrades a version 1 database to the current schema without losing data', () => {
+    db.exec(`
+      CREATE TABLE stocks (id TEXT PRIMARY KEY NOT NULL, name TEXT NOT NULL, name_key TEXT NOT NULL UNIQUE,
+        symbol TEXT, created_at TEXT NOT NULL, updated_at TEXT NOT NULL) STRICT;
+      CREATE TABLE trades (id TEXT PRIMARY KEY NOT NULL, stock_id TEXT NOT NULL REFERENCES stocks (id),
+        side TEXT NOT NULL, quantity TEXT NOT NULL, price TEXT NOT NULL, traded_on TEXT NOT NULL,
+        created_at TEXT NOT NULL, updated_at TEXT NOT NULL) STRICT;
+      INSERT INTO stocks VALUES ('s1', 'Acme', 'acme', NULL, 'x', 'x');
+      PRAGMA user_version = 1;
+    `);
+
+    migrate(db);
+
+    expect(Number(db.selectValue('PRAGMA user_version'))).toBe(SCHEMA_VERSION);
+    expect(db.selectValue('SELECT name FROM stocks')).toBe('Acme');
+    expect(db.selectValue('SELECT count(*) FROM app_meta')).toBe(0);
   });
 
   it('refuses a file saved by a newer app version', () => {

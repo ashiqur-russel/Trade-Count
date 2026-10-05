@@ -1,3 +1,11 @@
+export {
+  BACKUP_FORMAT,
+  BACKUP_VERSION,
+  backupFileName,
+  createBackup,
+  parseBackup,
+  type PortfolioBackup,
+} from './backup.js';
 export { PRICE_LIMITS, QUANTITY_LIMITS, canonicalDecimal, type DecimalLimits } from './decimal-text.js';
 export { PortfolioDatabase, type PortfolioDatabaseOptions } from './portfolio-database.js';
 export { SCHEMA_VERSION, migrate } from './schema.js';

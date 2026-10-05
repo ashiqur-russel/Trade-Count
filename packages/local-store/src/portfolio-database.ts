@@ -8,7 +8,8 @@ import {
   type TradeChange,
   type TradeSide,
 } from '@trade-count/ledger';
-import { PRICE_LIMITS, QUANTITY_LIMITS, canonicalDecimal } from './decimal-text.js';
+import { createBackup, parseBackup, type PortfolioBackup } from './backup.js';
+import { validName, validSymbol, validTradeFields } from './record-validation.js';
 import { migrate } from './schema.js';
 import { StoreError } from './store-error.js';
 import type { NewStock, NewTrade, StockChanges, TradeChanges } from './store-inputs.js';
@@ -23,8 +24,6 @@ export interface PortfolioDatabaseOptions {
 type Row = Record<string, SqlValue>;
 
 const TRADE_COLUMNS = 'id, stock_id, side, quantity, price, traded_on, created_at';
-const SYMBOL_PATTERN = /^[A-Z0-9.-]{1,12}$/;
-const DATE_PATTERN = /^\d{4}-\d{2}-\d{2}$/;
 const DRAFT_ID = 'draft';
 
 /**
@@ -146,6 +145,49 @@ export class PortfolioDatabase {
     });
   }
 
+  /** A full copy of the data; also remembered as the latest backup. */
+  exportBackup(): PortfolioBackup {
+    const backup = createBackup(this.getPortfolio(), this.now());
+    this.setMeta('last_backup_at', backup.exportedAt);
+    return backup;
+  }
+
+  /** When the data was last exported or restored, or null if never. */
+  lastBackupAt(): string | null {
+    const value = this.db.selectValue("SELECT value FROM app_meta WHERE key = 'last_backup_at'");
+    return typeof value === 'string' ? value : null;
+  }
+
+  /** Replaces everything with a backup in one transaction: on any failure the current data stays. */
+  restoreBackup(input: unknown): Portfolio {
+    const backup = parseBackup(input);
+    this.db.transaction('IMMEDIATE', () => {
+      this.db.exec('DELETE FROM trades');
+      this.db.exec('DELETE FROM stocks');
+      const at = this.now().toISOString();
+      for (const stock of backup.stocks) {
+        this.db.exec(
+          'INSERT INTO stocks (id, name, name_key, symbol, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?)',
+          { bind: [stock.id, stock.name, nameKey(stock.name), stock.symbol, at, at] },
+        );
+      }
+      for (const trade of backup.trades) {
+        this.db.exec(`INSERT INTO trades (${TRADE_COLUMNS}, updated_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?)`, {
+          bind: [trade.id, trade.stockId, trade.side, trade.quantity, trade.price, trade.tradedOn, trade.createdAt, at],
+        });
+      }
+      this.setMeta('last_backup_at', backup.exportedAt);
+    });
+    this.lastCreatedAt = Math.max(0, ...backup.trades.map((t) => Date.parse(t.createdAt)));
+    return this.getPortfolio();
+  }
+
+  private setMeta(key: string, value: string): void {
+    this.db.exec('INSERT INTO app_meta (key, value) VALUES (?, ?) ON CONFLICT (key) DO UPDATE SET value = excluded.value', {
+      bind: [key, value],
+    });
+  }
+
   private findStock(id: string): Stock {
     const row = this.db.selectObject('SELECT id, name, symbol FROM stocks WHERE id = ?', [id]);
     if (!row) throw new StoreError('NOT_FOUND', 'Stock not found.');
@@ -205,38 +247,6 @@ function toTrade(row: Row): Trade {
 
 function nameKey(name: string): string {
   return name.normalize('NFC').toLowerCase();
-}
-
-function validName(value: unknown): string {
-  const name = typeof value === 'string' ? value.trim() : '';
-  if (name.length < 1 || name.length > 60) throw new StoreError('INVALID', "Enter the stock's name (up to 60 characters).");
-  return name;
-}
-
-function validSymbol(value: unknown): string | null {
-  if (value === null || value === undefined) return null;
-  const symbol = typeof value === 'string' ? value.trim().toUpperCase() : '';
-  if (symbol === '') return null;
-  if (!SYMBOL_PATTERN.test(symbol)) {
-    throw new StoreError('INVALID', 'Symbols use letters, digits, dots and dashes, up to 12 characters.');
-  }
-  return symbol;
-}
-
-function validTradeFields(input: NewTrade): NewTrade {
-  if (typeof input.stockId !== 'string' || input.stockId === '') throw new StoreError('INVALID', 'Choose a stock.');
-  if (input.side !== 'buy' && input.side !== 'sell') throw new StoreError('INVALID', 'Choose buy or sell.');
-  const quantity = canonicalDecimal(input.quantity, QUANTITY_LIMITS);
-  if (!quantity) throw new StoreError('INVALID', 'Enter a quantity above 0, with up to 6 decimals.');
-  const price = canonicalDecimal(input.price, PRICE_LIMITS);
-  if (!price) throw new StoreError('INVALID', 'Enter a price above 0, with up to 4 decimals.');
-  if (!isCalendarDate(input.tradedOn)) throw new StoreError('INVALID', 'Enter a date like 2026-10-05.');
-  return { stockId: input.stockId, side: input.side, quantity, price, tradedOn: input.tradedOn };
-}
-
-function isCalendarDate(value: unknown): value is string {
-  return typeof value === 'string' && DATE_PATTERN.test(value) && !Number.isNaN(Date.parse(value)) &&
-    new Date(`${value}T00:00:00Z`).toISOString().startsWith(value);
 }
 
 function definedOnly<T extends object>(changes: T): Partial<T> {

@@ -25,10 +25,13 @@
         [preferredStockId]="filter().stockId"
         (finished)="editingTrade.set(null)"
       />
-      <tc-stocks-panel
-        [selectedStockId]="filter().stockId"
-        (selectedStockIdChange)="selectStock($event)"
-      />
+      <div class="column">
+        <tc-stocks-panel
+          [selectedStockId]="filter().stockId"
+          (selectedStockIdChange)="selectStock($event)"
+        />
+        <tc-backup-panel />
+      </div>
     </div>
 
     <tc-ledger-panel

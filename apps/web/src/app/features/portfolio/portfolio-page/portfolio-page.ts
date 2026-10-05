@@ -8,6 +8,7 @@ import {
 } from '@angular/core';
 import type { Trade } from '@trade-count/ledger';
 import { Alert, Button, EmptyState, Panel } from '../../../shared/ui';
+import { BackupPanel } from '../components/backup-panel/backup-panel';
 import { LedgerPanel } from '../components/ledger-panel/ledger-panel';
 import { PortfolioSummary } from '../components/portfolio-summary/portfolio-summary';
 import { StocksPanel } from '../components/stocks-panel/stocks-panel';
@@ -27,6 +28,7 @@ import { PortfolioStore } from '../data/portfolio-store';
     TradeForm,
     StocksPanel,
     LedgerPanel,
+    BackupPanel,
   ],
   providers: [PortfolioDb, PortfolioStore],
   templateUrl: './portfolio-page.html',

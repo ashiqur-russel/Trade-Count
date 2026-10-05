@@ -9,7 +9,13 @@ import {
   type Trade,
   type TradeChange,
 } from '@trade-count/ledger';
-import type { NewStock, NewTrade, StockChanges, TradeChanges } from '@trade-count/local-store';
+import type {
+  NewStock,
+  NewTrade,
+  PortfolioBackup,
+  StockChanges,
+  TradeChanges,
+} from '@trade-count/local-store';
 import { PersistentStorage } from '../../../core/storage/persistent-storage';
 import { formatIsoDate } from '../../../shared/dates/iso-date';
 import { PortfolioDb, PortfolioDbError } from './portfolio-db';
@@ -39,6 +45,8 @@ export class PortfolioStore {
 
   readonly loadStatus = signal<LoadStatus>('loading');
   readonly loadError = signal<string | null>(null);
+  /** ISO time of the last export or restore; null if this device was never backed up. */
+  readonly lastBackupAt = signal<string | null>(null);
   /** Failures from actions that have no form of their own to show them (table deletes). */
   readonly notice = signal<string | null>(null);
 
@@ -57,9 +65,13 @@ export class PortfolioStore {
   async load(): Promise<void> {
     this.loadStatus.set('loading');
     try {
-      const portfolio = await this.db.call('getPortfolio');
+      const [portfolio, lastBackupAt] = await Promise.all([
+        this.db.call('getPortfolio'),
+        this.db.call('lastBackupAt'),
+      ]);
       this.stockList.set(portfolio.stocks);
       this.tradeList.set(portfolio.trades);
+      this.lastBackupAt.set(lastBackupAt);
       this.loadStatus.set('ready');
     } catch (error) {
       this.loadError.set(failureMessage(error));
@@ -135,6 +147,31 @@ export class PortfolioStore {
     const oversell = this.findOversellMessage({ type: 'remove', tradeId: id }, id);
     if (oversell) return Promise.resolve({ ok: false, message: oversell });
     return this.remove(this.tradeList, id, () => this.db.call('deleteTrade', id));
+  }
+
+  async exportBackup(): Promise<
+    { ok: true; backup: PortfolioBackup } | { ok: false; message: string }
+  > {
+    try {
+      const backup = await this.db.call('exportBackup');
+      this.lastBackupAt.set(backup.exportedAt);
+      return { ok: true, backup };
+    } catch (error) {
+      return { ok: false, message: failureMessage(error) };
+    }
+  }
+
+  async restoreBackup(backup: PortfolioBackup): Promise<MutationResult> {
+    try {
+      const portfolio = await this.db.call('restoreBackup', backup);
+      this.stockList.set(portfolio.stocks);
+      this.tradeList.set(portfolio.trades);
+      this.lastBackupAt.set(backup.exportedAt);
+      void this.persistentStorage.request();
+      return { ok: true };
+    } catch (error) {
+      return { ok: false, message: failureMessage(error) };
+    }
   }
 
   private async create<T extends Identified>(

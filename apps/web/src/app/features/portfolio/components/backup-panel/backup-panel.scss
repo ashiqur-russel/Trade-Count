@@ -1,0 +1,32 @@
+.explain {
+  color: var(--tc-color-text-muted);
+  font-size: var(--tc-text-sm);
+}
+
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--tc-space-2);
+}
+
+.confirm {
+  display: grid;
+  gap: var(--tc-space-3);
+  padding: var(--tc-space-3);
+  border: var(--tc-rule-width) solid var(--tc-color-loss);
+  border-radius: var(--tc-radius-sm);
+  background: var(--tc-color-loss-subtle);
+  font-size: var(--tc-text-sm);
+}
+
+.message {
+  font-size: var(--tc-text-sm);
+}
+
+.message[data-tone='gain'] {
+  color: var(--tc-color-gain);
+}
+
+.message[data-tone='loss'] {
+  color: var(--tc-color-loss);
+}

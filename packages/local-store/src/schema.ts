@@ -25,6 +25,12 @@ const MIGRATIONS: readonly string[] = [
 
   CREATE INDEX trades_fifo_order ON trades (stock_id, traded_on, created_at);
   `,
+  `
+  CREATE TABLE app_meta (
+    key TEXT PRIMARY KEY NOT NULL,
+    value TEXT NOT NULL
+  ) STRICT;
+  `,
 ];
 
 export const SCHEMA_VERSION = MIGRATIONS.length;

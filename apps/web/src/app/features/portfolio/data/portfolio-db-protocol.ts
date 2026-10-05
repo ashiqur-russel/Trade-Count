@@ -2,6 +2,7 @@ import type { Portfolio, Stock, Trade } from '@trade-count/ledger';
 import type {
   NewStock,
   NewTrade,
+  PortfolioBackup,
   StockChanges,
   StoreFailure,
   TradeChanges,
@@ -16,6 +17,10 @@ export interface PortfolioDbMethods {
   createTrade(input: NewTrade): Trade;
   updateTrade(id: string, changes: TradeChanges): Trade;
   deleteTrade(id: string): void;
+  exportBackup(): PortfolioBackup;
+  lastBackupAt(): string | null;
+  /** Takes the parsed file as-is; the worker validates it again before replacing anything. */
+  restoreBackup(input: unknown): Portfolio;
 }
 
 export type PortfolioDbMethod = keyof PortfolioDbMethods;

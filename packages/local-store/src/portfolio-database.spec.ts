@@ -138,6 +138,49 @@ describe('PortfolioDatabase', () => {
     });
   });
 
+  describe('backups', () => {
+    it('round-trips everything through a backup and remembers when it was taken', () => {
+      const at = new Date('2026-10-05T12:00:00.000Z');
+      const source = new PortfolioDatabase(sqlite, { now: () => at });
+      const acme = source.createStock({ name: 'Acme', symbol: 'ACM' });
+      source.createTrade({ stockId: acme.id, side: 'buy', quantity: '3', price: '10.5', tradedOn: '2026-10-01' });
+      source.createTrade({ stockId: acme.id, side: 'sell', quantity: '1', price: '12', tradedOn: '2026-10-02' });
+
+      expect(source.lastBackupAt()).toBeNull();
+      const backup = JSON.parse(JSON.stringify(source.exportBackup()));
+      expect(source.lastBackupAt()).toBe('2026-10-05T12:00:00.000Z');
+
+      const target = openMemoryDatabase();
+      const restored = new PortfolioDatabase(target).restoreBackup(backup);
+      expect(restored).toEqual(source.getPortfolio());
+      expect(new PortfolioDatabase(target).lastBackupAt()).toBe('2026-10-05T12:00:00.000Z');
+      target.close();
+    });
+
+    it('replaces existing data and keeps working with the restored trades', () => {
+      const old = store.createStock({ name: 'Old' });
+      store.createTrade({ stockId: old.id, side: 'buy', quantity: '1', price: '1', tradedOn: '2026-01-01' });
+
+      store.restoreBackup({
+        format: 'trade-count-backup',
+        version: 1,
+        exportedAt: '2026-10-05T12:00:00.000Z',
+        stocks: [{ id: 's1', name: 'Acme', symbol: null }],
+        trades: [{ id: 't1', stockId: 's1', side: 'buy', quantity: '2', price: '5', tradedOn: '2026-10-01', createdAt: '2026-10-01T09:00:00.000Z' }],
+      });
+
+      expect(store.getPortfolio().stocks.map((s) => s.name)).toEqual(['Acme']);
+      expect(failure(() => store.createTrade({ stockId: 's1', side: 'sell', quantity: '3', price: '6', tradedOn: '2026-10-02' })).code).toBe('CONFLICT');
+    });
+
+    it('leaves current data untouched when a backup is rejected', () => {
+      const acme = store.createStock({ name: 'Acme' });
+
+      expect(failure(() => store.restoreBackup({ format: 'something-else' })).code).toBe('INVALID');
+      expect(store.getPortfolio().stocks).toEqual([acme]);
+    });
+  });
+
   it('keeps data when the database is reopened', () => {
     const stock = store.createStock({ name: 'Acme' });
     store.createTrade({ stockId: stock.id, side: 'buy', quantity: '2', price: '10', tradedOn: '2026-10-01' });

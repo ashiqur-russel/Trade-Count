@@ -1,5 +1,6 @@
 import { TestBed } from '@angular/core/testing';
 import type { Portfolio, Trade } from '@trade-count/ledger';
+import type { PortfolioBackup } from '@trade-count/local-store';
 import { PersistentStorage } from '../../../core/storage/persistent-storage';
 import { PortfolioDb, PortfolioDbError } from './portfolio-db';
 import type { PortfolioDbMethod } from './portfolio-db-protocol';
@@ -38,6 +39,14 @@ class FakeDb {
   last() {
     return this.calls.at(-1)!;
   }
+
+  /** Settles the oldest waiting call of a method. */
+  answer(method: PortfolioDbMethod, outcome: unknown): void {
+    const index = this.calls.findIndex((c) => c.method === method);
+    if (index === -1) throw new Error(`No pending ${method} call`);
+    const [call] = this.calls.splice(index, 1);
+    call.settle(outcome);
+  }
 }
 
 describe('PortfolioStore', () => {
@@ -45,9 +54,10 @@ describe('PortfolioStore', () => {
   let db: FakeDb;
   let persistRequests: number;
 
-  async function loadWith(portfolio: Portfolio): Promise<void> {
+  async function loadWith(portfolio: Portfolio, lastBackupAt: string | null = null): Promise<void> {
     const loading = store.load();
-    db.last().settle(portfolio);
+    db.answer('getPortfolio', portfolio);
+    db.answer('lastBackupAt', lastBackupAt);
     await loading;
   }
 
@@ -175,5 +185,46 @@ describe('PortfolioStore', () => {
       message: 'ACME is already in your list.',
     });
     expect(db.calls.length).toBe(callsBefore);
+  });
+
+  it('loads when the device was last backed up', async () => {
+    await loadWith({ stocks: [acme], trades: [buy] }, '2026-10-01T08:00:00.000Z');
+
+    expect(store.lastBackupAt()).toBe('2026-10-01T08:00:00.000Z');
+  });
+
+  it('records the export time when a backup is exported', async () => {
+    await loadWith({ stocks: [acme], trades: [buy] });
+
+    const exporting = store.exportBackup();
+    const backup: PortfolioBackup = {
+      format: 'trade-count-backup',
+      version: 1,
+      exportedAt: '2026-10-05T12:00:00.000Z',
+      stocks: [acme],
+      trades: [buy],
+    };
+    db.answer('exportBackup', backup);
+
+    expect(await exporting).toEqual({ ok: true, backup });
+    expect(store.lastBackupAt()).toBe('2026-10-05T12:00:00.000Z');
+  });
+
+  it('shows the restored data after a backup is imported', async () => {
+    await loadWith({ stocks: [], trades: [] });
+    const backup: PortfolioBackup = {
+      format: 'trade-count-backup',
+      version: 1,
+      exportedAt: '2026-10-05T12:00:00.000Z',
+      stocks: [acme],
+      trades: [buy],
+    };
+
+    const restoring = store.restoreBackup(backup);
+    db.answer('restoreBackup', { stocks: [acme], trades: [buy] });
+
+    expect(await restoring).toEqual({ ok: true });
+    expect(store.totals().held.toString()).toBe('3');
+    expect(store.lastBackupAt()).toBe('2026-10-05T12:00:00.000Z');
   });
 });
