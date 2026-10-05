@@ -1,10 +1,11 @@
 import { ChangeDetectionStrategy, Component, DOCUMENT, inject } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
-import { NavigationEnd, Router, RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
+import { NavigationEnd, Router, RouterLink, RouterOutlet } from '@angular/router';
 import { filter, map } from 'rxjs';
 // Direct imports keep the rest of shared/ui (CDK overlays, forms) out of the initial bundle.
 import { BrandMark } from './shared/ui/brand-mark/brand-mark';
 import { Backdrop } from './shell/backdrop';
+import { SettingsLink } from './shell/settings-link';
 import { SiteFooter } from './shell/site-footer';
 import { InstallHint } from './shell/install-hint';
 import { UpdateBanner } from './shell/update-banner';
@@ -14,12 +15,12 @@ import { UpdateBanner } from './shell/update-banner';
   imports: [
     RouterOutlet,
     RouterLink,
-    RouterLinkActive,
     Backdrop,
     BrandMark,
     UpdateBanner,
     InstallHint,
     SiteFooter,
+    SettingsLink,
   ],
   templateUrl: './app.html',
   styleUrl: './app.scss',
@@ -34,5 +35,4 @@ export class App {
     ),
     { initialValue: inject(DOCUMENT).location.pathname === '/' },
   );
-  protected readonly today = new Intl.DateTimeFormat('de-DE').format(new Date());
 }

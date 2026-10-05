@@ -1,45 +1,24 @@
 <tc-backdrop />
+<header class="bar">
+  <a class="brand" routerLink="/">
+    <tc-brand-mark class="brand-mark" />
+    <span>Trade Count</span>
+  </a>
+  <tc-settings-link />
+</header>
 @if (isHome()) {
-  <header class="masthead">
-    <div class="meta">
-      <span>FIFO ledger</span>
-      <span>Private by design</span>
-      <span>{{ today }}</span>
-    </div>
-    <h1 class="wordmark"><tc-brand-mark class="mark" /><span>Trade Count</span></h1>
-    <div class="meta tagline">
-      <div class="intro">
-        <p>
-          Every sale is matched against your oldest open buys first (FIFO) to work out your profit
-          and loss.
-        </p>
-        <p class="privacy">
-          Your trades are saved in this browser on this device. Nothing leaves it unless you turn on
-          sync, and then only an encrypted copy does. No one else, including the people who run this
-          site, can read it.
-        </p>
-      </div>
-      <div class="tools">
-        <a class="settings-link" routerLink="/settings">Settings</a>
-      </div>
-    </div>
-  </header>
-} @else {
-  <header class="bar">
-    <a class="brand" routerLink="/" aria-label="Trade Count, back to your portfolio">
-      <tc-brand-mark class="brand-mark" />
-      <span>Trade Count</span>
-    </a>
-    <div class="tools">
-      <a
-        class="settings-link"
-        routerLink="/settings"
-        routerLinkActive="active"
-        ariaCurrentWhenActive="page"
-        >Settings</a
-      >
-    </div>
-  </header>
+  <section class="banner" aria-labelledby="app-title">
+    <h1 id="app-title" class="tc-visually-hidden">Trade Count</h1>
+    <p class="lead">
+      Every sale is matched against your oldest open buys first (FIFO) to work out your profit and
+      loss.
+    </p>
+    <p class="privacy">
+      Your trades are saved in this browser on this device. Nothing leaves it unless you turn on
+      sync, and then only an encrypted copy does. No one else, including the people who run this
+      site, can read it.
+    </p>
+  </section>
 }
 <main>
   <tc-update-banner />
