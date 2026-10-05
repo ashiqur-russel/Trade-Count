@@ -1,16 +1,29 @@
-import { ChangeDetectionStrategy, Component } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { RouterLink } from '@angular/router';
+import type { ThemePreference } from '../../../core/theme/theme';
+import { ThemeService } from '../../../core/theme/theme.service';
+import { Panel, SegmentedControl, type SegmentOption } from '../../../shared/ui';
 import { DataPanel } from '../components/data-panel/data-panel';
 
 @Component({
   selector: 'tc-settings-page',
-  imports: [RouterLink, DataPanel],
+  imports: [RouterLink, DataPanel, Panel, SegmentedControl],
   template: `
     <header class="head">
       <a class="back" routerLink="/">← Back to your portfolio</a>
       <h1>Settings</h1>
     </header>
     <tc-data-panel />
+    <tc-panel heading="Appearance">
+      <div class="option">
+        <p class="explain">Auto follows your device's light or dark mode.</p>
+        <tc-segmented-control
+          label="Colour theme"
+          [options]="themeOptions"
+          [(value)]="theme.preference"
+        />
+      </div>
+    </tc-panel>
   `,
   styles: `
     :host {
@@ -40,7 +53,27 @@ import { DataPanel } from '../components/data-panel/data-panel';
       font-size: var(--tc-text-xl);
       line-height: 1.1;
     }
+
+    .option {
+      display: flex;
+      flex-wrap: wrap;
+      gap: var(--tc-space-3);
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .explain {
+      color: var(--tc-color-text-muted);
+      font-size: var(--tc-text-sm);
+    }
   `,
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class SettingsPage {}
+export class SettingsPage {
+  protected readonly theme = inject(ThemeService);
+  protected readonly themeOptions: readonly SegmentOption<ThemePreference>[] = [
+    { value: 'system', label: 'Auto' },
+    { value: 'light', label: 'Light' },
+    { value: 'dark', label: 'Dark' },
+  ];
+}

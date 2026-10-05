@@ -2,14 +2,8 @@ import { ChangeDetectionStrategy, Component, DOCUMENT, inject } from '@angular/c
 import { toSignal } from '@angular/core/rxjs-interop';
 import { NavigationEnd, Router, RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
 import { filter, map } from 'rxjs';
-import type { ThemePreference } from './core/theme/theme';
-import { ThemeService } from './core/theme/theme.service';
 // Direct imports keep the rest of shared/ui (CDK overlays, forms) out of the initial bundle.
 import { BrandMark } from './shared/ui/brand-mark/brand-mark';
-import {
-  SegmentedControl,
-  type SegmentOption,
-} from './shared/ui/segmented-control/segmented-control';
 import { Backdrop } from './shell/backdrop';
 import { SiteFooter } from './shell/site-footer';
 import { InstallHint } from './shell/install-hint';
@@ -23,7 +17,6 @@ import { UpdateBanner } from './shell/update-banner';
     RouterLinkActive,
     Backdrop,
     BrandMark,
-    SegmentedControl,
     UpdateBanner,
     InstallHint,
     SiteFooter,
@@ -33,12 +26,6 @@ import { UpdateBanner } from './shell/update-banner';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class App {
-  protected readonly theme = inject(ThemeService);
-  protected readonly themeOptions: readonly SegmentOption<ThemePreference>[] = [
-    { value: 'system', label: 'Auto' },
-    { value: 'light', label: 'Light' },
-    { value: 'dark', label: 'Dark' },
-  ];
   /** The big masthead introduces the app; other pages (legal texts) get a slim bar instead. */
   protected readonly isHome = toSignal(
     inject(Router).events.pipe(

@@ -21,11 +21,6 @@
       </div>
       <div class="tools">
         <a class="settings-link" routerLink="/settings">Settings</a>
-        <tc-segmented-control
-          label="Colour theme"
-          [options]="themeOptions"
-          [(value)]="theme.preference"
-        />
       </div>
     </div>
   </header>
@@ -43,11 +38,6 @@
         ariaCurrentWhenActive="page"
         >Settings</a
       >
-      <tc-segmented-control
-        label="Colour theme"
-        [options]="themeOptions"
-        [(value)]="theme.preference"
-      />
     </div>
   </header>
 }
