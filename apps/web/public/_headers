@@ -13,3 +13,14 @@
 # Fonts and the SQLite engine have content hashes in their names, so they never change in place.
 /media/*
   Cache-Control: public, max-age=31536000, immutable
+
+# Build output named by content hash never changes in place. Without this, WebKit revalidates the database
+# worker on reload, gets a 304 and Angular's service worker fails the request, so the database never starts.
+/main-*.js
+  Cache-Control: public, max-age=31536000, immutable
+/chunk-*.js
+  Cache-Control: public, max-age=31536000, immutable
+/worker-*.js
+  Cache-Control: public, max-age=31536000, immutable
+/styles-*.css
+  Cache-Control: public, max-age=31536000, immutable
