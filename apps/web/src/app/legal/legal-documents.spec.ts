@@ -11,7 +11,7 @@ const operator: Operator = {
   country: 'Germany',
   email: 'hello@example.org',
 };
-const KINDS: LegalKind[] = ['imprint', 'privacy'];
+const KINDS: LegalKind[] = ['imprint', 'privacy', 'terms'];
 const LANGUAGES: LegalLanguage[] = ['en', 'de'];
 
 const texts = (doc: LegalDocument): string[] =>
@@ -93,10 +93,26 @@ describe('legal documents', () => {
     );
   });
 
+  it.each(LANGUAGES)(
+    'the terms (%s) cover backups, the sync key, liability and applicable law',
+    (language) => {
+      const text = texts(buildLegalDocument('terms', language, operator)).join(' ');
+
+      for (const topic of [
+        'backup',
+        'Sync-Schlüssel|sync key',
+        'Haftung|Liability',
+        'Anwendbares Recht|Applicable law',
+      ]) {
+        expect(text).toMatch(new RegExp(topic, 'i'));
+      }
+    },
+  );
+
   it('every legal page has its own path and name in both languages', () => {
     const paths = KINDS.flatMap((kind) => LANGUAGES.map((language) => LEGAL_PATHS[kind][language]));
 
-    expect(new Set(paths).size).toBe(4);
+    expect(new Set(paths).size).toBe(6);
     expect(legalLink('privacy', 'de')).toBe('/datenschutz');
     expect(LEGAL_NAMES.imprint).toEqual({ en: 'Imprint', de: 'Impressum' });
   });

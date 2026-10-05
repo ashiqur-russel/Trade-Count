@@ -11,6 +11,7 @@ import { LEGAL_NAMES, legalLink } from '../legal/legal-paths';
       <nav aria-label="Legal">
         <a [routerLink]="imprint">{{ imprintName }}</a>
         <a [routerLink]="privacy">{{ privacyName }}</a>
+        <a [routerLink]="terms">{{ termsName }}</a>
       </nav>
       <p>Trade Count is a calculator, not tax or investment advice.</p>
     </footer>
@@ -50,6 +51,8 @@ export class SiteFooter {
 
   protected readonly imprintName = LEGAL_NAMES.imprint[this.language];
   protected readonly privacyName = LEGAL_NAMES.privacy[this.language];
+  protected readonly termsName = LEGAL_NAMES.terms[this.language];
   protected readonly imprint = legalLink('imprint', this.language);
   protected readonly privacy = legalLink('privacy', this.language);
+  protected readonly terms = legalLink('terms', this.language);
 }

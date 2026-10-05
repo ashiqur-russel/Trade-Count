@@ -1,7 +1,7 @@
 import { formatIsoDate } from '../shared/dates/iso-date';
 
 export type LegalLanguage = 'en' | 'de';
-export type LegalKind = 'imprint' | 'privacy';
+export type LegalKind = 'imprint' | 'privacy' | 'terms';
 
 export type LegalBlock =
   | { type: 'p'; text: string }
