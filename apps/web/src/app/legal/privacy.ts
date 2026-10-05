@@ -1,7 +1,6 @@
 import { updatedLine, type LegalDocument, type LegalLanguage } from './legal-document';
+import { addressLines } from './legal-address';
 import type { Operator } from './operator';
-
-const address = (o: Operator) => [o.name, o.street, `${o.postalCode} ${o.city}`, o.country];
 
 export function privacy(operator: Operator, language: LegalLanguage): LegalDocument {
   return language === 'de' ? german(operator) : english(operator);
@@ -28,7 +27,7 @@ function english(o: Operator): LegalDocument {
       {
         heading: 'Who is responsible',
         blocks: [
-          { type: 'address', lines: address(o) },
+          { type: 'address', lines: addressLines(o, 'en') },
           { type: 'email', address: o.email },
         ],
       },
@@ -183,7 +182,7 @@ function german(o: Operator): LegalDocument {
       {
         heading: 'Verantwortlicher',
         blocks: [
-          { type: 'address', lines: address(o) },
+          { type: 'address', lines: addressLines(o, 'de') },
           { type: 'email', address: o.email },
         ],
       },

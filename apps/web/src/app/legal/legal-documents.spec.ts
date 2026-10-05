@@ -61,7 +61,7 @@ describe('legal documents', () => {
     expect(doc.title).toBe('Impressum');
     expect(address).toEqual({
       type: 'address',
-      lines: ['Erika Mustermann', 'Musterstraße 1', '10115 Berlin', 'Germany'],
+      lines: ['Erika Mustermann', 'Musterstraße 1', '10115 Berlin', 'Deutschland'],
     });
   });
 
@@ -75,6 +75,16 @@ describe('legal documents', () => {
       }
     },
   );
+
+  it('shows the country in the language of the page', () => {
+    const lastLine = (language: LegalLanguage) => {
+      const block = buildLegalDocument('imprint', language, operator).sections[0]!.blocks[0]!;
+      return block.type === 'address' ? block.lines.at(-1) : undefined;
+    };
+
+    expect(lastLine('en')).toBe('Germany');
+    expect(lastLine('de')).toBe('Deutschland');
+  });
 
   it('writes the update date the way each language reads it', () => {
     expect(buildLegalDocument('privacy', 'de', operator).updated).toBe('Stand: 05.10.2026');

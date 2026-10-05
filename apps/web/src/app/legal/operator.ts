@@ -1,6 +1,6 @@
 /**
- * Who runs this site, as shown in the Imprint and Privacy policy. Fill in every field, then deploy:
- * `npm run deploy` refuses to run while any value still says REPLACE_ME (see scripts/check-operator.mjs).
+ * Who runs this site, as shown in the Imprint and Privacy policy. `npm run deploy` refuses to run while any
+ * value still says REPLACE_ME (see scripts/check-operator.mjs).
  */
 export interface Operator {
   name: string;
@@ -12,10 +12,10 @@ export interface Operator {
 }
 
 export const OPERATOR: Operator = {
-  name: 'REPLACE_ME',
-  street: 'REPLACE_ME',
-  postalCode: 'REPLACE_ME',
-  city: 'REPLACE_ME',
+  name: 'Mohammad Ashiqur Rahman',
+  street: 'Kohelnhof Str. 4',
+  postalCode: '90443',
+  city: 'Nürnberg',
   country: 'Germany',
-  email: 'REPLACE_ME',
+  email: 'devops.tuc@gmail.com',
 };

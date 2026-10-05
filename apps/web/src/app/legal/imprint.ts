@@ -1,7 +1,6 @@
 import { updatedLine, type LegalDocument, type LegalLanguage } from './legal-document';
+import { addressLines } from './legal-address';
 import type { Operator } from './operator';
-
-const address = (o: Operator) => [o.name, o.street, `${o.postalCode} ${o.city}`, o.country];
 
 export function imprint(operator: Operator, language: LegalLanguage): LegalDocument {
   return language === 'de' ? german(operator) : english(operator);
@@ -12,7 +11,10 @@ function english(o: Operator): LegalDocument {
     title: 'Imprint',
     updated: updatedLine('en'),
     sections: [
-      { heading: 'Provider (§ 5 DDG)', blocks: [{ type: 'address', lines: address(o) }] },
+      {
+        heading: 'Provider (§ 5 DDG)',
+        blocks: [{ type: 'address', lines: addressLines(o, 'en') }],
+      },
       {
         heading: 'Contact',
         blocks: [
@@ -51,7 +53,10 @@ function german(o: Operator): LegalDocument {
     title: 'Impressum',
     updated: updatedLine('de'),
     sections: [
-      { heading: 'Angaben gemäß § 5 DDG', blocks: [{ type: 'address', lines: address(o) }] },
+      {
+        heading: 'Angaben gemäß § 5 DDG',
+        blocks: [{ type: 'address', lines: addressLines(o, 'de') }],
+      },
       {
         heading: 'Kontakt',
         blocks: [
