@@ -1,7 +1,9 @@
 import { isVaultEnvelope } from '@trade-count/sync-crypto';
+import { networkKeys } from './client-network.js';
 import { constantTimeEqual, sha256Hex } from './hashing.js';
 import {
   AUTH_TOKEN_PATTERN,
+  MAX_BODY_BYTES,
   MAX_ENVELOPE_BYTES,
   VAULT_ID_PATTERN,
   type ApiError,
@@ -14,14 +16,23 @@ import type { RateLimiter, VaultRecord, VaultStore } from './vault-store.js';
 
 export interface VaultApiDeps {
   store: VaultStore;
-  rateLimiter: RateLimiter;
+  /** Counts every request in memory: costs no database write, but only sees one server instance. */
+  requestLimiter: RateLimiter;
+  /** Durable counts shared by all instances; used only where the request writes to the database anyway. */
+  writeLimiter: RateLimiter;
   /** Secret that salts rate-limit keys, so stored keys can't be reversed into IP addresses. */
   rateLimitSalt: string;
   now?: () => Date;
 }
 
-/** Requests allowed per client per hour: plenty for syncing, little room for abuse. */
-export const LIMITS = { requestsPerHour: 600, createsPerHour: 10 } as const;
+/** Allowed per hour. Creating a vault is rare and costs storage, so it is limited per network and overall. */
+export const LIMITS = {
+  requestsPerClient: 600,
+  createsPerClient: 10,
+  createsPerNetwork: 40,
+  createsInTotal: 100,
+  writesPerVault: 120,
+} as const;
 const HOUR_SECONDS = 3600;
 
 const STATUS: Record<ApiErrorCode, number> = {
@@ -48,7 +59,8 @@ export async function handleVaultRequest(request: Request, vaultId: string, deps
       return fail('METHOD_NOT_ALLOWED', `Use ${ALLOWED_METHODS}.`, { Allow: ALLOWED_METHODS });
     }
 
-    const limited = await checkRateLimit(request, deps);
+    const network = networkKeys(request.headers.get('cf-connecting-ip'));
+    const limited = await checkRequestLimit(network.precise, deps);
     if (limited) return limited;
 
     const token = bearerToken(request);
@@ -58,7 +70,7 @@ export async function handleVaultRequest(request: Request, vaultId: string, deps
       case 'GET':
         return await getVault(vaultId, token, deps);
       case 'PUT':
-        return await putVault(request, vaultId, token, deps);
+        return await putVault(request, vaultId, token, network, deps);
       default:
         return await deleteVault(vaultId, token, deps);
     }
@@ -77,7 +89,13 @@ async function getVault(vaultId: string, token: string, deps: VaultApiDeps): Pro
   return json(state, 200);
 }
 
-async function putVault(request: Request, vaultId: string, token: string, deps: VaultApiDeps): Promise<Response> {
+async function putVault(
+  request: Request,
+  vaultId: string,
+  token: string,
+  network: ReturnType<typeof networkKeys>,
+  deps: VaultApiDeps,
+): Promise<Response> {
   const body = await readBody(request);
   if (body instanceof Response) return body;
 
@@ -87,12 +105,8 @@ async function putVault(request: Request, vaultId: string, token: string, deps: 
 
   if (!record) {
     if (body.baseVersion !== 0) return fail('NOT_FOUND', 'No synced data exists for this key yet.');
-    const allowed = await deps.rateLimiter.consume(
-      `create:${await clientKey(request, deps)}`,
-      LIMITS.createsPerHour,
-      HOUR_SECONDS,
-    );
-    if (!allowed) return fail('RATE_LIMITED', 'Too many new vaults from this connection. Try again later.');
+    const limited = await checkCreationLimits(network, deps);
+    if (limited) return limited;
 
     const created = await deps.store.create({ vaultId, tokenHash: await sha256Hex(token), envelope, updatedAt: now });
     if (created) return json<PutVaultResult>({ version: 1 }, 201);
@@ -100,6 +114,8 @@ async function putVault(request: Request, vaultId: string, token: string, deps: 
   }
 
   if (!(await isOwner(record, token))) return fail('UNAUTHORIZED', "These sync credentials don't match.");
+  const limited = await checkVaultWriteLimit(vaultId, deps);
+  if (limited) return limited;
   if (body.baseVersion !== record.version) return versionConflict(record.version);
 
   const updated = await deps.store.update(vaultId, record.version, envelope, now);
@@ -111,21 +127,35 @@ async function deleteVault(vaultId: string, token: string, deps: VaultApiDeps): 
   const record = await deps.store.get(vaultId);
   if (!record) return new Response(null, { status: 204, headers: baseHeaders() });
   if (!(await isOwner(record, token))) return fail('UNAUTHORIZED', "These sync credentials don't match.");
+  const limited = await checkVaultWriteLimit(vaultId, deps);
+  if (limited) return limited;
 
   await deps.store.delete(vaultId);
   return new Response(null, { status: 204, headers: baseHeaders() });
 }
 
+/** Reads the body as a stream and stops as soon as it is too big, instead of buffering whatever arrives. */
 async function readBody(request: Request): Promise<PutVaultBody | Response> {
-  const declared = Number(request.headers.get('content-length') ?? 0);
-  if (declared > MAX_ENVELOPE_BYTES) return fail('TOO_LARGE', 'The synced data is too large.');
+  const tooLarge = () => fail('TOO_LARGE', 'The synced data is too large.');
+  if (Number(request.headers.get('content-length') ?? 0) > MAX_BODY_BYTES) return tooLarge();
 
-  const text = await request.text();
-  if (new TextEncoder().encode(text).length > MAX_ENVELOPE_BYTES) return fail('TOO_LARGE', 'The synced data is too large.');
+  const chunks: Uint8Array[] = [];
+  let received = 0;
+  const reader = request.body?.getReader();
+  while (reader) {
+    const { done, value } = await reader.read();
+    if (done) break;
+    received += value.byteLength;
+    if (received > MAX_BODY_BYTES) {
+      await reader.cancel();
+      return tooLarge();
+    }
+    chunks.push(value);
+  }
 
   let parsed: unknown;
   try {
-    parsed = JSON.parse(text);
+    parsed = JSON.parse(new TextDecoder().decode(concat(chunks, received)));
   } catch {
     return fail('BAD_REQUEST', 'The request body is not valid JSON.');
   }
@@ -134,22 +164,51 @@ async function readBody(request: Request): Promise<PutVaultBody | Response> {
     return fail('BAD_REQUEST', 'baseVersion must be a whole number, 0 or more.');
   }
   if (!isVaultEnvelope(body.envelope)) return fail('BAD_REQUEST', 'The body does not hold an encrypted vault.');
+  // The stored envelope is what costs space, so the exact cap applies to it, not just to the request body.
+  if (JSON.stringify(body.envelope).length > MAX_ENVELOPE_BYTES) return tooLarge();
   return { baseVersion: body.baseVersion!, envelope: body.envelope };
 }
 
-async function checkRateLimit(request: Request, deps: VaultApiDeps): Promise<Response | null> {
-  const allowed = await deps.rateLimiter.consume(
-    `any:${await clientKey(request, deps)}`,
-    LIMITS.requestsPerHour,
-    HOUR_SECONDS,
-  );
+function concat(chunks: Uint8Array[], length: number): Uint8Array {
+  const out = new Uint8Array(length);
+  let offset = 0;
+  for (const chunk of chunks) {
+    out.set(chunk, offset);
+    offset += chunk.byteLength;
+  }
+  return out;
+}
+
+async function checkRequestLimit(clientKey: string, deps: VaultApiDeps): Promise<Response | null> {
+  const key = await limiterKey('request', clientKey, deps);
+  const allowed = await deps.requestLimiter.consume(key, LIMITS.requestsPerClient, HOUR_SECONDS);
   return allowed ? null : fail('RATE_LIMITED', 'Too many requests. Try again in a few minutes.', { 'Retry-After': '300' });
 }
 
-/** A salted hash of the client address; the address itself is never stored or logged. */
-async function clientKey(request: Request, deps: VaultApiDeps): Promise<string> {
-  const address = request.headers.get('cf-connecting-ip') ?? 'unknown';
-  return sha256Hex(`${deps.rateLimitSalt}:${address}`);
+/** New vaults cost storage, so they are limited per client network, per wider network and across everyone. */
+async function checkCreationLimits(network: ReturnType<typeof networkKeys>, deps: VaultApiDeps): Promise<Response | null> {
+  const checks: [string, number][] = [
+    [await limiterKey('create', network.precise, deps), LIMITS.createsPerClient],
+    [await limiterKey('create-network', network.coarse, deps), LIMITS.createsPerNetwork],
+    ['create-total', LIMITS.createsInTotal],
+  ];
+  for (const [key, limit] of checks) {
+    if (!(await deps.writeLimiter.consume(key, limit, HOUR_SECONDS))) {
+      return fail('RATE_LIMITED', 'Too many new synced copies right now. Try again later.', { 'Retry-After': '3600' });
+    }
+  }
+  return null;
+}
+
+/** Only the owner of a vault gets here, so this limits one vault's writes rather than anyone's requests. */
+async function checkVaultWriteLimit(vaultId: string, deps: VaultApiDeps): Promise<Response | null> {
+  const allowed = await deps.writeLimiter.consume(`write:${vaultId}`, LIMITS.writesPerVault, HOUR_SECONDS);
+  return allowed ? null : fail('RATE_LIMITED', 'This synced copy is changing too often. Try again in a few minutes.', { 'Retry-After': '300' });
+}
+
+/** A salted hash of a client network; the address itself is never stored or logged. */
+function limiterKey(scope: string, network: string, deps: VaultApiDeps): Promise<string> {
+  return sha256Hex(`${deps.rateLimitSalt}:${network}`).then((hash) => `${scope}:${hash}`);
 }
 
 function bearerToken(request: Request): string | null {

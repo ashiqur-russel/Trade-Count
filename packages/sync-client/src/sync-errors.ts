@@ -57,3 +57,10 @@ export class VaultGoneError extends SyncError {
     );
   }
 }
+
+/** The encrypted copy would exceed what the server accepts for one vault. */
+export class SyncTooLargeError extends SyncError {
+  constructor() {
+    super('Your portfolio has grown too large to sync. Export a backup instead, or remove old trades you no longer need.');
+  }
+}

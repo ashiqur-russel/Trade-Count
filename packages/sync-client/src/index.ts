@@ -6,6 +6,7 @@ export {
   SyncError,
   SyncNetworkError,
   SyncRateLimitedError,
+  SyncTooLargeError,
   SyncUnavailableError,
   VaultGoneError,
   VaultNotFoundError,

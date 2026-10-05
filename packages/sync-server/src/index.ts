@@ -1,3 +1,5 @@
+export { networkKeys, type NetworkKeys } from './client-network.js';
+export { WindowedMemoryRateLimiter } from './windowed-memory-limiter.js';
 export { constantTimeEqual, sha256Hex } from './hashing.js';
 export { LIMITS, handleVaultRequest, type VaultApiDeps } from './vault-handler.js';
 export * from './vault-protocol.js';

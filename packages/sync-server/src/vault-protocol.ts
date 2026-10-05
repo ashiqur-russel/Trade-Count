@@ -4,7 +4,10 @@ import type { VaultEnvelope } from '@trade-count/sync-crypto';
 
 export const VAULT_ID_PATTERN = /^[0-9a-f]{32}$/;
 export const AUTH_TOKEN_PATTERN = /^[A-Za-z0-9_-]{43}$/;
-export const MAX_ENVELOPE_BYTES = 1024 * 1024;
+/** Compressed and encrypted, this holds several thousand trades; it also bounds what one vault can cost. */
+export const MAX_ENVELOPE_BYTES = 256 * 1024;
+/** The request body also carries the version number around the envelope. */
+export const MAX_BODY_BYTES = MAX_ENVELOPE_BYTES + 1024;
 
 export interface VaultState {
   version: number;

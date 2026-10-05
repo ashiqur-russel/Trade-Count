@@ -3,6 +3,7 @@ import {
   SyncAuthError,
   SyncNetworkError,
   SyncRateLimitedError,
+  SyncTooLargeError,
   SyncUnavailableError,
   VaultNotFoundError,
 } from "./sync-errors.js";
@@ -86,6 +87,9 @@ describe("createFetchVaultApi", () => {
     await expect(
       api(reply(500, { error: "SERVER_ERROR", message: "x" })).get(),
     ).rejects.toBeInstanceOf(SyncUnavailableError);
+    await expect(
+      api(reply(413, { error: "TOO_LARGE", message: "x" })).put(0, envelope),
+    ).rejects.toBeInstanceOf(SyncTooLargeError);
   });
 
   it("treats an HTML answer (an app running without its API) as the service being unavailable", async () => {

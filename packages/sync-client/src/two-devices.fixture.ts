@@ -20,7 +20,8 @@ export function createServer() {
   const store = new MemoryVaultStore();
   const deps = {
     store,
-    rateLimiter: new MemoryRateLimiter(),
+    requestLimiter: new MemoryRateLimiter(),
+    writeLimiter: new MemoryRateLimiter(),
     rateLimitSalt: "test",
   };
   const requests: string[] = [];

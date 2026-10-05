@@ -1,4 +1,10 @@
-import { createD1RateLimiter, createD1VaultStore, handleVaultRequest, type D1Like } from '@trade-count/sync-server';
+import {
+  WindowedMemoryRateLimiter,
+  createD1RateLimiter,
+  createD1VaultStore,
+  handleVaultRequest,
+  type D1Like,
+} from '@trade-count/sync-server';
 
 interface Env {
   DB?: D1Like;
@@ -12,6 +18,9 @@ interface Context {
   env: Env;
 }
 
+/** Counts requests in this instance's memory, so reads and rejected requests cost no database writes. */
+const requestLimiter = new WindowedMemoryRateLimiter();
+
 /** Cloudflare Pages Function for /api/vaults/:vaultId; all logic lives in @trade-count/sync-server. */
 export const onRequest = async ({ request, params, env }: Context): Promise<Response> => {
   if (!env.DB || !env.RATE_LIMIT_SALT) {
@@ -24,7 +33,8 @@ export const onRequest = async ({ request, params, env }: Context): Promise<Resp
   const vaultId = Array.isArray(params.vaultId) ? params.vaultId[0] : params.vaultId;
   return handleVaultRequest(request, vaultId ?? '', {
     store: createD1VaultStore(env.DB),
-    rateLimiter: createD1RateLimiter(env.DB),
+    requestLimiter,
+    writeLimiter: createD1RateLimiter(env.DB),
     rateLimitSalt: env.RATE_LIMIT_SALT,
   });
 };

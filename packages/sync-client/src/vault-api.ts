@@ -4,6 +4,7 @@ import {
   SyncAuthError,
   SyncNetworkError,
   SyncRateLimitedError,
+  SyncTooLargeError,
   SyncUnavailableError,
   VaultNotFoundError,
 } from './sync-errors.js';
@@ -67,6 +68,7 @@ export function createFetchVaultApi(credentials: SyncCredentials, options: Fetch
   function unexpected(status: number): never {
     if (status === 401) throw new SyncAuthError();
     if (status === 429) throw new SyncRateLimitedError();
+    if (status === 413) throw new SyncTooLargeError();
     throw new SyncUnavailableError();
   }
 
