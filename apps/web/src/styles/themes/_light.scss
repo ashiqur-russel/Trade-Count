@@ -1,0 +1,27 @@
+// Layer 2: semantic tokens. Every theme defines exactly this set of names.
+@use '../tokens/primitives' as p;
+
+@mixin light-theme {
+  color-scheme: light;
+
+  --tc-color-bg: #{p.color(sage, 50)};
+  --tc-color-surface: #{p.color(sage, 0)};
+  --tc-color-surface-sunken: #{p.color(sage, 100)};
+  --tc-color-border: #{p.color(sage, 200)};
+  --tc-color-text: #{p.color(sage, 900)};
+  --tc-color-text-muted: #{p.color(sage, 600)};
+
+  --tc-color-accent: #{p.color(cobalt, 600)};
+  --tc-color-accent-subtle: #{p.color(cobalt, 100)};
+  --tc-color-on-accent: #{p.color(sage, 0)};
+  --tc-color-focus: #{p.color(cobalt, 600)};
+
+  --tc-color-gain: #{p.color(green, 700)};
+  --tc-color-gain-subtle: #{p.color(green, 100)};
+  --tc-color-loss: #{p.color(red, 700)};
+  --tc-color-loss-subtle: #{p.color(red, 100)};
+  --tc-color-warn: #{p.color(amber, 700)};
+  --tc-color-warn-subtle: #{p.color(amber, 100)};
+
+  --tc-shadow-raised: 0 1px 2px #{rgba(p.color(sage, 950), 0.12)};
+}

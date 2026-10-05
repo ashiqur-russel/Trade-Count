@@ -1,0 +1,27 @@
+.shell {
+  display: grid;
+  gap: var(--tc-space-6);
+  max-width: var(--tc-content-max-width);
+  margin: 0 auto;
+  padding: var(--tc-space-8) var(--tc-space-5) var(--tc-space-12);
+}
+
+.top {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--tc-space-3);
+  align-items: end;
+  justify-content: space-between;
+}
+
+.brand p {
+  max-width: 60ch;
+  margin-top: var(--tc-space-1);
+  color: var(--tc-color-text-muted);
+}
+
+main {
+  display: grid;
+  gap: var(--tc-space-6);
+  min-width: 0;
+}

@@ -1,0 +1,25 @@
+@let current = state();
+@let badge = statusBadges[current.status];
+<tc-panel heading="Portfolio">
+  <tc-pill panel-actions [tone]="badge.tone">{{ badge.label }}</tc-pill>
+  @switch (current.status) {
+    @case ('loading') {
+      <tc-empty-state heading="Loading your portfolio">Fetching stocks and trades.</tc-empty-state>
+    }
+    @case ('error') {
+      <tc-empty-state heading="Couldn't load your portfolio">{{ current.message }}</tc-empty-state>
+    }
+    @case ('ready') {
+      <tc-empty-state
+        [heading]="
+          current.portfolio.stocks.length +
+          ' stocks, ' +
+          current.portfolio.trades.length +
+          ' trades'
+        "
+      >
+        The stock list, trade form and ledgers come next.
+      </tc-empty-state>
+    }
+  }
+</tc-panel>

@@ -1,0 +1,26 @@
+@use '../tokens/primitives' as p;
+
+@mixin dark-theme {
+  color-scheme: dark;
+
+  --tc-color-bg: #{p.color(sage, 950)};
+  --tc-color-surface: #{p.color(sage, 850)};
+  --tc-color-surface-sunken: #{p.color(sage, 800)};
+  --tc-color-border: #{p.color(sage, 700)};
+  --tc-color-text: #{p.color(sage, 150)};
+  --tc-color-text-muted: #{p.color(sage, 400)};
+
+  --tc-color-accent: #{p.color(cobalt, 300)};
+  --tc-color-accent-subtle: #{p.color(cobalt, 900)};
+  --tc-color-on-accent: #{p.color(sage, 850)};
+  --tc-color-focus: #{p.color(cobalt, 300)};
+
+  --tc-color-gain: #{p.color(green, 400)};
+  --tc-color-gain-subtle: #{p.color(green, 900)};
+  --tc-color-loss: #{p.color(red, 400)};
+  --tc-color-loss-subtle: #{p.color(red, 900)};
+  --tc-color-warn: #{p.color(amber, 400)};
+  --tc-color-warn-subtle: #{p.color(amber, 900)};
+
+  --tc-shadow-raised: 0 1px 2px #{rgba(p.color(sage, 950), 0.5)};
+}

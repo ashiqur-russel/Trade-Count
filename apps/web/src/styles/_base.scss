@@ -1,0 +1,67 @@
+@use 'tokens/scale';
+
+:root {
+  @include scale.scale-tokens;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  background: var(--tc-color-bg);
+  color: var(--tc-color-text);
+  font-family: var(--tc-font-body);
+  font-size: var(--tc-text-base);
+  line-height: var(--tc-leading-body);
+  -webkit-font-smoothing: antialiased;
+}
+
+h1,
+h2,
+h3 {
+  margin: 0;
+  font-family: var(--tc-font-display);
+  letter-spacing: -0.01em;
+  text-wrap: balance;
+}
+
+h1 {
+  font-size: var(--tc-text-xl);
+  font-weight: var(--tc-weight-bold);
+}
+
+h2 {
+  font-size: var(--tc-text-md);
+  font-weight: var(--tc-weight-semibold);
+}
+
+p {
+  margin: 0;
+}
+
+:focus-visible {
+  outline: 2px solid var(--tc-color-focus);
+  outline-offset: 1px;
+}
+
+.tc-visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    transition-duration: 0.01ms !important;
+    animation-duration: 0.01ms !important;
+  }
+}

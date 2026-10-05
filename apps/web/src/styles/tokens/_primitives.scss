@@ -1,0 +1,53 @@
+// Layer 1: raw values. Only theme files read these; components use the semantic --tc-* tokens.
+@use 'sass:map';
+
+$palette: (
+  sage: (
+    0: #fff,
+    50: #f2f5f4,
+    100: #e8eeec,
+    150: #e4ece9,
+    200: #d3ddda,
+    400: #93a39e,
+    600: #5b6b66,
+    700: #2c3936,
+    800: #1d2725,
+    850: #161e1c,
+    900: #14211d,
+    950: #0e1413,
+  ),
+  cobalt: (
+    100: #e3e8fb,
+    300: #93a6ff,
+    600: #2b48c8,
+    900: #232c4f,
+  ),
+  green: (
+    100: #ddf1e6,
+    400: #4cc58c,
+    700: #12784a,
+    900: #17332a,
+  ),
+  red: (
+    100: #f8e1de,
+    400: #ff8475,
+    700: #b8352a,
+    900: #3a1f1c,
+  ),
+  amber: (
+    100: #fbefd5,
+    400: #f0be5a,
+    700: #8a5a00,
+    900: #3a2e14,
+  ),
+);
+
+@function color($hue, $step) {
+  $scale: map.get($palette, $hue);
+
+  @if not $scale or not map.has-key($scale, $step) {
+    @error 'Unknown palette color #{$hue} #{$step}';
+  }
+
+  @return map.get($scale, $step);
+}

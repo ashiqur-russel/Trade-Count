@@ -1,0 +1,56 @@
+{
+  "extends": [
+    "stylelint-config-standard-scss"
+  ],
+  "rules": {
+    "color-no-hex": [
+      true,
+      {
+        "message": "Use a semantic --tc-color-* token; raw colours belong in src/styles/tokens."
+      }
+    ],
+    "color-named": [
+      "never",
+      {
+        "message": "Use a semantic --tc-color-* token instead of a named colour."
+      }
+    ],
+    "function-disallowed-list": [
+      [
+        "rgb",
+        "rgba",
+        "hsl",
+        "hsla",
+        "hwb",
+        "lab",
+        "lch",
+        "oklab",
+        "oklch"
+      ],
+      {
+        "message": "Use a semantic --tc-color-* token; raw colours belong in src/styles/tokens."
+      }
+    ],
+    "custom-property-pattern": [
+      "^tc-[a-z0-9-]+$",
+      {
+        "message": "Design tokens are named --tc-*."
+      }
+    ],
+    "selector-class-pattern": null,
+    "scss/at-mixin-pattern": null,
+    "custom-property-empty-line-before": null
+  },
+  "overrides": [
+    {
+      "files": [
+        "src/styles/tokens/**/*.scss",
+        "src/styles/themes/**/*.scss"
+      ],
+      "rules": {
+        "color-no-hex": null,
+        "function-disallowed-list": null
+      }
+    }
+  ]
+}

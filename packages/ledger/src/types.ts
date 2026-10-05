@@ -21,6 +21,12 @@ export interface Trade {
   createdAt: string;
 }
 
+/** Everything the ledger needs, as returned by GET /api/portfolio. */
+export interface Portfolio {
+  stocks: Stock[];
+  trades: Trade[];
+}
+
 export interface OpenLot {
   buy: Trade;
   remaining: Big;

@@ -1,0 +1,38 @@
+// Theme-independent tokens: type, spacing, shape, motion.
+@mixin scale-tokens {
+  --tc-font-display: 'Bricolage Grotesque Variable', 'Avenir Next', system-ui, sans-serif;
+  --tc-font-body: 'Instrument Sans', 'Helvetica Neue', system-ui, sans-serif;
+  --tc-font-numeric: 'IBM Plex Mono', ui-monospace, 'SF Mono', menlo, monospace;
+
+  --tc-text-xs: 0.72rem;
+  --tc-text-sm: 0.82rem;
+  --tc-text-base: 0.94rem;
+  --tc-text-md: 1.15rem;
+  --tc-text-lg: 1.35rem;
+  --tc-text-xl: clamp(1.6rem, 3.4vw, 2.2rem);
+
+  --tc-weight-regular: 400;
+  --tc-weight-medium: 500;
+  --tc-weight-semibold: 600;
+  --tc-weight-bold: 700;
+
+  --tc-tracking-label: 0.08em;
+  --tc-leading-body: 1.5;
+
+  --tc-space-1: 0.25rem;
+  --tc-space-2: 0.5rem;
+  --tc-space-3: 0.75rem;
+  --tc-space-4: 1rem;
+  --tc-space-5: 1.25rem;
+  --tc-space-6: 1.5rem;
+  --tc-space-8: 2rem;
+  --tc-space-12: 3rem;
+
+  --tc-radius-sm: 6px;
+  --tc-radius-md: 8px;
+  --tc-radius-lg: 10px;
+  --tc-radius-pill: 999px;
+
+  --tc-content-max-width: 1180px;
+  --tc-duration-fast: 150ms;
+}

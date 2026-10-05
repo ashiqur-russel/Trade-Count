@@ -1,0 +1,40 @@
+.track {
+  display: grid;
+  grid-auto-columns: 1fr;
+  grid-auto-flow: column;
+  padding: 3px;
+  border-radius: var(--tc-radius-md);
+  background: var(--tc-color-surface-sunken);
+}
+
+.option {
+  position: relative;
+}
+
+input {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  opacity: 0;
+  pointer-events: none;
+}
+
+span {
+  display: block;
+  padding: var(--tc-space-1) var(--tc-space-3);
+  border-radius: var(--tc-radius-sm);
+  color: var(--tc-color-text-muted);
+  font-weight: var(--tc-weight-semibold);
+  text-align: center;
+  cursor: pointer;
+}
+
+input:checked + span {
+  background: var(--tc-color-surface);
+  box-shadow: var(--tc-shadow-raised);
+  color: var(--tc-color-text);
+}
+
+input:focus-visible + span {
+  outline: 2px solid var(--tc-color-focus);
+}

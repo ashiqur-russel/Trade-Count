@@ -1,0 +1,23 @@
+// Applies a theme per data-theme value; no attribute follows the OS setting.
+// To add a theme: create _<name>.scss with the same token names, include it below,
+// and add the name to THEMES in core/theme/theme.ts.
+@use 'light';
+@use 'dark';
+
+:root {
+  @include light.light-theme;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme]) {
+    @include dark.dark-theme;
+  }
+}
+
+:root[data-theme='light'] {
+  @include light.light-theme;
+}
+
+:root[data-theme='dark'] {
+  @include dark.dark-theme;
+}
