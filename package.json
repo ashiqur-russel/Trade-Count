@@ -12,7 +12,7 @@
     "db:up": "docker compose up -d --wait db",
     "db:down": "docker compose down",
     "db:logs": "docker compose logs -f db",
-    "postinstall": "npm run build -w @trade-count/ledger"
+    "postinstall": "npm run build -w @trade-count/ledger -w @trade-count/local-store"
   },
   "allowScripts": {
     "prisma@7.10.0": true,
