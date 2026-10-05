@@ -13,12 +13,18 @@
     "start": "npm start -w @trade-count/web",
     "build": "npm run build -w @trade-count/web",
     "test": "npm test --workspaces --if-present",
-    "lint": "npm run lint -w @trade-count/web"
+    "lint": "npm run lint -w @trade-count/web",
+    "deploy": "npm run build && wrangler pages deploy apps/web/dist/web/browser --project-name trade-count --branch main",
+    "preview:prod": "npm run build && wrangler pages dev apps/web/dist/web/browser --port 8788"
   },
   "allowScripts": {
-    "esbuild@0.28.2": true,
     "lmdb@3.5.6": true,
     "msgpackr-extract@3.0.4": true,
-    "@parcel/watcher@2.6.0": true
+    "@parcel/watcher@2.6.0": true,
+    "workerd@1.20261001.1": true,
+    "esbuild@0.28.1": true
+  },
+  "devDependencies": {
+    "wrangler": "4.147.0"
   }
 }

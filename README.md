@@ -27,6 +27,21 @@ npm run build    # static production build in apps/web/dist/web/browser
 
 Only one tab can open the on-device database at a time (a limit of the `opfs-sahpool` VFS).
 
+## Deploying (Cloudflare Pages)
+
+The production build is static files plus `apps/web/public/_headers`, which sets the Content-Security-Policy and other security headers. `connect-src 'self'` is the privacy guarantee: the browser blocks any request to another origin. `wasm-unsafe-eval` is needed for SQLite; inline scripts are not allowed (the theme bootstrap lives in `public/theme-init.js`).
+
+```bash
+npx wrangler login                                                        # once, opens the browser
+npx wrangler pages project create trade-count --production-branch main   # once
+npm run preview:prod   # production build under local Pages emulation, http://localhost:8788
+npm run deploy         # build + upload; prints the https://<hash>.trade-count.pages.dev URL
+```
+
+- **Rollback:** Cloudflare dashboard → Workers & Pages → trade-count → Deployments → "Rollback" on any earlier deployment. Users get it on their next visit; the service worker shows "A new version is ready".
+- **Custom domain:** dashboard → trade-count → Custom domains. No code change needed.
+- **Data safety:** deploys never touch user data; it lives only in each user's browser. Schema changes must be additive migrations (see below), because users may open an old database with a new app version.
+
 ## Data and privacy
 
 - **Where data lives:** the browser's private file system for this site, on this device. Clearing site data deletes it.

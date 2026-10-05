@@ -15,13 +15,7 @@
     <link rel="icon" href="favicon.ico" sizes="32x32" />
     <link rel="icon" href="favicon.svg" type="image/svg+xml" />
     <link rel="apple-touch-icon" href="apple-touch-icon.png" />
-    <script>
-      // Applies the saved theme before first paint; key matches THEME_STORAGE_KEY in core/theme/theme.ts.
-      try {
-        var theme = localStorage.getItem('tc-theme');
-        if (theme === 'light' || theme === 'dark') document.documentElement.dataset.theme = theme;
-      } catch (e) {}
-    </script>
+    <script src="theme-init.js"></script>
     <link rel="manifest" href="manifest.webmanifest" />
   </head>
   <body>

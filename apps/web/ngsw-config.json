@@ -10,6 +10,7 @@
           "/favicon.ico",
           "/favicon.svg",
           "/index.html",
+          "/theme-init.js",
           "/manifest.webmanifest",
           "/*.css",
           "/*.js",
@@ -22,7 +23,9 @@
       "installMode": "lazy",
       "updateMode": "prefetch",
       "resources": {
-        "files": ["/**/*.(svg|png|webp|avif|woff|woff2)"]
+        "files": [
+          "/**/*.(svg|png|webp|avif|woff|woff2)"
+        ]
       }
     }
   ]
