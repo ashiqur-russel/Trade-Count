@@ -5,14 +5,14 @@
 <h1 align="center">Trade Count</h1>
 
 <p align="center">
-  <b>Know the real profit of every sale.</b><br>
+  <b>Know the real profit of every sale. No spreadsheet needed.</b><br>
   A free, private stock tracker that matches each sale to your oldest open buys first (FIFO),<br>
   works offline, and keeps your trades on your own device.
 </p>
 
 <p align="center">
   <a href="https://trade-count.pages.dev"><b>Open the app →</b></a>
-  &nbsp;·&nbsp; No account &nbsp;·&nbsp; No ads or trackers &nbsp;·&nbsp; Open source (AGPL-3.0)
+  &nbsp;·&nbsp; No account &nbsp;·&nbsp; No Excel or Google Sheets &nbsp;·&nbsp; No ads or trackers &nbsp;·&nbsp; Open source (AGPL-3.0)
 </p>
 
 ![Trade Count portfolio page: totals, the trade form and the stocks you hold](docs/screenshots/portfolio.png?v=2)
@@ -20,6 +20,9 @@
 <sub>Screenshots show an example portfolio of well-known stocks with made-up trades and prices. Regenerate them with `npm run screenshots`.</sub>
 
 ## Features
+
+### No more Excel or Google Sheets
+No formulas to write and no spreadsheet to maintain. Enter each buy and sale once; Trade Count splits batches into lots, matches every sale to the right buys, and keeps profit, open shares and averages up to date on its own. Correcting a trade, or adding one you forgot weeks later, recalculates everything that depends on it.
 
 ### Profit and loss the way your broker counts it
 Every sale is matched against the **oldest shares you still hold** (FIFO), across as many buys as it needs. Realized profit, open investment, average buy price and shares held are always exact: amounts are calculated in decimal, never rounded floating point.
