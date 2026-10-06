@@ -64,3 +64,24 @@ main {
   margin: 0 auto;
   padding: var(--tc-space-6) var(--tc-page-gutter) var(--tc-space-12);
 }
+
+.nav {
+  display: flex;
+  gap: var(--tc-space-1);
+  align-items: center;
+}
+
+.nav > a {
+  padding: var(--tc-space-2) var(--tc-space-3);
+  border-radius: var(--tc-radius-sm);
+  color: var(--tc-color-text-muted);
+  font-size: var(--tc-text-sm);
+  font-weight: var(--tc-weight-semibold);
+  text-decoration: none;
+}
+
+.nav > a:hover,
+.nav > a.active {
+  background: var(--tc-color-surface-sunken);
+  color: var(--tc-color-text);
+}

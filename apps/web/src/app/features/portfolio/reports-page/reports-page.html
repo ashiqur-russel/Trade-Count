@@ -1,0 +1,211 @@
+<header class="head">
+  <div class="title">
+    <a class="back" routerLink="/">← Back to your portfolio</a>
+    <h1>Reports</h1>
+    <p class="muted">
+      Tax is estimated at {{ ratePercent() }} % of each profitable sale.
+      <a routerLink="/settings">Change the rate</a>
+    </p>
+  </div>
+  @if (report(); as report) {
+    <div class="tools">
+      <tc-segmented-control label="Report view" [options]="viewOptions" [(value)]="view" />
+      <tc-select
+        ariaLabel="Year"
+        [options]="yearOptions()"
+        [value]="year()"
+        (valueChange)="chooseYear($event)"
+      />
+      <button tc-button type="button" (click)="exportCsv()">Export CSV</button>
+    </div>
+  }
+</header>
+
+@if (report(); as report) {
+  <section class="totals" aria-label="Year totals">
+    <div>
+      <span class="label"><span class="key invested"></span>Invested</span>
+      <span class="value">{{ report.totals.invested | euro }}</span>
+      <span class="note">{{ report.buyCount }} buy(s)</span>
+    </div>
+    <div>
+      <span class="label"><span class="key gain"></span>Profit</span>
+      <span class="value gain">{{ report.totals.profit | signedEuro }}</span>
+      <span class="note">{{ report.profitableSales }} sale(s)</span>
+    </div>
+    <div>
+      <span class="label"><span class="key loss"></span>Loss</span>
+      <span class="value" [class.loss]="report.totals.loss.lt(0)">{{
+        report.totals.loss | signedEuro
+      }}</span>
+      <span class="note">{{ report.losingSales }} sale(s)</span>
+    </div>
+    <div>
+      <span class="label"><span class="key tax"></span>Tax, estimated</span>
+      <span class="value">{{ report.totals.tax.times(-1) | euro }}</span>
+      <span class="note">{{ ratePercent() }} % of each profit</span>
+    </div>
+    <div>
+      <span class="label">After tax</span>
+      <span
+        class="value"
+        [class.gain]="report.totals.afterTax.gt(0)"
+        [class.loss]="report.totals.afterTax.lt(0)"
+      >
+        {{ report.totals.afterTax | signedEuro }}
+      </span>
+      <span class="note">Profit − loss − tax</span>
+    </div>
+  </section>
+
+  @switch (view()) {
+    @case ('monthly') {
+      <tc-panel [heading]="'From profit to what you keep, ' + report.year">
+        <tc-profit-waterfall [figures]="report.totals" />
+      </tc-panel>
+
+      <tc-panel heading="Month by month">
+        <div panel-actions class="legend">
+          <span><span class="key invested"></span>Invested</span>
+          <span><span class="key gain"></span>You keep</span>
+          <span><span class="key tax"></span>Tax (est.)</span>
+          <span><span class="key loss"></span>Loss</span>
+        </div>
+        <tc-month-charts [months]="report.months" />
+        <div class="table-scroll">
+          <table class="months">
+            <thead>
+              <tr>
+                <th>Month</th>
+                <th class="end">Invested</th>
+                <th class="end">Sold for</th>
+                <th class="end">Profit</th>
+                <th class="end">Loss</th>
+                <th class="end">Tax (est.)</th>
+                <th class="end">After tax</th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (month of activeMonths(); track month.month) {
+                <tr>
+                  <td class="name">{{ monthName(month) }}</td>
+                  <td class="end num">
+                    {{ month.invested.gt(0) ? (month.invested | euro) : '–' }}
+                  </td>
+                  <td class="end num">{{ month.soldFor.gt(0) ? (month.soldFor | euro) : '–' }}</td>
+                  <td class="end num gain">
+                    {{ month.profit.gt(0) ? (month.profit | signedEuro) : '–' }}
+                  </td>
+                  <td class="end num loss">
+                    {{ month.loss.lt(0) ? (month.loss | signedEuro) : '–' }}
+                  </td>
+                  <td class="end num tax">
+                    {{ month.tax.gt(0) ? (month.tax.times(-1) | euro) : '–' }}
+                  </td>
+                  <td
+                    class="end num"
+                    [class.gain]="month.afterTax.gt(0)"
+                    [class.loss]="month.afterTax.lt(0)"
+                  >
+                    {{ month.soldFor.gt(0) ? (month.afterTax | signedEuro) : '–' }}
+                  </td>
+                </tr>
+              }
+            </tbody>
+            <tfoot>
+              <tr>
+                <td>Year</td>
+                <td class="end num">{{ report.totals.invested | euro }}</td>
+                <td class="end num">{{ report.totals.soldFor | euro }}</td>
+                <td class="end num gain">{{ report.totals.profit | signedEuro }}</td>
+                <td class="end num loss">{{ report.totals.loss | signedEuro }}</td>
+                <td class="end num tax">{{ report.totals.tax.times(-1) | euro }}</td>
+                <td class="end num">{{ report.totals.afterTax | signedEuro }}</td>
+              </tr>
+            </tfoot>
+          </table>
+        </div>
+        <p class="muted">Months with no trades are hidden.</p>
+      </tc-panel>
+
+      <section class="highlights" aria-label="Highlights">
+        <div>
+          <span class="label">Best month</span>
+          <span class="value">{{ report.bestMonth ? monthName(report.bestMonth) : '–' }}</span>
+          @if (report.bestMonth; as best) {
+            <span class="note">{{ best.afterTax | signedEuro }} after tax</span>
+          }
+        </div>
+        <div>
+          <span class="label">Profitable sales</span>
+          <span class="value">{{ report.profitableSales }} of {{ report.sales.length }}</span>
+          <span class="note">{{ report.losingSales }} ended at a loss</span>
+        </div>
+        <div>
+          <span class="label">After tax per share sold</span>
+          <span class="value">{{
+            report.afterTaxPerShareSold ? (report.afterTaxPerShareSold | euro) : '–'
+          }}</span>
+          <span class="note"
+            >{{ report.totals.afterTax | euro }} over
+            {{ report.totals.sharesSold | quantity }} share(s)</span
+          >
+        </div>
+      </section>
+
+      <tc-panel heading="Every sale, tax per share">
+        <span panel-actions class="muted">One line per buy the sale used (FIFO)</span>
+        <tc-sale-tax-table [sales]="report.sales" [totals]="report.totals" />
+        <p class="muted">
+          Tax per share = profit per share × {{ ratePercent() }} %, shown rounded; each sale's tax
+          is worked out on its total. A sale that is a loss overall pays no tax. An estimate for
+          your own overview, not tax advice.
+        </p>
+      </tc-panel>
+    }
+    @case ('stocks') {
+      <tc-panel [heading]="'By stock, ' + report.year">
+        <div class="table-scroll">
+          <table class="months">
+            <thead>
+              <tr>
+                <th>Stock</th>
+                <th class="end">Invested</th>
+                <th class="end">Sold for</th>
+                <th class="end">Profit</th>
+                <th class="end">Loss</th>
+                <th class="end">Tax (est.)</th>
+                <th class="end">After tax</th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (row of report.byStock; track row.stock.id) {
+                <tr>
+                  <td class="name">{{ row.stock.name }}</td>
+                  <td class="end num">{{ row.invested | euro }}</td>
+                  <td class="end num">{{ row.soldFor | euro }}</td>
+                  <td class="end num gain">{{ row.profit | signedEuro }}</td>
+                  <td class="end num loss">{{ row.loss | signedEuro }}</td>
+                  <td class="end num tax">{{ row.tax.times(-1) | euro }}</td>
+                  <td
+                    class="end num"
+                    [class.gain]="row.afterTax.gt(0)"
+                    [class.loss]="row.afterTax.lt(0)"
+                  >
+                    {{ row.afterTax | signedEuro }}
+                  </td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+      </tc-panel>
+    }
+  }
+} @else {
+  <tc-panel>
+    <tc-empty-state heading="Nothing to report yet">
+      Record buys and sales on the portfolio page; each year with trades gets a report here.
+    </tc-empty-state>
+  </tc-panel>
+}

@@ -10,7 +10,17 @@
       <tc-brand-mark class="brand-mark" />
       <span>Trade Count</span>
     </a>
-    <tc-settings-link />
+    <nav class="nav" aria-label="Main">
+      <a
+        routerLink="/"
+        routerLinkActive="active"
+        [routerLinkActiveOptions]="{ exact: true }"
+        ariaCurrentWhenActive="page"
+        >Portfolio</a
+      >
+      <a routerLink="/reports" routerLinkActive="active" ariaCurrentWhenActive="page">Reports</a>
+      <tc-settings-link />
+    </nav>
   </div>
 </header>
 @if (isHome()) {
