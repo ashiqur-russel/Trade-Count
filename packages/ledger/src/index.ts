@@ -12,3 +12,14 @@ export {
 } from './oversell.js';
 export { describeOversell } from './describe-oversell.js';
 export { portfolioTotals, type PortfolioTotals } from './portfolio-totals.js';
+export {
+  DEFAULT_TAX_RATE,
+  reportYears,
+  yearReport,
+  type ReportFigures,
+  type ReportLot,
+  type ReportMonth,
+  type ReportSale,
+  type ReportStock,
+  type YearReport,
+} from './year-report.js';
