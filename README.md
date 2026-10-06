@@ -17,7 +17,7 @@
 
 ![Trade Count portfolio page: totals, the trade form and the stocks you hold](docs/screenshots/portfolio.png)
 
-<sub>Screenshots use a made-up portfolio. Regenerate them with `npm run screenshots`.</sub>
+<sub>Screenshots show an example portfolio of well-known stocks with made-up trades and prices. Regenerate them with `npm run screenshots`.</sub>
 
 ## Features
 
@@ -45,9 +45,9 @@ The ledger shows each share on its own line, plus open lots, FIFO-matched sales 
 ![Sheet view of the ledger: one line per share with buy and sale price, profit and status](docs/screenshots/ledger.png)
 
 ### Your data, your devices
-Keep a **backup file**, or turn on **end-to-end encrypted sync** to use the same portfolio on your phone and laptop. Sync is optional and needs no account: one sync key is all it takes.
+Keep a **backup file**, or turn on **end-to-end encrypted sync** to use the same portfolio on your phone and laptop. Sync is optional and needs no account: one sync key is all it takes. Settings is also where you set your tax rate and choose light, dark or automatic appearance.
 
-<p align="center"><img src="docs/screenshots/settings.png" width="560" alt="Settings: sync and backup options"></p>
+<p align="center"><img src="docs/screenshots/settings.png" width="720" alt="Settings page: encrypted sync, backup file, tax rate and light or dark appearance"></p>
 
 ### Made for every screen
 Installable as an app (PWA), works offline, light and dark themes, and a layout that adapts to phones.

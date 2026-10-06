@@ -3,7 +3,7 @@ import { test } from '../fixtures';
 import { openPortfolio, openSettings } from '../portfolio-page';
 import { showcaseBackup } from './showcase-portfolio';
 
-/* Regenerates the images in docs/screenshots with a made-up portfolio. Run with `npm run screenshots`. */
+/* Regenerates the images in docs/screenshots from an example portfolio. Run with `npm run screenshots`. */
 const OUT = 'docs/screenshots';
 
 test.use({ deviceScaleFactor: 2 });
@@ -44,7 +44,7 @@ test('README screenshots @screenshots', async ({ openDevice }) => {
   const form = page.locator('tc-trade-form');
   await form.getByText('Sell', { exact: true }).click();
   await page.locator('#trade-quantity').fill('9');
-  await page.locator('#trade-price').fill('128');
+  await page.locator('#trade-price').fill('585');
   await page.waitForTimeout(300);
   await shotOf(page, 'sell-form.png', form);
   await page.locator('#trade-quantity').fill('');
@@ -55,12 +55,17 @@ test('README screenshots @screenshots', async ({ openDevice }) => {
   await page.waitForTimeout(300);
   await shotOf(page, 'reports.png', page.locator('section.totals'), page.locator('tc-month-charts'));
   await page.emulateMedia({ colorScheme: 'light' });
+  // A wider page column for this shot only, so the whole table fits inside its panel.
+  await page.setViewportSize({ width: 1720, height: 900 });
+  await page.evaluate(() => document.documentElement.style.setProperty('--tc-content-max-width', '1680px'));
   await page.waitForTimeout(300);
-  await shotOf(page, 'tax-per-share.png', page.locator('tc-sale-tax-table'));
+  await shotOf(page, 'tax-per-share.png', page.locator('tc-panel', { has: page.locator('tc-sale-tax-table') }));
+  await page.evaluate(() => document.documentElement.style.removeProperty('--tc-content-max-width'));
+  await page.setViewportSize({ width: 1280, height: 900 });
 
   await openSettings(page);
   await page.evaluate(() => window.scrollTo(0, 0));
-  await shotOf(page, 'settings.png', page.locator('tc-data-panel'));
+  await page.screenshot({ path: `${OUT}/settings.png`, fullPage: true });
 
   await page.setViewportSize({ width: 390, height: 844 });
   await openPortfolio(page);

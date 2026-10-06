@@ -1,4 +1,4 @@
-/** A made-up portfolio for the README screenshots: three fictional companies over 2026. */
+/** An example portfolio for the README screenshots: well-known stocks, made-up trades over 2026. */
 export function showcaseBackup(): string {
   let entry = 0;
   const trade = (stockId: string, side: 'buy' | 'sell', quantity: string, price: string, tradedOn: string) => ({
@@ -15,23 +15,26 @@ export function showcaseBackup(): string {
     version: 1,
     exportedAt: '2026-10-06T10:00:00.000Z',
     stocks: [
-      { id: 'acme', name: 'Acme Corp', symbol: 'ACME' },
-      { id: 'globex', name: 'Globex', symbol: 'GLBX' },
-      { id: 'initech', name: 'Initech', symbol: 'INIT' },
+      { id: 'amd', name: 'Advanced Micro Devices', symbol: 'AMD' },
+      { id: 'tesla', name: 'Tesla', symbol: 'TSLA' },
+      { id: 'apple', name: 'Apple', symbol: 'AAPL' },
+      { id: 'amazon', name: 'Amazon', symbol: 'AMZN' },
     ],
     trades: [
-      trade('acme', 'buy', '10', '100', '2026-01-08'),
-      trade('globex', 'buy', '20', '50', '2026-01-20'),
-      trade('initech', 'buy', '8', '75', '2026-02-14'),
-      trade('acme', 'buy', '5', '110', '2026-03-03'),
-      trade('acme', 'sell', '6', '125', '2026-03-25'),
-      trade('globex', 'buy', '10', '48', '2026-04-10'),
-      trade('globex', 'sell', '12', '58', '2026-05-06'),
-      trade('initech', 'sell', '4', '70', '2026-06-18'),
-      trade('initech', 'buy', '6', '68', '2026-07-02'),
-      trade('acme', 'sell', '6', '132', '2026-08-21'),
-      trade('acme', 'buy', '4', '120', '2026-09-15'),
-      trade('globex', 'sell', '10', '61', '2026-10-01'),
+      trade('amd', 'buy', '10', '520', '2026-01-08'),
+      trade('tesla', 'buy', '10', '380', '2026-01-23'),
+      trade('apple', 'buy', '15', '195', '2026-02-14'),
+      trade('amd', 'buy', '5', '540', '2026-03-03'),
+      trade('amd', 'sell', '6', '565', '2026-03-25'),
+      trade('amazon', 'buy', '12', '178', '2026-04-10'),
+      trade('tesla', 'buy', '5', '315', '2026-04-23'),
+      trade('apple', 'sell', '8', '214', '2026-05-06'),
+      trade('tesla', 'sell', '4', '350', '2026-06-18'),
+      trade('apple', 'buy', '6', '205', '2026-07-02'),
+      trade('amd', 'sell', '6', '572', '2026-08-21'),
+      trade('amazon', 'sell', '7', '196', '2026-09-04'),
+      trade('amd', 'buy', '4', '548', '2026-09-15'),
+      trade('tesla', 'sell', '6', '405', '2026-10-01'),
     ],
   });
 }
