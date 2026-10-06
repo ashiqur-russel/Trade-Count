@@ -1,10 +1,15 @@
-import { formatSignedEuro, profitTone } from './display-format';
+import { Big } from '@trade-count/ledger';
+import { formatEuro, formatSignedEuro, profitTone } from './display-format';
 
 describe('display-format', () => {
   it('formats signed euro amounts the German way with an explicit plus for gains', () => {
     expect(formatSignedEuro('1234.5')).toBe('+1.234,50 €');
     expect(formatSignedEuro('-20')).toBe('-20,00 €');
     expect(formatSignedEuro('0')).toBe('0,00 €');
+  });
+
+  it('never shows a negated zero as minus zero', () => {
+    expect(formatEuro(new Big(0).times(-1))).toBe('0,00\u00a0€');
   });
 
   it('classifies profit as gain, loss or flat', () => {

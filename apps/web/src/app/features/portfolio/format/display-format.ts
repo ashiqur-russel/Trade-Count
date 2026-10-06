@@ -12,7 +12,8 @@ const percent = new Intl.NumberFormat(LOCALE, {
   signDisplay: 'exceptZero',
 });
 
-const toNumber = (value: Decimal): number => new Big(value).toNumber();
+// `|| 0` turns -0 (e.g. a zero tax negated for display) into 0, so it never shows as "-0,00 €".
+const toNumber = (value: Decimal): number => new Big(value).toNumber() || 0;
 
 export type ProfitTone = 'gain' | 'loss' | 'flat';
 
