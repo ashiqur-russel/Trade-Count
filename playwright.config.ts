@@ -8,6 +8,8 @@ export default defineConfig({
   fullyParallel: false,
   workers: 1,
   expect: { timeout: 15_000 },
+  // README screenshots only run on request (`npm run screenshots`), never in the normal suite.
+  grepInvert: process.env['SCREENSHOTS'] ? undefined : /@screenshots/,
   retries: process.env['CI'] ? 1 : 0,
   reporter: process.env['CI'] ? [['github'], ['html', { open: 'never' }]] : 'list',
   use: { baseURL: `http://localhost:${PORT}`, trace: 'retain-on-failure' },
