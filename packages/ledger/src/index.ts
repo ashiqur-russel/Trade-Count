@@ -11,6 +11,7 @@ export {
   type TradeChange,
 } from './oversell.js';
 export { describeOversell } from './describe-oversell.js';
+export { openSharesBefore } from './open-shares.js';
 export { portfolioTotals, type PortfolioTotals } from './portfolio-totals.js';
 export {
   DEFAULT_TAX_RATE,
