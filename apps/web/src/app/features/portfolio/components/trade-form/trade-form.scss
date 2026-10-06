@@ -16,6 +16,7 @@ form {
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: var(--tc-space-3);
+  align-items: start;
 }
 
 .preview {
@@ -86,4 +87,33 @@ form {
 .how b {
   color: var(--tc-color-text);
   font-weight: var(--tc-weight-semibold);
+}
+
+.open-badge {
+  padding: 1px var(--tc-space-2);
+  border-radius: var(--tc-radius-pill);
+  background: var(--tc-color-accent-subtle);
+  color: var(--tc-color-accent);
+  font-family: var(--tc-font-numeric);
+  font-size: var(--tc-text-xs);
+  font-weight: var(--tc-weight-semibold);
+}
+
+.with-action {
+  display: flex;
+  gap: var(--tc-space-1);
+}
+
+.with-action input {
+  flex: 1;
+  min-width: 0;
+}
+
+.all {
+  flex-shrink: 0;
+  white-space: nowrap;
+}
+
+.oversell {
+  margin-top: calc(var(--tc-space-1) * -1);
 }

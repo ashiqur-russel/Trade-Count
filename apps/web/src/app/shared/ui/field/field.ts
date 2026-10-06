@@ -1,10 +1,13 @@
 import { ChangeDetectionStrategy, Component, input } from '@angular/core';
 
-/** Label, control and message for one form input; the control is projected. */
+/** Label, control and message for one form input; the control is projected, and `field-aside` content sits beside the label. */
 @Component({
   selector: 'tc-field',
   template: `
-    <label [for]="controlId()">{{ label() }}</label>
+    <div class="label-row">
+      <label [for]="controlId()">{{ label() }}</label>
+      <ng-content select="[field-aside]" />
+    </div>
     <ng-content />
     @if (error()) {
       <p class="error" role="alert">{{ error() }}</p>
@@ -17,6 +20,14 @@ import { ChangeDetectionStrategy, Component, input } from '@angular/core';
       display: grid;
       gap: var(--tc-space-1);
       min-width: 0;
+    }
+
+    .label-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: var(--tc-space-2);
+      align-items: baseline;
+      justify-content: space-between;
     }
 
     label {

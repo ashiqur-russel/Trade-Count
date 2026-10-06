@@ -12,18 +12,36 @@
       placeholder="Add a stock first"
       [options]="stockOptions()"
     />
+    @if (openShares(); as open) {
+      <span field-aside class="open-badge">{{ open | quantity }} open</span>
+    }
   </tc-field>
 
   <div class="pair">
     <tc-field label="Quantity" controlId="trade-quantity" [error]="errors.quantity ?? null">
-      <input
-        id="trade-quantity"
-        formControlName="quantity"
-        inputmode="decimal"
-        autocomplete="off"
-        placeholder="3"
-        [attr.aria-invalid]="!!errors.quantity"
-      />
+      <div class="with-action">
+        <input
+          id="trade-quantity"
+          formControlName="quantity"
+          inputmode="decimal"
+          autocomplete="off"
+          placeholder="3"
+          [attr.aria-invalid]="!!(errors.quantity ?? oversellMessage())"
+        />
+        @if (openShares(); as open) {
+          @if (open.gt(0)) {
+            <button
+              tc-button
+              type="button"
+              class="all"
+              [attr.aria-label]="'Sell all ' + (open | quantity) + ' open shares'"
+              (click)="sellAllOpenShares()"
+            >
+              All {{ open | quantity }}
+            </button>
+          }
+        }
+      </div>
     </tc-field>
     <tc-field label="Price per share (€)" controlId="trade-price" [error]="errors.price ?? null">
       <input
@@ -36,6 +54,10 @@
       />
     </tc-field>
   </div>
+
+  @if (!errors.quantity && oversellMessage(); as message) {
+    <p class="error oversell" role="alert">{{ message }}</p>
+  }
 
   <tc-field label="Date" controlId="trade-date">
     <tc-date-picker inputId="trade-date" formControlName="tradedOn" ariaLabel="Trade date" />
@@ -82,7 +104,7 @@
       tc-button
       variant="primary"
       type="submit"
-      [disabled]="saving() || stocks().length === 0"
+      [disabled]="saving() || stocks().length === 0 || !!oversellMessage()"
     >
       {{ editingTrade ? 'Save changes' : side() === 'buy' ? 'Add buy' : 'Add sale' }}
     </button>

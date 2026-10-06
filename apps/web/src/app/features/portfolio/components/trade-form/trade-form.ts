@@ -14,6 +14,7 @@ import {
   Big,
   applyTradeChange,
   computeLedger,
+  openSharesBefore,
   type Trade,
   type TradeSide,
 } from '@trade-count/ledger';
@@ -115,6 +116,32 @@ export class TradeForm {
     return draft?.side === 'buy' ? new Big(draft.quantity).times(draft.price) : null;
   });
 
+  /** Shares of the chosen stock open on the chosen date, shown while recording a sale. */
+  protected readonly openShares = computed(() => {
+    const { stockId, tradedOn } = { ...this.form.getRawValue(), ...this.values() };
+    if (this.side() !== 'sell' || !stockId || !tradedOn) return null;
+    const editing = this.editing();
+    return openSharesBefore(this.store.trades(), {
+      id: editing?.id ?? PREVIEW_ID,
+      stockId,
+      side: 'sell',
+      quantity: '0',
+      price: '0',
+      tradedOn,
+      createdAt: editing?.createdAt ?? new Date().toISOString(),
+    });
+  });
+
+  /** Why the sale as typed can't be saved (too many shares, or it would break a later sale). */
+  protected readonly oversellMessage = computed(() => {
+    const draft = this.draft();
+    if (draft?.side !== 'sell') return null;
+    const change = this.editing()
+      ? ({ type: 'update', trade: draft } as const)
+      : ({ type: 'add', trade: draft } as const);
+    return this.store.findOversellMessage(change, draft.id);
+  });
+
   /** The sale as FIFO would book it, so the user sees which lots it uses before saving. */
   protected readonly salePreview = computed(() => {
     const draft = this.draft();
@@ -152,6 +179,11 @@ export class TradeForm {
         stocks.find((s) => s.id === preferred)?.id ?? stocks[0]?.id ?? '',
       );
     });
+  }
+
+  protected sellAllOpenShares(): void {
+    const open = this.openShares();
+    if (open) this.form.controls.quantity.setValue(open.toString().replace('.', ','));
   }
 
   protected clearMessages(): void {
