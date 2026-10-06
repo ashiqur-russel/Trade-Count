@@ -15,7 +15,8 @@ interface Step {
 const TOP = 40;
 const BOTTOM = 220;
 const BAR_WIDTH = 140;
-const STEP_X = [120, 340, 560, 780];
+const SLOT = 250;
+const STEP_X = [0, 1, 2, 3].map((i) => i * SLOT + (SLOT - BAR_WIDTH) / 2);
 
 /** Profit, minus losses, minus estimated tax: what the year leaves you with. */
 @Component({
@@ -23,19 +24,21 @@ const STEP_X = [120, 340, 560, 780];
   template: `
     <div class="chart-scroll">
       <svg viewBox="0 0 1000 270" role="img" [attr.aria-label]="summary()">
-        <line x1="40" x2="980" [attr.y1]="zeroY()" [attr.y2]="zeroY()" class="axis" />
+        <line x1="0" x2="1000" [attr.y1]="zeroY()" [attr.y2]="zeroY()" class="axis" />
         @for (step of steps(); track step.label; let last = $last) {
-          <rect
-            [attr.x]="step.x"
-            [attr.y]="step.y"
-            [attr.width]="barWidth"
-            [attr.height]="step.height"
-            [attr.class]="step.tone"
-          />
+          @if (step.height > 0) {
+            <rect
+              [attr.x]="step.x"
+              [attr.y]="step.y"
+              [attr.width]="barWidth"
+              [attr.height]="step.height"
+              [attr.class]="step.tone"
+            />
+          }
           @if (!last) {
             <line
               [attr.x1]="step.x + barWidth"
-              [attr.x2]="step.x + 220"
+              [attr.x2]="step.x + slot"
               [attr.y1]="connectorY($index)"
               [attr.y2]="connectorY($index)"
               class="connector"
@@ -138,6 +141,7 @@ const STEP_X = [120, 340, 560, 780];
 export class ProfitWaterfall {
   readonly figures = input.required<ReportFigures>();
   protected readonly barWidth = BAR_WIDTH;
+  protected readonly slot = SLOT;
 
   /** Running level after each step: profit, then minus losses, then minus tax. */
   private readonly levels = computed(() => {
@@ -162,7 +166,8 @@ export class ProfitWaterfall {
     const bar = (from: number, to: number) => {
       const y1 = this.scale()(from);
       const y2 = this.scale()(to);
-      return { y: Math.min(y1, y2), height: Math.max(Math.abs(y2 - y1), 1) };
+      // A step that changes nothing draws no bar; a tiny non-zero one stays visible.
+      return { y: Math.min(y1, y2), height: from === to ? 0 : Math.max(Math.abs(y2 - y1), 1) };
     };
     const steps: Omit<Step, 'labelY'>[] = [
       {

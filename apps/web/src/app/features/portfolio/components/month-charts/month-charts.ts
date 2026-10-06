@@ -16,7 +16,7 @@ const MONTH_LABELS = [
   'Nov',
   'Dec',
 ];
-const LEFT = 60;
+const LEFT = 0;
 const COLUMN = (1000 - LEFT) / 12;
 const BAR = 40;
 
@@ -44,9 +44,9 @@ interface MonthColumn {
   selector: 'tc-month-charts',
   template: `
     <svg viewBox="0 0 1000 430" role="img" [attr.aria-label]="summary()">
-      <text x="60" y="18" class="row-title">Invested</text>
-      <text x="60" y="148" class="row-title">Result</text>
-      <text x="60" y="308" class="row-title">Year so far, after tax</text>
+      <text x="0" y="18" class="row-title">Invested</text>
+      <text x="0" y="148" class="row-title">Result</text>
+      <text x="0" y="308" class="row-title">Year so far, after tax</text>
 
       <line
         [attr.x1]="left"
@@ -277,13 +277,12 @@ export class MonthCharts {
 
   protected readonly runningLine = computed(() => {
     const points = this.runningPoints();
-    return points.map((p, i) => (i === 0 ? `M${p.x} ${p.y}` : `H${p.x} V${p.y}`)).join(' ');
+    const steps = points.map((p) => `H${p.x} V${p.y}`).join(' ');
+    return `M${LEFT} ${this.runningZero()} ${steps} H1000`;
   });
 
   protected readonly runningArea = computed(() => {
-    const points = this.runningPoints();
-    const zero = this.runningZero();
-    return `${this.runningLine()} V${zero} H${points[0]!.x} Z`;
+    return `${this.runningLine()} V${this.runningZero()} H${LEFT} Z`;
   });
 
   protected readonly runningEnd = computed(() => {
