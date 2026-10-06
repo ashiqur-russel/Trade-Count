@@ -15,7 +15,7 @@
   &nbsp;·&nbsp; No account &nbsp;·&nbsp; No ads or trackers &nbsp;·&nbsp; Open source (AGPL-3.0)
 </p>
 
-![Trade Count portfolio page: totals, the trade form and the stocks you hold](docs/screenshots/portfolio.png)
+![Trade Count portfolio page: totals, the trade form and the stocks you hold](docs/screenshots/portfolio.png?v=2)
 
 <sub>Screenshots show an example portfolio of well-known stocks with made-up trades and prices. Regenerate them with `npm run screenshots`.</sub>
 
@@ -27,32 +27,32 @@ Every sale is matched against the **oldest shares you still hold** (FIFO), acros
 ### A sell form that won't let you make mistakes
 While recording a sale you see how many shares are **open on that date**, fill them all in with one click, and get a preview of exactly which buys the sale uses. Selling more than you hold, or editing a trade so that a later sale would no longer be covered, is refused with a clear explanation.
 
-<p align="center"><img src="docs/screenshots/sell-form.png" width="380" alt="Sell form showing 7 open shares, an All 7 button, a warning that 9 is too many, and the FIFO lots the sale would use"></p>
+<p align="center"><img src="docs/screenshots/sell-form.png?v=2" width="380" alt="Sell form showing 7 open shares, an All 7 button, a warning that 9 is too many, and the FIFO lots the sale would use"></p>
 
 ### Reports: what you invested, earned and keep, month by month
 A separate **Reports** page shows each year at a glance: a waterfall from profit to what you keep after losses and estimated tax, and three charts on one shared month axis for money invested, the monthly result and the running total after tax.
 
-![Reports page in dark mode: year totals, the profit-to-what-you-keep waterfall and the month-by-month charts](docs/screenshots/reports.png)
+![Reports page in dark mode: year totals, the profit-to-what-you-keep waterfall and the month-by-month charts](docs/screenshots/reports.png?v=2)
 
 ### Tax per share, for every sale
 Each sale is listed with the buys it used, the profit and **estimated tax per share**, and how much of the profit you keep. The rate is yours to set (default 26,375 %, German Abgeltungsteuer plus Soli). A sale at a loss is never taxed. Export the year as CSV for Excel or Numbers.
 
-![Every sale with profit per share, tax per share and the share of the profit you keep](docs/screenshots/tax-per-share.png)
+![Every sale with profit per share, tax per share and the share of the profit you keep](docs/screenshots/tax-per-share.png?v=2)
 
 ### Every share, every lot
 The ledger shows each share on its own line, plus open lots, FIFO-matched sales and the full trade history, with filters for stock, dates and status. Edit or delete any trade; everything recalculates instantly.
 
-![Sheet view of the ledger: one line per share with buy and sale price, profit and status](docs/screenshots/ledger.png)
+![Sheet view of the ledger: one line per share with buy and sale price, profit and status](docs/screenshots/ledger.png?v=2)
 
 ### Your data, your devices
 Keep a **backup file**, or turn on **end-to-end encrypted sync** to use the same portfolio on your phone and laptop. Sync is optional and needs no account: one sync key is all it takes. Settings is also where you set your tax rate and choose light, dark or automatic appearance.
 
-<p align="center"><img src="docs/screenshots/settings.png" width="720" alt="Settings page: encrypted sync, backup file, tax rate and light or dark appearance"></p>
+<p align="center"><img src="docs/screenshots/settings.png?v=2" width="720" alt="Settings page: encrypted sync, backup file, tax rate and light or dark appearance"></p>
 
 ### Made for every screen
 Installable as an app (PWA), works offline, light and dark themes, and a layout that adapts to phones.
 
-<p align="center"><img src="docs/screenshots/mobile.png" width="300" alt="Trade Count on a phone"></p>
+<p align="center"><img src="docs/screenshots/mobile.png?v=2" width="300" alt="Trade Count on a phone"></p>
 
 ## How it works
 
