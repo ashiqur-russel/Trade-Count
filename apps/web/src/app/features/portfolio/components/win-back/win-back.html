@@ -75,7 +75,6 @@
           <th>Buy back</th>
           <th class="end">Money in</th>
           <th class="end">Must reach</th>
-          <th class="end">Rise</th>
         </tr>
       </thead>
       <tbody>
@@ -88,8 +87,10 @@
               }
             </td>
             <td class="end num">{{ row.moneyIn | euro }}</td>
-            <td class="end num strong">{{ row.target | euro }}</td>
-            <td class="end num">{{ row.rise | percentChange }}</td>
+            <td class="end num">
+              <strong>{{ row.target | euro }}</strong>
+              <span class="rise">{{ row.rise | percentChange }}</span>
+            </td>
           </tr>
         }
       </tbody>

@@ -1,5 +1,6 @@
 :host {
   display: block;
+  min-width: 0;
 }
 
 .win-back {
@@ -93,6 +94,12 @@ td {
 .strong,
 strong {
   font-weight: var(--tc-weight-semibold);
+}
+
+.rise {
+  display: block;
+  color: var(--tc-color-text-muted);
+  font-size: var(--tc-text-xs);
 }
 
 .muted,
