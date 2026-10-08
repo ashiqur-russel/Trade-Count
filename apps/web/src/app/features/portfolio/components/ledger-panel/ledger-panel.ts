@@ -1,6 +1,7 @@
 import {
   ChangeDetectionStrategy,
   Component,
+  DOCUMENT,
   computed,
   inject,
   input,
@@ -51,7 +52,10 @@ export class LedgerPanel {
   readonly editTrade = output<Trade>();
 
   protected readonly tab = signal<LedgerTab>('sheet');
-  protected readonly pageSize = signal(25);
+  /** Phones start with fewer rows so the page stays short; the selector offers more. */
+  protected readonly pageSize = signal(
+    inject(DOCUMENT).defaultView?.matchMedia('(max-width: 640px)').matches ? 10 : 25,
+  );
   /** Back to page 1 whenever the tab, filter or page size changes. */
   protected readonly page = linkedSignal({
     source: () => [this.tab(), this.filter(), this.pageSize()],

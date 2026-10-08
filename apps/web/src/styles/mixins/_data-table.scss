@@ -1,9 +1,9 @@
 /*
  * Shared table look; include from a component stylesheet with `@use 'mixins/data-table'`.
- * Under 640px rows become stacked cards: cells show their `data-label`, `.cell-title` heads the card,
- * `.cell-badge` sits top-right, `.cell-actions` closes it and `.hide-on-mobile` is dropped.
+ * Below `$cards-below` rows become stacked cards: cells show their `data-label`, `.cell-title` heads the
+ * card, `.cell-badge` sits top-right, `.cell-actions` closes it and `.hide-on-mobile` is dropped.
  */
-@mixin data-table {
+@mixin data-table($cards-below: 640px) {
   :host {
     display: block;
     min-width: 0;
@@ -58,7 +58,7 @@
     color: var(--tc-color-text-muted);
   }
 
-  @media (width <= 640px) {
+  @media (width <= $cards-below) {
     .table-scroll {
       margin: 0;
       padding: 0;

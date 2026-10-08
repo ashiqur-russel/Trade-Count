@@ -12,6 +12,10 @@
   min-width: 0;
 }
 
+.control.date {
+  flex-basis: 8rem;
+}
+
 .control > label,
 .control > .label {
   color: var(--tc-color-text-muted);

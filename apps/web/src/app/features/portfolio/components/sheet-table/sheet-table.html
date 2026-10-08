@@ -20,15 +20,35 @@
           @let row = line.row;
           <tr class="share">
             <td class="num muted hide-on-mobile">{{ line.number }}</td>
-            <td class="cell-title"><tc-stock-label [stock]="line.group.stock" /></td>
-            <td class="end num" data-label="Qty">{{ row.quantity | quantity }}</td>
-            <td class="num" data-label="Bought">{{ row.buy.tradedOn | displayDate }}</td>
-            <td class="end num" data-label="Buy price">{{ row.buy.price | euro }}</td>
+            <td class="cell-title">
+              <tc-stock-label [stock]="line.group.stock" />
+              <div class="summary">
+                <span>
+                  {{ row.quantity | quantity }} × bought {{ row.buy.tradedOn | displayDate }} &#64;
+                  {{ row.buy.price | euro }}
+                </span>
+                @if (row.sell; as sell) {
+                  <span class="summary-sale">
+                    <span
+                      >sold {{ sell.tradedOn | displayDate }} &#64; {{ sell.price | euro }}</span
+                    >
+                    <tc-profit-amount [value]="row.profit!" />
+                    <tc-profit-amount
+                      unit="percent"
+                      [value]="changeRatio(row.buy.price, sell.price)"
+                    />
+                  </span>
+                }
+              </div>
+            </td>
+            <td class="end num hide-on-mobile">{{ row.quantity | quantity }}</td>
+            <td class="num hide-on-mobile">{{ row.buy.tradedOn | displayDate }}</td>
+            <td class="end num hide-on-mobile">{{ row.buy.price | euro }}</td>
             @if (row.sell; as sell) {
-              <td class="num" data-label="Sold">{{ sell.tradedOn | displayDate }}</td>
-              <td class="end num" data-label="Sale price">{{ sell.price | euro }}</td>
-              <td class="end" data-label="P/L"><tc-profit-amount [value]="row.profit!" /></td>
-              <td class="end" data-label="Change">
+              <td class="num hide-on-mobile">{{ sell.tradedOn | displayDate }}</td>
+              <td class="end num hide-on-mobile">{{ sell.price | euro }}</td>
+              <td class="end hide-on-mobile"><tc-profit-amount [value]="row.profit!" /></td>
+              <td class="end hide-on-mobile">
                 <tc-profit-amount unit="percent" [value]="changeRatio(row.buy.price, sell.price)" />
               </td>
               <td class="cell-badge"><tc-pill tone="gain">Closed</tc-pill></td>

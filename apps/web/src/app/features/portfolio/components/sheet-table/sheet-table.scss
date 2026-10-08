@@ -1,5 +1,9 @@
 @use 'mixins/data-table';
-@include data-table.data-table;
+
+// The full sheet needs about 1000px, so tablets get the compact cards too.
+$cards-below: 900px;
+
+@include data-table.data-table($cards-below);
 
 .share td {
   padding-top: var(--tc-space-1);
@@ -22,7 +26,7 @@
   font-weight: var(--tc-weight-bold);
 }
 
-@media (width <= 640px) {
+@media (width <= $cards-below) {
   .share:nth-child(even) td,
   .subtotal td {
     background: none;
@@ -37,5 +41,37 @@
 
   .subtotal {
     background: var(--tc-color-surface-sunken);
+  }
+}
+
+.summary {
+  display: none;
+}
+
+@media (width <= $cards-below) {
+  .share .cell-title {
+    display: block;
+  }
+
+  .summary {
+    display: grid;
+    gap: 2px;
+    margin-top: var(--tc-space-1);
+    color: var(--tc-color-text-muted);
+    font-family: var(--tc-font-numeric);
+    font-size: var(--tc-text-xs);
+    font-weight: var(--tc-weight-regular);
+  }
+
+  .summary-sale {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0 var(--tc-space-2);
+    align-items: baseline;
+  }
+
+  .summary-sale tc-profit-amount {
+    font-size: var(--tc-text-sm);
+    font-weight: var(--tc-weight-semibold);
   }
 }
