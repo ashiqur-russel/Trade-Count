@@ -67,7 +67,12 @@ td:first-child {
 
 @media (width <= 640px) {
   td:first-child {
+    flex-wrap: wrap;
     min-width: 0;
+  }
+
+  .break-even {
+    flex-basis: 100%;
   }
 
   .rename {
@@ -97,6 +102,13 @@ td:first-child {
 
 .name {
   font-weight: var(--tc-weight-semibold);
+}
+
+.break-even {
+  display: block;
+  color: var(--tc-color-warn);
+  font-family: var(--tc-font-numeric);
+  font-size: var(--tc-text-xs);
 }
 
 .symbol {

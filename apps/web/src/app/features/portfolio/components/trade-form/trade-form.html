@@ -72,7 +72,8 @@
     </div>
   }
 
-  @if (salePreview(); as sale) {
+  @if (salePreview(); as preview) {
+    @let sale = preview.sale;
     <div class="preview" aria-live="polite">
       <span class="label">Sells these lots, oldest first</span>
       @for (allocation of sale.allocations; track allocation.buy.id) {
@@ -92,7 +93,35 @@
         <strong>Profit / loss</strong>
         <tc-profit-amount [value]="sale.profit" />
       </div>
+      @if (preview.overallAfter; as overall) {
+        <div class="line">
+          <span>{{ preview.afterSale.stock.name }} overall after this sale</span>
+          <tc-profit-amount [value]="overall" />
+        </div>
+      }
+      <div class="line">
+        <span>Cash this sale frees</span>
+        <span class="num">{{ sale.proceeds | euro }}</span>
+      </div>
+      @if (preview.tax.covered.gt(0)) {
+        <p class="pot-note">
+          @if (preview.tax.taxable.eq(0)) {
+            Tax: none, covered by your loss pot
+          } @else {
+            Your loss pot covers {{ preview.tax.covered | euro }} of this gain
+          }
+          · {{ preview.tax.potAfter | euro }} left
+        </p>
+      }
     </div>
+    @if (sale.profit.lt(0)) {
+      <tc-win-back
+        [stockName]="preview.afterSale.stock.name"
+        [sale]="sale"
+        [afterSale]="preview.afterSale"
+        [taxRate]="taxRate()"
+      />
+    }
   }
 
   @if (formError()) {

@@ -13,7 +13,9 @@ import { NonNullableFormBuilder, ReactiveFormsModule } from '@angular/forms';
 import {
   Big,
   applyTradeChange,
+  compareTrades,
   computeLedger,
+  lossPotTimeline,
   openSharesBefore,
   type Trade,
   type TradeSide,
@@ -27,12 +29,15 @@ import {
   type SegmentOption,
   type SelectOption,
 } from '../../../../shared/ui';
+import { LossPotSetting } from '../../data/loss-pot-setting';
 import { PortfolioStore } from '../../data/portfolio-store';
+import { TaxRateSetting } from '../../data/tax-rate-setting';
 import { todayIsoDate } from '../../../../shared/dates/iso-date';
 import { DisplayDatePipe, EuroPipe, QuantityPipe } from '../../format/display-pipes';
 import { PRICE_LIMITS, QUANTITY_LIMITS } from '@trade-count/local-store';
 import { parseDecimalInput } from '../../format/decimal-input';
 import { ProfitAmount } from '../profit-amount/profit-amount';
+import { WinBack } from '../win-back/win-back';
 
 const PREVIEW_ID = 'preview';
 
@@ -52,6 +57,7 @@ interface FieldErrors {
     Select,
     DatePicker,
     ProfitAmount,
+    WinBack,
     EuroPipe,
     QuantityPipe,
     DisplayDatePipe,
@@ -62,6 +68,8 @@ interface FieldErrors {
 })
 export class TradeForm {
   private readonly store = inject(PortfolioStore);
+  private readonly lossPot = inject(LossPotSetting);
+  protected readonly taxRate = inject(TaxRateSetting).rate;
 
   /** A trade to edit; null records a new one. */
   readonly editing = input<Trade | null>(null);
@@ -142,18 +150,32 @@ export class TradeForm {
     return this.store.findOversellMessage(change, draft.id);
   });
 
-  /** The sale as FIFO would book it, so the user sees which lots it uses before saving. */
+  /**
+   * The sale as FIFO would book it, so the user sees which lots it uses before saving, plus the
+   * stock right after it and what the loss pot does with it.
+   */
   protected readonly salePreview = computed(() => {
     const draft = this.draft();
     if (draft?.side !== 'sell') return null;
     const change = this.editing()
       ? ({ type: 'update', trade: draft } as const)
       : ({ type: 'add', trade: draft } as const);
-    const ledger = computeLedger(
+    const trades = applyTradeChange(this.store.trades(), change);
+    const ledger = computeLedger(this.store.stocks(), trades);
+    const sale = ledger.get(draft.stockId)?.sales.find((s) => s.sell.id === draft.id);
+    const afterSale = computeLedger(
       this.store.stocks(),
-      applyTradeChange(this.store.trades(), change),
-    );
-    return ledger.get(draft.stockId)?.sales.find((s) => s.sell.id === draft.id) ?? null;
+      trades.filter((t) => compareTrades(t, draft) <= 0),
+    ).get(draft.stockId);
+    if (!sale || !afterSale) return null;
+    const tax = lossPotTimeline(ledger, this.taxRate(), this.lossPot.start()).sales.get(draft.id)!;
+    const earlierRealized = afterSale.realizedProfit.minus(sale.profit);
+    return {
+      sale,
+      afterSale,
+      tax,
+      overallAfter: sale.profit.gt(0) && earlierRealized.lt(0) ? afterSale.realizedProfit : null,
+    };
   });
 
   constructor() {

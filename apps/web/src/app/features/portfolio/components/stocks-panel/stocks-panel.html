@@ -73,6 +73,11 @@
                       <span class="symbol">{{ row.stock.symbol }}</span>
                     }
                   </button>
+                  @if (row.breakEven; as breakEven) {
+                    <span class="break-even"
+                      >Break-even incl. past loss {{ breakEven | euro }}</span
+                    >
+                  }
                 }
               </td>
               <td class="end num" data-label="Held">{{ row.entry.held | quantity }}</td>

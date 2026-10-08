@@ -1,0 +1,101 @@
+:host {
+  display: block;
+}
+
+.win-back {
+  display: grid;
+  gap: var(--tc-space-2);
+  padding: var(--tc-space-3);
+  border: 1px solid var(--tc-color-border);
+  border-left: 3px solid var(--tc-color-warn);
+  border-radius: var(--tc-radius-md);
+  background: var(--tc-color-surface);
+  font-size: var(--tc-text-sm);
+}
+
+.label,
+.way-title,
+.inputs span,
+th {
+  color: var(--tc-color-text-muted);
+  font-size: var(--tc-text-xs);
+  font-weight: var(--tc-weight-semibold);
+  letter-spacing: var(--tc-tracking-label);
+  text-transform: uppercase;
+}
+
+.ways {
+  display: grid;
+  gap: var(--tc-space-2);
+}
+
+.way {
+  display: grid;
+  gap: 2px;
+  padding: var(--tc-space-2);
+  border-radius: var(--tc-radius-md);
+  background: var(--tc-color-surface-sunken);
+}
+
+.inputs {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--tc-space-2);
+}
+
+.inputs label {
+  display: grid;
+  gap: 2px;
+}
+
+.inputs input {
+  min-width: 0;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+th,
+td {
+  padding: var(--tc-space-1) 0 var(--tc-space-1) var(--tc-space-2);
+  text-align: left;
+  vertical-align: top;
+}
+
+th:first-child,
+td:first-child {
+  padding-left: 0;
+}
+
+th {
+  white-space: nowrap;
+}
+
+td.num {
+  white-space: nowrap;
+}
+
+td {
+  border-top: 1px solid var(--tc-color-border);
+}
+
+.end {
+  text-align: right;
+}
+
+.num {
+  font-family: var(--tc-font-numeric);
+  font-variant-numeric: tabular-nums;
+}
+
+.strong,
+strong {
+  font-weight: var(--tc-weight-semibold);
+}
+
+.muted,
+.tax-side {
+  color: var(--tc-color-text-muted);
+}

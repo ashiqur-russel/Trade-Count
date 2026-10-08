@@ -1,7 +1,13 @@
 import { Pipe, PipeTransform } from '@angular/core';
 import type { Big } from '@trade-count/ledger';
 import { formatIsoDate } from '../../../shared/dates/iso-date';
-import { formatEuro, formatPercent, formatQuantity, formatSignedEuro } from './display-format';
+import {
+  formatEuro,
+  formatPercent,
+  formatQuantity,
+  formatSignedEuro,
+  formatWholeEuro,
+} from './display-format';
 
 type Decimal = Big | string | number;
 
@@ -9,6 +15,13 @@ type Decimal = Big | string | number;
 export class EuroPipe implements PipeTransform {
   transform(value: Decimal): string {
     return formatEuro(value);
+  }
+}
+
+@Pipe({ name: 'wholeEuro' })
+export class WholeEuroPipe implements PipeTransform {
+  transform(value: Decimal): string {
+    return formatWholeEuro(value);
   }
 }
 
@@ -42,6 +55,7 @@ export class DisplayDatePipe implements PipeTransform {
 
 export const DISPLAY_PIPES = [
   EuroPipe,
+  WholeEuroPipe,
   SignedEuroPipe,
   QuantityPipe,
   PercentChangePipe,

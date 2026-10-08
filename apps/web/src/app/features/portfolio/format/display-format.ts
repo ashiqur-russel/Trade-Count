@@ -4,6 +4,11 @@ type Decimal = Big | string | number;
 
 const LOCALE = 'de-DE';
 const euro = new Intl.NumberFormat(LOCALE, { style: 'currency', currency: 'EUR' });
+const wholeEuro = new Intl.NumberFormat(LOCALE, {
+  style: 'currency',
+  currency: 'EUR',
+  maximumFractionDigits: 0,
+});
 const quantity = new Intl.NumberFormat(LOCALE, { maximumFractionDigits: 6 });
 const percent = new Intl.NumberFormat(LOCALE, {
   style: 'percent',
@@ -19,6 +24,10 @@ export type ProfitTone = 'gain' | 'loss' | 'flat';
 
 export function formatEuro(value: Decimal): string {
   return euro.format(toNumber(value));
+}
+
+export function formatWholeEuro(value: Decimal): string {
+  return wholeEuro.format(toNumber(value));
 }
 
 export function formatSignedEuro(value: Decimal): string {

@@ -5,6 +5,7 @@ import {
   ReactiveFormsModule,
   Validators,
 } from '@angular/forms';
+import { breakEvenWithPastLoss } from '@trade-count/ledger';
 import { Button, ConfirmButton, EmptyState, Panel } from '../../../../shared/ui';
 import { PortfolioStore } from '../../data/portfolio-store';
 import { EuroPipe, QuantityPipe } from '../../format/display-pipes';
@@ -48,11 +49,15 @@ export class StocksPanel {
   protected readonly rows = computed(() => {
     const ledger = this.store.ledger();
     const stocksWithTrades = new Set(this.store.trades().map((t) => t.stockId));
-    return this.store.stocks().map((stock) => ({
-      stock,
-      entry: ledger.get(stock.id)!,
-      canDelete: !stocksWithTrades.has(stock.id),
-    }));
+    return this.store.stocks().map((stock) => {
+      const entry = ledger.get(stock.id)!;
+      return {
+        stock,
+        entry,
+        breakEven: breakEvenWithPastLoss(entry),
+        canDelete: !stocksWithTrades.has(stock.id),
+      };
+    });
   });
 
   protected toggleFilter(stockId: string): void {

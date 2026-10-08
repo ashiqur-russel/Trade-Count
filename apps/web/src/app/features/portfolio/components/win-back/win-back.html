@@ -1,0 +1,106 @@
+@let head = headline();
+<section class="win-back" aria-label="Win back this loss">
+  <span class="label">Win back this loss</span>
+
+  @if (keptTarget(); as kept) {
+    <p>
+      You keep {{ afterSale().held | quantity }} {{ stockName() }} bought at
+      {{ afterSale().averageOpenPrice! | euro }}. Two ways to make up the {{ loss() | euro }}:
+    </p>
+    <div class="ways">
+      <div class="way">
+        <span class="way-title">With the {{ afterSale().held | quantity }} you keep</span>
+        <span>
+          They must reach
+          <strong class="num" data-testid="kept-target">{{ kept | euro }}</strong> ({{
+            riseFrom(kept) | percentChange
+          }}
+          from {{ salePrice() | euro }})
+        </span>
+        <span class="muted">Their own cost back, plus {{ loss() | euro }} spread over them.</span>
+      </div>
+      <div class="way">
+        <span class="way-title">
+          Buy the {{ soldShares() | quantity }} back at {{ salePrice() | euro }}
+        </span>
+        <span>
+          They must reach <strong class="num">{{ head.target | euro }}</strong> ({{
+            head.rise | percentChange
+          }})
+        </span>
+        <span class="muted">The price you paid for them, as if you had never sold.</span>
+      </div>
+    </div>
+  } @else {
+    <p>
+      {{ stockName() }} has to climb back to
+      <strong class="num" data-testid="win-back-target">{{ head.target | euro }}</strong>
+      ({{ head.rise | percentChange }} from {{ salePrice() | euro }}) to make up the
+      {{ loss() | euro }}.
+    </p>
+    <p class="muted">
+      That is the same whether you keep your {{ soldShares() | quantity }} shares or sell and buy
+      {{ soldShares() | quantity }} back at {{ salePrice() | euro }}. Selling only changes the
+      target if you buy back cheaper, or buy more.
+    </p>
+  }
+
+  <div class="inputs">
+    <label>
+      <span>Buy back shares</span>
+      <input
+        inputmode="decimal"
+        autocomplete="off"
+        [value]="buyBackSharesText()"
+        (input)="buyBackSharesText.set(inputValue($event))"
+        (keydown.enter)="$event.preventDefault()"
+      />
+    </label>
+    <label>
+      <span>At price (€)</span>
+      <input
+        inputmode="decimal"
+        autocomplete="off"
+        [value]="buyBackPriceText()"
+        (input)="buyBackPriceText.set(inputValue($event))"
+        (keydown.enter)="$event.preventDefault()"
+      />
+    </label>
+  </div>
+
+  @if (rows().length) {
+    <table>
+      <thead>
+        <tr>
+          <th>Buy back</th>
+          <th class="end">Money in</th>
+          <th class="end">Must reach</th>
+          <th class="end">Rise</th>
+        </tr>
+      </thead>
+      <tbody>
+        @for (row of rows(); track row.shares.toString()) {
+          <tr>
+            <td>
+              {{ row.shares | quantity }}
+              @if (row.sameShares) {
+                <span class="muted">same shares</span>
+              }
+            </td>
+            <td class="end num">{{ row.moneyIn | euro }}</td>
+            <td class="end num strong">{{ row.target | euro }}</td>
+            <td class="end num">{{ row.rise | percentChange }}</td>
+          </tr>
+        }
+      </tbody>
+    </table>
+    @if (rows().length > 1) {
+      <p class="muted">Buying more lowers the price you need, but puts more money at risk.</p>
+    }
+  }
+
+  <p class="tax-side">
+    Tax side: the {{ loss() | euro }} loss offsets later share gains, about
+    {{ taxSaved() | wholeEuro }} less tax at {{ ratePercent() }} % (estimate).
+  </p>
+</section>
