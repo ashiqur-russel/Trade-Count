@@ -10,6 +10,7 @@ describe('display-format', () => {
 
   it('never shows a negated zero as minus zero', () => {
     expect(formatEuro(new Big(0).times(-1))).toBe('0,00\u00a0€');
+    expect(formatSignedEuro(new Big(0).times(-1))).toBe('0,00\u00a0€');
   });
 
   it('classifies profit as gain, loss or flat', () => {

@@ -11,6 +11,7 @@ import {
   type SegmentOption,
   type SelectOption,
 } from '../../../shared/ui';
+import { LossPotSummary } from '../components/loss-pot-summary/loss-pot-summary';
 import { MonthCharts } from '../components/month-charts/month-charts';
 import { ProfitWaterfall } from '../components/profit-waterfall/profit-waterfall';
 import { SaleTaxTable } from '../components/sale-tax-table/sale-tax-table';
@@ -39,6 +40,7 @@ const MONTH_NAMES = Array.from({ length: 12 }, (_, i) =>
     Select,
     ProfitWaterfall,
     MonthCharts,
+    LossPotSummary,
     SaleTaxTable,
     ...DISPLAY_PIPES,
   ],
@@ -83,6 +85,13 @@ export class ReportsPage {
   protected readonly usesLossPot = computed(() => {
     const report = this.report();
     return !!report && (report.potAtStart.gt(0) || report.potAtEnd.gt(0));
+  });
+  protected readonly taxNote = computed(() => {
+    const report = this.report();
+    if (!this.usesLossPot() || !report) return `${this.ratePercent()} % of each profit`;
+    return report.totals.tax.eq(0) && report.totals.profit.gt(0)
+      ? 'All gains covered by the pot'
+      : `${this.ratePercent()} % of gains the pot does not cover`;
   });
   protected readonly activeMonths = computed(
     () => this.report()?.months.filter((m) => m.hasTrades) ?? [],

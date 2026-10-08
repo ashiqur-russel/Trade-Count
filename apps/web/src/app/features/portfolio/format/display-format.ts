@@ -32,7 +32,7 @@ export function formatWholeEuro(value: Decimal): string {
 
 export function formatSignedEuro(value: Decimal): string {
   const amount = new Big(value);
-  return (amount.gt(0) ? '+' : '') + euro.format(amount.toNumber());
+  return (amount.gt(0) ? '+' : '') + euro.format(toNumber(amount));
 }
 
 export function formatQuantity(value: Decimal): string {

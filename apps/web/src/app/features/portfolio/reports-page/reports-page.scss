@@ -68,6 +68,16 @@ h1 {
   border-right: 0;
 }
 
+.totals > .pot {
+  background: var(--tc-color-accent-subtle);
+  color: var(--tc-color-accent);
+}
+
+.totals > .pot .label,
+.totals > .pot .note {
+  color: inherit;
+}
+
 .label {
   display: inline-flex;
   gap: var(--tc-space-2);

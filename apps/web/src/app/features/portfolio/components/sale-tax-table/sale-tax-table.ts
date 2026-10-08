@@ -57,9 +57,15 @@ import {
                     {{ sale.profit | signedEuro }}
                   </td>
                   <td class="end num tax" [attr.rowspan]="count">
-                    {{ sale.tax.times(-1) | euro }}
-                    @if (sale.covered.gt(0)) {
-                      <span class="covered">{{ sale.covered | euro }} covered</span>
+                    @if (sale.covered.gt(0) && sale.tax.eq(0)) {
+                      <span class="pot-word">covered</span>
+                    } @else if (showPot() && sale.profit.lt(0)) {
+                      <span class="pot-word muted">added</span>
+                    } @else {
+                      {{ sale.tax.times(-1) | euro }}
+                      @if (sale.covered.gt(0)) {
+                        <span class="covered">{{ sale.covered | euro }} covered</span>
+                      }
                     }
                   </td>
                   <td
@@ -203,6 +209,15 @@ import {
 
     .taxed {
       background: var(--tc-color-warn);
+    }
+
+    .pot-word {
+      color: var(--tc-color-accent);
+      font-size: var(--tc-text-sm);
+    }
+
+    .pot-word.muted {
+      color: var(--tc-color-text-muted);
     }
 
     .covered {

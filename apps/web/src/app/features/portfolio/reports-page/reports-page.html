@@ -38,24 +38,15 @@
       <span class="value" [class.loss]="report.totals.loss.lt(0)">{{
         report.totals.loss | signedEuro
       }}</span>
-      <span class="note">{{ report.losingSales }} sale(s)</span>
+      <span class="note"
+        >{{ report.losingSales }} sale(s){{ usesLossPot() ? ', added to the pot' : '' }}</span
+      >
     </div>
     <div>
       <span class="label"><span class="key tax"></span>Tax, estimated</span>
       <span class="value">{{ report.totals.tax.times(-1) | euro }}</span>
-      <span class="note"
-        >{{ ratePercent() }} % of each profit{{
-          usesLossPot() ? ' the loss pot does not cover' : ''
-        }}</span
-      >
+      <span class="note">{{ taxNote() }}</span>
     </div>
-    @if (usesLossPot()) {
-      <div>
-        <span class="label">Loss pot left</span>
-        <span class="value">{{ report.potAtEnd | euro }}</span>
-        <span class="note">of {{ report.potAtStart | euro }} at the start of the year</span>
-      </div>
-    }
     <div>
       <span class="label">After tax</span>
       <span
@@ -67,10 +58,22 @@
       </span>
       <span class="note">Profit − loss − tax</span>
     </div>
+    @if (usesLossPot()) {
+      <div class="pot">
+        <span class="label">Loss pot left</span>
+        <span class="value">{{ report.potAtEnd | euro }}</span>
+        <span class="note">of {{ report.potAtStart | euro }} at the start of the year</span>
+      </div>
+    }
   </section>
 
   @switch (view()) {
     @case ('monthly') {
+      @if (usesLossPot()) {
+        <tc-panel heading="Loss pot through the year">
+          <tc-loss-pot-summary [report]="report" />
+        </tc-panel>
+      }
       <tc-panel [heading]="'From profit to what you keep, ' + report.year">
         <tc-profit-waterfall [figures]="report.totals" />
       </tc-panel>

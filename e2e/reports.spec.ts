@@ -68,6 +68,7 @@ test.describe('reports page', () => {
     await expect(totals).toContainText('20.877,00 €');
     await expect(totals).toContainText('+123,00 €');
     await expect(page.locator('tc-sale-tax-table')).toContainText('covered');
+    await expect(page.locator('tc-loss-pot-summary')).toContainText('128 € of gains covered, 5 € of loss added');
   });
 
   test('exports the year as CSV', async ({ openDevice }) => {

@@ -111,6 +111,10 @@ td:first-child {
   font-size: var(--tc-text-xs);
 }
 
+.nowrap {
+  white-space: nowrap;
+}
+
 .symbol {
   margin-left: var(--tc-space-2);
   color: var(--tc-color-text-muted);

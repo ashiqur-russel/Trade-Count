@@ -75,7 +75,8 @@
                   </button>
                   @if (row.breakEven; as breakEven) {
                     <span class="break-even"
-                      >Break-even incl. past loss {{ breakEven | euro }}</span
+                      >Break-even incl. past loss
+                      <span class="nowrap">{{ breakEven | euro }}</span></span
                     >
                   }
                 }
