@@ -22,24 +22,41 @@
             <td class="num muted hide-on-mobile">{{ line.number }}</td>
             <td class="cell-title">
               <tc-stock-label [stock]="line.group.stock" />
-              <div class="summary">
-                <span>
-                  {{ row.quantity | quantity }} × bought {{ row.buy.tradedOn | displayDate }} &#64;
-                  {{ row.buy.price | euro }}
-                </span>
-                @if (row.sell; as sell) {
-                  <span class="summary-sale">
-                    <span
-                      >sold {{ sell.tradedOn | displayDate }} &#64; {{ sell.price | euro }}</span
-                    >
-                    <tc-profit-amount [value]="row.profit!" />
-                    <tc-profit-amount
-                      unit="percent"
-                      [value]="changeRatio(row.buy.price, sell.price)"
-                    />
-                  </span>
-                }
-              </div>
+              <dl class="summary">
+                <div>
+                  <dt>Bought</dt>
+                  <dd>
+                    @if (!row.quantity.eq(1)) {
+                      {{ row.quantity | quantity }} ×
+                    }
+                    {{ row.buy.tradedOn | displayDate }}
+                  </dd>
+                  <dd>{{ row.buy.price | euro }}</dd>
+                </div>
+                <div>
+                  <dt>Sold</dt>
+                  @if (row.sell; as sell) {
+                    <dd>{{ sell.tradedOn | displayDate }}</dd>
+                    <dd>{{ sell.price | euro }}</dd>
+                  } @else {
+                    <dd class="muted">–</dd>
+                  }
+                </div>
+                <div class="pl">
+                  <dt>P/L</dt>
+                  @if (row.sell; as sell) {
+                    <dd><tc-profit-amount [value]="row.profit!" /></dd>
+                    <dd>
+                      <tc-profit-amount
+                        unit="percent"
+                        [value]="changeRatio(row.buy.price, sell.price)"
+                      />
+                    </dd>
+                  } @else {
+                    <dd class="muted">–</dd>
+                  }
+                </div>
+              </dl>
             </td>
             <td class="end num hide-on-mobile">{{ row.quantity | quantity }}</td>
             <td class="num hide-on-mobile">{{ row.buy.tradedOn | displayDate }}</td>

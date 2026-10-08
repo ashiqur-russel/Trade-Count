@@ -49,29 +49,53 @@ $cards-below: 900px;
 }
 
 @media (width <= $cards-below) {
+  /* The figures use the card's full width; the status badge sits in the top-right corner beside the name. */
   .share .cell-title {
     display: block;
+    grid-column: 1 / -1;
+  }
+
+  .share .cell-title tc-stock-label {
+    display: block;
+    padding-inline-end: 5rem;
+  }
+
+  .share .cell-badge {
+    grid-row: 1;
+    grid-column: 2;
+    align-self: start;
   }
 
   .summary {
     display: grid;
-    gap: 2px;
-    margin-top: var(--tc-space-1);
-    color: var(--tc-color-text-muted);
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: var(--tc-space-3);
+    margin: var(--tc-space-2) 0 0;
     font-family: var(--tc-font-numeric);
-    font-size: var(--tc-text-xs);
+    font-size: var(--tc-text-sm);
     font-weight: var(--tc-weight-regular);
   }
 
-  .summary-sale {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0 var(--tc-space-2);
-    align-items: baseline;
+  .summary > div {
+    display: grid;
+    align-content: start;
+    gap: 2px;
+    min-width: 0;
   }
 
-  .summary-sale tc-profit-amount {
-    font-size: var(--tc-text-sm);
-    font-weight: var(--tc-weight-semibold);
+  .summary .pl {
+    justify-items: end;
+    text-align: right;
+  }
+
+  .summary dt {
+    color: var(--tc-color-text-muted);
+    font-size: var(--tc-text-xs);
+    letter-spacing: var(--tc-tracking-label);
+    text-transform: uppercase;
+  }
+
+  .summary dd {
+    margin: 0;
   }
 }
