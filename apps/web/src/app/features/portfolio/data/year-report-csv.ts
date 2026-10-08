@@ -19,6 +19,8 @@ export function yearReportCsv(report: YearReport): string {
     'Sale profit',
     'Sale tax',
     'Sale after tax',
+    'Covered by loss pot',
+    'Loss pot after',
   ];
   const lines = report.sales.flatMap((sale) =>
     sale.lots.map((lot) => [
@@ -33,6 +35,8 @@ export function yearReportCsv(report: YearReport): string {
       decimal(sale.profit),
       decimal(sale.tax),
       decimal(sale.afterTax),
+      decimal(sale.covered),
+      decimal(sale.potAfter),
     ]),
   );
   return (

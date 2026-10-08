@@ -27,6 +27,9 @@ import {
             <th class="end">Tax</th>
             <th class="end">After tax</th>
             <th>Kept / tax</th>
+            @if (showPot()) {
+              <th class="end">Pot after</th>
+            }
           </tr>
         </thead>
         <tbody>
@@ -55,6 +58,9 @@ import {
                   </td>
                   <td class="end num tax" [attr.rowspan]="count">
                     {{ sale.tax.times(-1) | euro }}
+                    @if (sale.covered.gt(0)) {
+                      <span class="covered">{{ sale.covered | euro }} covered</span>
+                    }
                   </td>
                   <td
                     class="end num strong"
@@ -75,12 +81,15 @@ import {
                       }}</span>
                     }
                   </td>
+                  @if (showPot()) {
+                    <td class="end num" [attr.rowspan]="count">{{ sale.potAfter | euro }}</td>
+                  }
                 }
               </tr>
             }
           } @empty {
             <tr>
-              <td colspan="11" class="muted">No sales in this year.</td>
+              <td [attr.colspan]="showPot() ? 12 : 11" class="muted">No sales in this year.</td>
             </tr>
           }
         </tbody>
@@ -97,7 +106,7 @@ import {
               <td class="end num" [attr.data-tone]="tone(totals().afterTax)">
                 {{ totals().afterTax | signedEuro }}
               </td>
-              <td></td>
+              <td [attr.colspan]="showPot() ? 2 : 1"></td>
             </tr>
           </tfoot>
         }
@@ -196,6 +205,12 @@ import {
       background: var(--tc-color-warn);
     }
 
+    .covered {
+      display: block;
+      color: var(--tc-color-text-muted);
+      font-size: var(--tc-text-xs);
+    }
+
     .loss-note {
       color: var(--tc-color-loss);
       font-size: var(--tc-text-xs);
@@ -206,6 +221,7 @@ import {
 export class SaleTaxTable {
   readonly sales = input.required<ReportSale[]>();
   readonly totals = input.required<ReportFigures>();
+  readonly showPot = input(false);
 
   protected tone(value: {
     gt(n: number): boolean;

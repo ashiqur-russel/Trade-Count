@@ -33,7 +33,7 @@ describe('yearReportCsv', () => {
 
   it('starts with a byte-order mark and uses semicolons with decimal commas', () => {
     expect(yearReportCsv(report).startsWith('﻿')).toBe(true);
-    expect(lines[1]).toBe('2026-08-02;"Acme; ""Holdings""";1;105;2026-01-12;100;5;;-5;0;-5');
+    expect(lines[1]).toBe('2026-08-02;"Acme; ""Holdings""";1;105;2026-01-12;100;5;;-5;0;-5;0;5');
   });
 
   it('writes one line per lot a sale used', () => {

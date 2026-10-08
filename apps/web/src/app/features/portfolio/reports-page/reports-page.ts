@@ -14,6 +14,7 @@ import {
 import { MonthCharts } from '../components/month-charts/month-charts';
 import { ProfitWaterfall } from '../components/profit-waterfall/profit-waterfall';
 import { SaleTaxTable } from '../components/sale-tax-table/sale-tax-table';
+import { LossPotSetting } from '../data/loss-pot-setting';
 import { PortfolioStore } from '../data/portfolio-store';
 import { TaxRateSetting, rateToPercentText } from '../data/tax-rate-setting';
 import { yearReportCsv, yearReportFileName } from '../data/year-report-csv';
@@ -48,6 +49,7 @@ const MONTH_NAMES = Array.from({ length: 12 }, (_, i) =>
 export class ReportsPage {
   private readonly store = inject(PortfolioStore);
   private readonly taxRate = inject(TaxRateSetting);
+  private readonly lossPot = inject(LossPotSetting);
 
   protected readonly viewOptions: readonly SegmentOption<ReportView>[] = [
     { value: 'monthly', label: 'Monthly' },
@@ -70,7 +72,17 @@ export class ReportsPage {
     const year = this.year();
     return year === null
       ? null
-      : yearReport(this.store.stocks(), this.store.trades(), year, this.taxRate.rate());
+      : yearReport(
+          this.store.stocks(),
+          this.store.trades(),
+          year,
+          this.taxRate.rate(),
+          this.lossPot.start(),
+        );
+  });
+  protected readonly usesLossPot = computed(() => {
+    const report = this.report();
+    return !!report && (report.potAtStart.gt(0) || report.potAtEnd.gt(0));
   });
   protected readonly activeMonths = computed(
     () => this.report()?.months.filter((m) => m.hasTrades) ?? [],

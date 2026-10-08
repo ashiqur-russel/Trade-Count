@@ -43,8 +43,19 @@
     <div>
       <span class="label"><span class="key tax"></span>Tax, estimated</span>
       <span class="value">{{ report.totals.tax.times(-1) | euro }}</span>
-      <span class="note">{{ ratePercent() }} % of each profit</span>
+      <span class="note"
+        >{{ ratePercent() }} % of each profit{{
+          usesLossPot() ? ' the loss pot does not cover' : ''
+        }}</span
+      >
     </div>
+    @if (usesLossPot()) {
+      <div>
+        <span class="label">Loss pot left</span>
+        <span class="value">{{ report.potAtEnd | euro }}</span>
+        <span class="note">of {{ report.potAtStart | euro }} at the start of the year</span>
+      </div>
+    }
     <div>
       <span class="label">After tax</span>
       <span
@@ -155,7 +166,11 @@
 
       <tc-panel heading="Every sale, tax per share">
         <span panel-actions class="muted">One line per buy the sale used (FIFO)</span>
-        <tc-sale-tax-table [sales]="report.sales" [totals]="report.totals" />
+        <tc-sale-tax-table
+          [showPot]="usesLossPot()"
+          [sales]="report.sales"
+          [totals]="report.totals"
+        />
         <p class="muted">
           Tax per share = profit per share × {{ ratePercent() }} %, shown rounded; each sale's tax
           is worked out on its total. A sale that is a loss overall pays no tax. An estimate for
