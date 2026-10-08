@@ -13,10 +13,12 @@ tc-panel {
   min-height: 0;
 }
 
-/* Long lists scroll inside the panel, with the column headings kept in view. */
+/* Long lists scroll inside the panel, with the column headings kept in view. The end padding keeps
+   right-aligned numbers clear of overlay scrollbars (macOS, iOS), which draw on top of the content. */
 .table-scroll {
   flex: 1 1 auto;
   min-height: 0;
+  padding-inline-end: var(--tc-space-3);
   overflow-y: auto;
 }
 
@@ -27,9 +29,11 @@ thead th {
   background: var(--tc-color-surface);
 }
 
+/* Once the panels stack, a scroll box inside the scrolling page is awkward: the list flows with the page. */
 @media (width <= 880px) {
   .table-scroll {
-    max-height: 28rem;
+    padding-inline-end: 0;
+    overflow-y: visible;
   }
 }
 
@@ -64,6 +68,24 @@ td:first-child {
 @media (width <= 640px) {
   td:first-child {
     min-width: 0;
+  }
+
+  /* Each stock becomes a card: name and actions on top, then the figures two per row, label above value. */
+  tr {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: var(--tc-space-2) var(--tc-space-4);
+  }
+
+  td[data-label] {
+    display: grid;
+    grid-column: auto;
+    gap: 2px;
+    justify-content: start;
+    text-align: left;
+  }
+
+  .cell-badge {
+    align-self: start;
   }
 
   .rename {
