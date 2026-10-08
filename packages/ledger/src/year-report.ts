@@ -1,5 +1,6 @@
 import { Big } from 'big.js';
 import { computeLedger } from './fifo-ledger.js';
+import { lossPotTimeline, type LossPotStart, type SaleTax } from './loss-pot.js';
 import type { Stock, Trade } from './types.js';
 
 /** Abgeltungsteuer 25 % plus Solidaritätszuschlag 5,5 % of it. */
@@ -12,7 +13,7 @@ export interface ReportLot {
   quantity: Big;
   buyPrice: Big;
   profitPerShare: Big;
-  /** Null when this lot made no profit or the sale as a whole is a loss. */
+  /** Null when this lot made no profit, the sale as a whole is a loss, or the loss pot covers it all. */
   taxPerShare: Big | null;
 }
 
@@ -25,6 +26,9 @@ export interface ReportSale {
   profit: Big;
   tax: Big;
   afterTax: Big;
+  /** Part of the gain the loss pot covered. */
+  covered: Big;
+  potAfter: Big;
   lots: ReportLot[];
 }
 
@@ -66,6 +70,9 @@ export interface YearReport {
   /** The month that kept the most after tax; null when no month ended above zero. */
   bestMonth: ReportMonth | null;
   afterTaxPerShareSold: Big | null;
+  /** The loss pot at the start and the end of the year. */
+  potAtStart: Big;
+  potAtEnd: Big;
 }
 
 /** Years that have at least one trade, newest first. */
@@ -75,12 +82,19 @@ export function reportYears(trades: readonly Trade[]): number[] {
 
 /**
  * Invested, profit, loss and estimated tax of one calendar year. Sales are matched FIFO against the
- * whole history, so lots bought in earlier years count. Tax is the rate times each profitable sale's
- * total profit, rounded to the cent; a sale at a loss adds no tax and offsets nothing.
+ * whole history, so lots bought in earlier years count. Tax follows the share loss pot (see
+ * `lossPotTimeline`): losses fill it, gains use it up, and only the rest is taxed at the rate.
  */
-export function yearReport(stocks: readonly Stock[], trades: readonly Trade[], year: number, rate: Big | string): YearReport {
+export function yearReport(
+  stocks: readonly Stock[],
+  trades: readonly Trade[],
+  year: number,
+  rate: Big | string,
+  lossPot?: LossPotStart | null,
+): YearReport {
   const taxRate = new Big(rate);
   const ledger = computeLedger(stocks, trades);
+  const pot = lossPotTimeline(ledger, taxRate, lossPot);
   const months = Array.from({ length: 12 }, (_, i) => ({ ...emptyFigures(), month: i + 1, hasTrades: false, runningAfterTax: ZERO }));
   const byStock = new Map<string, ReportStock>();
   const sales: ReportSale[] = [];
@@ -100,7 +114,7 @@ export function yearReport(stocks: readonly Stock[], trades: readonly Trade[], y
   for (const entry of ledger.values()) {
     for (const sale of entry.sales) {
       if (yearOf(sale.sell.tradedOn) !== year) continue;
-      const report = reportSale(entry.stock, sale.sell, sale.allocations, sale.matched, sale.proceeds, sale.profit, taxRate);
+      const report = reportSale(entry.stock, sale.sell, sale.allocations, sale.matched, sale.proceeds, pot.sales.get(sale.sell.id)!, taxRate);
       sales.push(report);
       const month = months[monthOf(sale.sell.tradedOn) - 1]!;
       month.hasTrades = true;
@@ -134,6 +148,8 @@ export function yearReport(stocks: readonly Stock[], trades: readonly Trade[], y
     losingSales: sales.filter((s) => s.profit.lt(0)).length,
     bestMonth: best,
     afterTaxPerShareSold: totals.sharesSold.gt(0) ? totals.afterTax.div(totals.sharesSold).round(2, Big.roundHalfUp) : null,
+    potAtStart: pot.balanceAfter(`${year - 1}-12-31`),
+    potAtEnd: pot.balanceAfter(`${year}-12-31`),
   };
 }
 
@@ -143,12 +159,12 @@ function reportSale(
   allocations: { buy: Trade; quantity: Big; buyPrice: Big }[],
   quantity: Big,
   proceeds: Big,
-  profit: Big,
+  { profit, tax, covered, taxable, potAfter }: SaleTax,
   taxRate: Big,
 ): ReportSale {
   const salePrice = new Big(sell.price);
-  const taxed = profit.gt(0);
-  const tax = taxed ? profit.times(taxRate).round(2, Big.roundHalfUp) : ZERO;
+  // The share of each lot's gain that is taxed: all of it without a pot, less where the pot covers part.
+  const taxedShare = taxable.gt(0) ? taxable.div(profit) : ZERO;
   return {
     stock,
     sell,
@@ -158,6 +174,8 @@ function reportSale(
     profit,
     tax,
     afterTax: profit.minus(tax),
+    covered,
+    potAfter,
     lots: allocations.map(({ buy, quantity: shares, buyPrice }) => {
       const profitPerShare = salePrice.minus(buyPrice);
       return {
@@ -165,7 +183,10 @@ function reportSale(
         quantity: shares,
         buyPrice,
         profitPerShare,
-        taxPerShare: taxed && profitPerShare.gt(0) ? profitPerShare.times(taxRate).round(2, Big.roundHalfUp) : null,
+        taxPerShare:
+          taxedShare.gt(0) && profitPerShare.gt(0)
+            ? profitPerShare.times(taxRate).times(taxedShare).round(2, Big.roundHalfUp)
+            : null,
       };
     }),
   };

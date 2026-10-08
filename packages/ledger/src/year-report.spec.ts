@@ -27,19 +27,21 @@ describe('yearReport', () => {
     expect(money(report.totals.soldFor)).toBe('1143.00');
     expect(money(report.totals.profit)).toBe('128.00');
     expect(money(report.totals.loss)).toBe('-5.00');
-    expect(money(report.totals.tax)).toBe('33.76');
-    expect(money(report.totals.afterTax)).toBe('89.24');
+    expect(money(report.totals.tax)).toBe('32.44');
+    expect(money(report.totals.afterTax)).toBe('90.56');
     expect(report.buyCount).toBe(4);
   });
 
-  it('taxes each profitable sale on its total, rounded to the cent, and shows the tax per share', () => {
+  it('taxes each profitable sale on its total after the loss pot, rounded to the cent, and shows the tax per share', () => {
     const [april, , september] = yearReport([acme, globex], sampleYear(), 2026, RATE).sales;
 
     expect(money(april!.tax)).toBe('21.10');
     expect(money(april!.lots[0]!.profitPerShare)).toBe('20.00');
     expect(money(april!.lots[0]!.taxPerShare!)).toBe('5.28');
-    expect(money(september!.tax)).toBe('12.66');
-    expect(money(september!.lots[0]!.taxPerShare!)).toBe('2.11');
+    // August's 5 € loss went into the pot and covers 5 € of September's 48 € gain.
+    expect(money(september!.covered)).toBe('5.00');
+    expect(money(september!.tax)).toBe('11.34');
+    expect(money(september!.lots[0]!.taxPerShare!)).toBe('1.89');
   });
 
   it('charges no tax on a sale that is a loss overall, even when one of its lots made a profit', () => {
@@ -60,7 +62,7 @@ describe('yearReport', () => {
     expect(months.filter((m) => m.hasTrades).map((m) => m.month)).toEqual([1, 2, 3, 4, 5, 8, 9]);
     expect(money(months[0]!.invested)).toBe('500.00');
     expect(money(months[3]!.afterTax)).toBe('58.90');
-    expect([4, 8, 9, 12].map((m) => money(months[m - 1]!.runningAfterTax))).toEqual(['58.90', '53.90', '89.24', '89.24']);
+    expect([4, 8, 9, 12].map((m) => money(months[m - 1]!.runningAfterTax))).toEqual(['58.90', '53.90', '90.56', '90.56']);
   });
 
   it('picks the best month, counts profitable and losing sales and the after-tax result per share sold', () => {
@@ -68,14 +70,14 @@ describe('yearReport', () => {
 
     expect(report.bestMonth?.month).toBe(4);
     expect([report.profitableSales, report.losingSales]).toEqual([2, 1]);
-    expect(money(report.afterTaxPerShareSold!)).toBe('6.86');
+    expect(money(report.afterTaxPerShareSold!)).toBe('6.97');
   });
 
   it('splits the year by stock', () => {
     const [acmeFigures, globexFigures] = yearReport([acme, globex], sampleYear(), 2026, RATE).byStock;
 
     expect([acmeFigures!.stock.name, money(acmeFigures!.afterTax)]).toEqual(['Acme', '53.90']);
-    expect([globexFigures!.stock.name, money(globexFigures!.afterTax)]).toEqual(['Globex', '35.34']);
+    expect([globexFigures!.stock.name, money(globexFigures!.afterTax)]).toEqual(['Globex', '36.66']);
   });
 
   it('uses lots bought in earlier years but reports only the chosen year', () => {
@@ -92,7 +94,7 @@ describe('yearReport', () => {
 
   it('follows the tax rate it is given, including zero', () => {
     expect(money(yearReport([acme, globex], sampleYear(), 2026, '0').totals.tax)).toBe('0.00');
-    expect(money(yearReport([acme, globex], sampleYear(), 2026, '0.27995').totals.tax)).toBe('35.84');
+    expect(money(yearReport([acme, globex], sampleYear(), 2026, '0.27995').totals.tax)).toBe('34.44');
   });
 
   it('has no best month and no per-share figure in a year without sales', () => {
@@ -106,5 +108,28 @@ describe('yearReport', () => {
 describe('reportYears', () => {
   it('lists the years that have trades, newest first', () => {
     expect(reportYears([trade('buy', '1', '1', '2024-05-01'), trade('buy', '1', '1', '2026-01-01'), trade('sell', '1', '1', '2026-02-01')])).toEqual([2026, 2024]);
+  });
+});
+
+describe('yearReport with a loss pot carried over', () => {
+  const pot = { amount: '21000', validUpTo: '2025-12-31' };
+
+  it('covers the gains with the pot so no tax is due, and reports the pot left at the end of the year', () => {
+    const report = yearReport([acme, globex], sampleYear(), 2026, RATE, pot);
+
+    expect(money(report.totals.tax)).toBe('0.00');
+    expect(money(report.totals.afterTax)).toBe('123.00');
+    expect(money(report.potAtStart)).toBe('21000.00');
+    expect(money(report.potAtEnd)).toBe('20877.00');
+    expect(report.sales.every((sale) => sale.lots.every((lot) => lot.taxPerShare === null))).toBe(true);
+  });
+
+  it('taxes only the part of a gain the pot no longer covers', () => {
+    const report = yearReport([acme, globex], sampleYear(), 2026, RATE, { amount: '30', validUpTo: '2025-12-31' });
+    const [april, , september] = report.sales;
+
+    expect([money(april!.covered), money(april!.tax)]).toEqual(['30.00', '13.19']);
+    expect([money(september!.covered), money(september!.tax)]).toEqual(['5.00', '11.34']);
+    expect(money(report.potAtEnd)).toBe('0.00');
   });
 });
