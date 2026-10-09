@@ -19,6 +19,7 @@
     "typecheck:functions": "tsc -p functions/tsconfig.json",
     "db:migrate:local": "wrangler d1 migrations apply DB --local",
     "check:operator": "node scripts/check-operator.mjs",
+    "insights:lock": "node scripts/insights-lock.mjs",
     "screenshots": "SCREENSHOTS=1 playwright test --grep @screenshots --project=chromium"
   },
   "allowScripts": {
