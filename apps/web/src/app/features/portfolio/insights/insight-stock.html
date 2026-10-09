@@ -1,0 +1,437 @@
+@let s = stock();
+@let o = textOptions();
+@let f = figures();
+@let entry = matched().entry;
+<article [attr.aria-label]="s.name">
+  <header class="head">
+    <h2>
+      {{ s.name }} <span class="ticker">{{ s.ticker }}</span>
+    </h2>
+    <span class="close">
+      close {{ asOf() | displayDate }}
+      @if (currency() === 'USD') {
+        ${{ s.closeUsd.toFixed(2) }}
+      } @else {
+        {{ closeEur() | euro }}
+      }
+      <span [attr.data-tone]="tone(s.dayChangePct)">{{
+        s.dayChangePct / 100 | percentChange
+      }}</span>
+    </span>
+    <tc-pill [tone]="directionTone()">{{ s.verdict.direction }}</tc-pill>
+  </header>
+
+  @if (f) {
+    <div class="stats">
+      <div>
+        <span class="label">Your position</span>
+        <span class="value">{{ f.shares | quantity }} shares</span>
+        <span class="note">avg {{ f.average | euro }} · cost {{ f.cost | euro }}</span>
+      </div>
+      <label>
+        <span class="label">Price now (€)</span>
+        <input
+          class="value"
+          inputmode="decimal"
+          autocomplete="off"
+          [attr.aria-label]="'Price now of ' + s.name + ' in euros'"
+          [value]="priceNowEur().toFixed(2).replace('.', ',')"
+          (change)="setPrice($event)"
+          (keydown.enter)="$any($event.target).blur()"
+        />
+        <span class="note">{{
+          typedPrice() ? 'typed, kept on this device' : 'close of ' + (asOf() | displayDate)
+        }}</span>
+      </label>
+      <div>
+        <span class="label">Value</span>
+        <span class="value">{{ f.value | euro }}</span>
+      </div>
+      <div>
+        <span class="label">Your result</span>
+        <span class="value" [attr.data-tone]="tone(f.result)">{{ f.result | signedEuro }}</span>
+        <span class="note" [attr.data-tone]="tone(f.result)">{{
+          f.resultRatio | percentChange
+        }}</span>
+      </div>
+    </div>
+  } @else {
+    <p class="not-held">
+      Not held. {{ entry.sold | quantity }} sold, realized
+      <span [attr.data-tone]="tone(entry.realizedProfit)">{{
+        entry.realizedProfit | signedEuro
+      }}</span
+      >. Shown because you have traded it.
+    </p>
+  }
+
+  @if (s.latest?.length) {
+    <section>
+      <h3>Latest close</h3>
+      <ul>
+        @for (line of s.latest; track $index) {
+          <li>{{ line }}</li>
+        }
+      </ul>
+    </section>
+  }
+
+  <section>
+    <h3>Decision</h3>
+    <dl class="decision">
+      <div>
+        <dt>Direction</dt>
+        <dd [attr.data-tone]="s.verdict.tone">{{ s.verdict.direction }}</dd>
+      </div>
+      <div>
+        <dt>10-day up probability</dt>
+        <dd>{{ s.verdict.probability }}</dd>
+      </div>
+      <div>
+        <dt>Action</dt>
+        <dd>{{ s.verdict.action }}</dd>
+      </div>
+      <div>
+        <dt>Best entry</dt>
+        <dd><tc-insight-text [text]="s.verdict.entry" [options]="o" /></dd>
+      </div>
+      <div>
+        <dt>Stop</dt>
+        <dd><tc-insight-text [text]="s.verdict.stop" [options]="o" /></dd>
+      </div>
+      <div>
+        <dt>Target</dt>
+        <dd><tc-insight-text [text]="s.verdict.target" [options]="o" /></dd>
+      </div>
+      <div>
+        <dt>Risk / reward</dt>
+        <dd>{{ s.verdict.riskReward }}</dd>
+      </div>
+      <div>
+        <dt>Timeframe</dt>
+        <dd>{{ s.verdict.timeframe }}</dd>
+      </div>
+    </dl>
+    <p class="read">
+      <strong>Expected next move:</strong>
+      <tc-insight-text [text]="s.verdict.nextMove" [options]="o" />.
+      <strong><tc-insight-text [text]="s.verdict.waitHeadline" [options]="o" />.</strong>
+      {{ s.verdict.waitDetail }}
+    </p>
+  </section>
+
+  <section>
+    <h3>6 months to the {{ asOf() | displayDate }} close</h3>
+    <tc-insight-chart [stock]="s" [currency]="currency()" [usdPerEur]="usdPerEur()" />
+  </section>
+
+  @if (f && s.position) {
+    <div class="pair">
+      <section>
+        <h3>Your result at each level</h3>
+        <div class="table-scroll">
+          <table>
+            <thead>
+              <tr>
+                <th>Level</th>
+                <th class="end">Price</th>
+                <th class="end">Your P/L</th>
+                <th class="end change">%</th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (row of levels(); track row.name) {
+                <tr [class.mine]="row.mine">
+                  <td>{{ row.name }}</td>
+                  <td class="end num">
+                    @if (currency() === 'USD' && row.priceUsd) {
+                      ${{ row.priceUsd.toFixed(2) }}
+                    } @else {
+                      {{ row.priceEur | euro }}
+                    }
+                  </td>
+                  <td class="end num" [attr.data-tone]="tone(row.profit)">
+                    {{ row.profit | signedEuro }}
+                  </td>
+                  <td class="end num change" [attr.data-tone]="tone(row.profit)">
+                    {{ row.change ? (row.change | percentChange) : '' }}
+                  </td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+      </section>
+      <section>
+        <h3>Plan · from your {{ f.shares | quantity }} shares</h3>
+        <ol class="plan">
+          @for (step of s.position.plan; track $index) {
+            <li><tc-insight-text [text]="step" [options]="o" /></li>
+          }
+        </ol>
+      </section>
+    </div>
+  }
+
+  <div class="more">
+    <details>
+      <summary>
+        Snapshot and moving averages <span class="hint">{{ s.keyPoint }}</span>
+      </summary>
+      <div class="pair">
+        <dl class="kv">
+          @for (row of s.snapshot; track row[0]) {
+            <div>
+              <dt>{{ row[0] }}</dt>
+              <dd><tc-insight-text [text]="row[1]" [options]="o" /></dd>
+            </div>
+          }
+        </dl>
+        <table>
+          <thead>
+            <tr>
+              <th>Average</th>
+              <th class="end">Value</th>
+              <th class="end">Price vs average</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (ma of s.movingAverages; track ma.label) {
+              <tr>
+                <td>{{ ma.label }}</td>
+                <td class="end num">
+                  @if (currency() === 'USD') {
+                    ${{ ma.usd.toFixed(2) }}
+                  } @else {
+                    {{ ma.usd / usdPerEur() | euro }}
+                  }
+                </td>
+                <td class="end num" [attr.data-tone]="tone(ma.vsPricePct)">
+                  {{ ma.vsPricePct / 100 | percentChange }}
+                </td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    </details>
+
+    <details>
+      <summary>Technicals and the next move</summary>
+      <ul>
+        @for (line of s.technicals; track $index) {
+          <li>{{ line }}</li>
+        }
+      </ul>
+      <dl class="kv">
+        @for (row of s.nextMove; track row[0]) {
+          <div>
+            <dt>{{ row[0] }}</dt>
+            <dd><tc-insight-text [text]="row[1]" [options]="o" /></dd>
+          </div>
+        }
+      </dl>
+    </details>
+
+    <details>
+      <summary>
+        Volatility ranges and level odds <span class="hint">earnings: {{ s.earnings }}</span>
+      </summary>
+      <div class="pair">
+        <table>
+          <thead>
+            <tr>
+              <th>Horizon</th>
+              <th class="end">68 %</th>
+              <th class="end">90 %</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (r of s.ranges; track r.horizon) {
+              <tr>
+                <td>{{ r.horizon }}</td>
+                <td class="end num"><tc-insight-text [text]="r.likely" [options]="o" /></td>
+                <td class="end num"><tc-insight-text [text]="r.wide" [options]="o" /></td>
+              </tr>
+            }
+          </tbody>
+        </table>
+        <table>
+          <thead>
+            <tr>
+              <th>Level</th>
+              <th class="end">Touch, 10 days</th>
+              <th class="end">Close beyond</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (t of s.touchOdds; track t.level) {
+              <tr>
+                <td class="num"><tc-insight-text [text]="t.level" [options]="o" /></td>
+                <td class="end num">{{ t.touch }}</td>
+                <td class="end num">{{ t.close }}</td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    </details>
+
+    <details>
+      <summary>Levels and what happens if one breaks</summary>
+      <div class="pair">
+        <table>
+          <thead>
+            <tr>
+              <th>Resistance</th>
+              <th class="end">Price</th>
+              <th>Why</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (l of s.resistance; track l.label) {
+              <tr>
+                <td data-tone="loss">{{ l.label }}</td>
+                <td class="end num"><tc-insight-text [text]="l.price" [options]="o" /></td>
+                <td>{{ l.why }}</td>
+              </tr>
+            }
+          </tbody>
+        </table>
+        <table>
+          <thead>
+            <tr>
+              <th>Support</th>
+              <th class="end">Price</th>
+              <th>Why</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (l of s.support; track l.label) {
+              <tr>
+                <td data-tone="gain">{{ l.label }}</td>
+                <td class="end num"><tc-insight-text [text]="l.price" [options]="o" /></td>
+                <td>{{ l.why }}</td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+      <ul>
+        @for (line of s.breaks; track $index) {
+          <li><tc-insight-text [text]="line" [options]="o" /></li>
+        }
+      </ul>
+    </details>
+
+    <details>
+      <summary>Setups and scenarios</summary>
+      <div class="table-scroll">
+        <table>
+          <thead>
+            <tr>
+              <th>Setup</th>
+              <th>Entry</th>
+              <th>Stop</th>
+              <th>Targets</th>
+              <th>Reward : risk</th>
+              <th>Type</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (setup of s.setups; track setup.name) {
+              <tr>
+                <td>{{ setup.name }}</td>
+                <td class="num"><tc-insight-text [text]="setup.entry" [options]="o" /></td>
+                <td class="num"><tc-insight-text [text]="setup.stop" [options]="o" /></td>
+                <td class="num"><tc-insight-text [text]="setup.targets" [options]="o" /></td>
+                <td class="num">{{ setup.rewardRisk }}</td>
+                <td>{{ setup.kind }}</td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+      <p class="read">{{ s.setupNote }}</p>
+      <div class="table-scroll">
+        <table>
+          <thead>
+            <tr>
+              <th>Case</th>
+              <th>Trigger</th>
+              <th>Target</th>
+              <th>Time</th>
+              <th class="end">Probability</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (scenario of s.scenarios; track scenario.name) {
+              <tr>
+                <td
+                  [attr.data-tone]="
+                    scenario.name === 'Bull' ? 'gain' : scenario.name === 'Bear' ? 'loss' : null
+                  "
+                >
+                  {{ scenario.name }}
+                </td>
+                <td><tc-insight-text [text]="scenario.trigger" [options]="o" /></td>
+                <td class="num"><tc-insight-text [text]="scenario.target" [options]="o" /></td>
+                <td>{{ scenario.time }}</td>
+                <td class="end num">{{ scenario.probability }}</td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+      <table>
+        <thead>
+          <tr>
+            <th>Horizon</th>
+            <th>Range (68 %)</th>
+            <th>Note</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (r of s.horizonRanges; track r.horizon) {
+            <tr>
+              <td>{{ r.horizon }}</td>
+              <td class="num"><tc-insight-text [text]="r.range" [options]="o" /></td>
+              <td>{{ r.note }}</td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </details>
+
+    <details>
+      <summary>Catalysts and options positioning</summary>
+      <ul class="catalysts">
+        @for (c of s.catalysts; track $index) {
+          <li>
+            <tc-pill [tone]="impactTone(c.impact)">{{ c.impact }}</tc-pill> {{ c.text }}
+          </li>
+        }
+      </ul>
+      <div class="pair">
+        <dl class="kv">
+          @for (row of s.options; track row[0]) {
+            <div>
+              <dt>{{ row[0] }}</dt>
+              <dd>{{ row[1] }}</dd>
+            </div>
+          }
+        </dl>
+        <p class="read">{{ s.optionsRead }} Option strikes are in USD.</p>
+      </div>
+    </details>
+
+    <details>
+      <summary>What would change the view</summary>
+      <ul>
+        @for (line of s.changeMind; track $index) {
+          <li><tc-insight-text [text]="line" [options]="o" /></li>
+        }
+      </ul>
+    </details>
+  </div>
+</article>

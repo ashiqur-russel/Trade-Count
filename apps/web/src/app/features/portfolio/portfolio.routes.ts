@@ -21,6 +21,11 @@ export const PORTFOLIO_ROUTES: Routes = [
         loadComponent: () => import('./reports-page/reports-page').then((m) => m.ReportsPage),
       },
       {
+        path: 'insights',
+        title: 'Insights · Trade Count',
+        loadComponent: () => import('./insights/insights-page').then((m) => m.InsightsPage),
+      },
+      {
         path: 'settings',
         title: 'Settings · Trade Count',
         loadComponent: () => import('./settings-page/settings-page').then((m) => m.SettingsPage),

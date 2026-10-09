@@ -1,0 +1,237 @@
+:host {
+  display: block;
+  min-width: 0;
+}
+
+article {
+  display: grid;
+  gap: var(--tc-space-5);
+  padding: var(--tc-space-5);
+  border: var(--tc-rule-width) solid var(--tc-color-rule);
+  border-radius: var(--tc-radius-lg);
+  background: var(--tc-color-surface);
+}
+
+section,
+details {
+  display: grid;
+  gap: var(--tc-space-2);
+  min-width: 0;
+}
+
+.head {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--tc-space-2) var(--tc-space-4);
+  align-items: baseline;
+}
+
+h2 {
+  font-size: var(--tc-text-lg);
+}
+
+.ticker,
+.close {
+  color: var(--tc-color-text-muted);
+  font-family: var(--tc-font-numeric);
+  font-size: var(--tc-text-sm);
+  font-weight: var(--tc-weight-regular);
+}
+
+h3,
+.label,
+dt,
+th {
+  color: var(--tc-color-text-muted);
+  font-family: var(--tc-font-numeric);
+  font-size: var(--tc-text-xs);
+  font-weight: var(--tc-weight-semibold);
+  letter-spacing: var(--tc-tracking-label);
+  text-transform: uppercase;
+}
+
+.stats {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 8.5rem), 1fr));
+  gap: var(--tc-space-2);
+}
+
+.stats > * {
+  display: grid;
+  gap: 2px;
+  padding: var(--tc-space-2) var(--tc-space-3);
+  border-radius: var(--tc-radius-md);
+  background: var(--tc-color-surface-sunken);
+}
+
+.value {
+  font-family: var(--tc-font-numeric);
+  font-size: var(--tc-text-md);
+  font-weight: var(--tc-weight-semibold);
+  font-variant-numeric: tabular-nums;
+}
+
+input.value {
+  width: 100%;
+  min-width: 0;
+  padding: 2px var(--tc-space-2);
+}
+
+.note,
+.hint,
+.not-held,
+.read {
+  color: var(--tc-color-text-muted);
+  font-size: var(--tc-text-sm);
+}
+
+.hint {
+  margin-left: var(--tc-space-2);
+  font-weight: var(--tc-weight-regular);
+}
+
+.decision {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 8.5rem), 1fr));
+  gap: var(--tc-space-2);
+}
+
+.decision > div {
+  display: grid;
+  gap: 2px;
+  padding: var(--tc-space-2) var(--tc-space-3);
+  border-radius: var(--tc-radius-md);
+  background: var(--tc-color-surface-sunken);
+}
+
+dd {
+  font-family: var(--tc-font-numeric);
+  font-variant-numeric: tabular-nums;
+}
+
+.read strong {
+  color: var(--tc-color-text);
+}
+
+.pair {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 22rem), 1fr));
+  gap: var(--tc-space-5);
+  align-items: start;
+}
+
+ul,
+ol {
+  display: grid;
+  gap: var(--tc-space-1);
+  padding-left: var(--tc-space-5);
+  font-size: var(--tc-text-sm);
+}
+
+.plan {
+  gap: var(--tc-space-2);
+}
+
+.catalysts {
+  padding-left: 0;
+  list-style: none;
+}
+
+.table-scroll {
+  overflow-x: auto;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: var(--tc-text-sm);
+}
+
+th,
+td {
+  padding: var(--tc-space-1) var(--tc-space-2);
+  border-bottom: 1px solid var(--tc-color-border);
+  text-align: left;
+  vertical-align: top;
+}
+
+th {
+  border-bottom-color: var(--tc-color-rule);
+}
+
+.end {
+  text-align: right;
+}
+
+.num {
+  font-family: var(--tc-font-numeric);
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+tr.mine td {
+  background: var(--tc-color-surface-sunken);
+  font-weight: var(--tc-weight-semibold);
+}
+
+.kv {
+  display: grid;
+  gap: var(--tc-space-1);
+}
+
+.kv > div {
+  display: grid;
+  grid-template-columns: minmax(8rem, 40%) 1fr;
+  gap: var(--tc-space-3);
+  font-size: var(--tc-text-sm);
+}
+
+.kv dt {
+  text-transform: none;
+  letter-spacing: 0;
+  font-size: var(--tc-text-sm);
+  font-weight: var(--tc-weight-regular);
+}
+
+.more {
+  display: grid;
+  gap: var(--tc-space-2);
+}
+
+details {
+  padding: var(--tc-space-2) var(--tc-space-3);
+  border: 1px solid var(--tc-color-border);
+  border-radius: var(--tc-radius-md);
+}
+
+details[open] {
+  gap: var(--tc-space-3);
+  padding-bottom: var(--tc-space-3);
+}
+
+summary {
+  font-weight: var(--tc-weight-semibold);
+  cursor: pointer;
+}
+
+[data-tone='gain'] {
+  color: var(--tc-color-gain);
+}
+
+[data-tone='loss'] {
+  color: var(--tc-color-loss);
+}
+
+[data-tone='warn'] {
+  color: var(--tc-color-warn);
+}
+
+@media (width <= 480px) {
+  article {
+    padding: var(--tc-space-4);
+  }
+
+  .change {
+    display: none;
+  }
+}

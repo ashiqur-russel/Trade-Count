@@ -1,0 +1,136 @@
+@let state = vault.state();
+<header class="head">
+  <div class="title">
+    <a class="back" routerLink="/">← Back to your portfolio</a>
+    <h1>Insights</h1>
+    @if (bundle(); as b) {
+      <p class="muted">
+        As of the <strong>{{ b.asOf | displayDate }}</strong> close · 1 € = ${{ b.usdPerEur }} ·
+        personal notes for the key holder, not investment advice
+      </p>
+    }
+  </div>
+  @if (bundle()) {
+    <div class="tools">
+      <tc-segmented-control
+        label="Currency"
+        [options]="currencyOptions"
+        [value]="currency()"
+        (valueChange)="chooseCurrency($event)"
+      />
+      <button tc-button variant="quiet" type="button" (click)="forget()">Forget key</button>
+    </div>
+  }
+</header>
+
+@if (bundle(); as b) {
+  @if (stale()) {
+    <p class="stale" role="status">
+      These notes are from {{ b.asOf | displayDate }}, more than a week ago. Levels and plans may no
+      longer fit the market.
+    </p>
+  }
+
+  @if (matches().length) {
+    <nav class="cards" aria-label="Your stocks in this edition">
+      @for (match of matches(); track match.insight.ticker) {
+        @let f = cardFigures(match);
+        <a class="card" [class.not-held]="!match.held" routerLink="." [fragment]="anchorFor(match)">
+          <span class="row">
+            <strong class="name">{{ match.insight.name }}</strong>
+            <span class="ticker">{{ match.insight.ticker }}</span>
+          </span>
+          <span class="row">
+            <span class="price">
+              @if (currency() === 'USD') {
+                ${{ match.insight.closeUsd.toFixed(2) }}
+              } @else {
+                {{ closeEur(match) | euro }}
+              }
+            </span>
+            <span class="rank">#{{ match.insight.rank }} risk/reward</span>
+          </span>
+          <span>
+            @if (!match.held) {
+              <tc-pill>not held</tc-pill>
+            } @else if (match.insight.position) {
+              <tc-pill tone="warn">
+                <tc-insight-text
+                  [text]="match.insight.position.heldAction"
+                  [options]="{ currency: currency(), usdPerEur: b.usdPerEur, position: f }"
+                />
+              </tc-pill>
+            } @else {
+              <tc-pill tone="warn">{{ match.insight.verdict.action }}</tc-pill>
+            }
+          </span>
+          <span class="muted small">
+            @if (f) {
+              {{ f.shares | quantity }} held · avg {{ f.average | euro }} ·
+              <span [attr.data-tone]="tone(f.result)">{{ f.result | signedEuro }}</span>
+            } @else {
+              {{ match.entry.sold | quantity }} sold ·
+              <span [attr.data-tone]="tone(match.entry.realizedProfit)">{{
+                match.entry.realizedProfit | signedEuro
+              }}</span>
+              realized
+            }
+          </span>
+        </a>
+      }
+    </nav>
+
+    @for (match of matches(); track match.insight.ticker) {
+      <tc-insight-stock
+        [id]="anchorFor(match)"
+        [matched]="match"
+        [asOf]="b.asOf"
+        [usdPerEur]="b.usdPerEur"
+        [currency]="currency()"
+      />
+    }
+  } @else {
+    <p class="empty">
+      None of your stocks is in this edition. It covers
+      @for (stock of b.stocks; track stock.ticker; let last = $last) {
+        {{ stock.name }}{{ last ? '.' : ', ' }}
+      }
+    </p>
+  }
+
+  <footer class="foot">
+    <p>{{ b.sharedRisk }}</p>
+    @if (b.sources.length) {
+      <p>
+        Sources:
+        @for (source of b.sources; track source.url; let last = $last) {
+          <a [href]="source.url" target="_blank" rel="noopener noreferrer">{{ source.label }}</a
+          >{{ last ? '' : ' · ' }}
+        }
+      </p>
+    }
+  </footer>
+} @else {
+  <form class="unlock" (submit)="$event.preventDefault(); unlock()">
+    <p class="muted">
+      Private market notes for the key holder. They are stored encrypted inside the app; without the
+      key there is nothing to read.
+    </p>
+    <tc-sync-key-field
+      label="Insights key"
+      controlId="insights-key"
+      [control]="keyInput"
+      (submitted)="unlock()"
+    />
+    <tc-check-row [(checked)]="rememberKey">
+      Remember the key on this device. The notes then open without asking, and
+      <strong>Insights</strong> appears in the top bar.
+    </tc-check-row>
+    @if (state.status === 'failed') {
+      <p class="error" role="alert">{{ state.message }}</p>
+    }
+    <button tc-button variant="primary" type="submit" [disabled]="state.status === 'opening'">
+      {{ state.status === 'opening' ? 'Opening…' : 'Unlock' }}
+    </button>
+  </form>
+}

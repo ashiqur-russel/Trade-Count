@@ -3,6 +3,7 @@ import { toSignal } from '@angular/core/rxjs-interop';
 import { NavigationEnd, Router, RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
 import { filter, map } from 'rxjs';
 // Direct imports keep the rest of shared/ui (CDK overlays, forms) out of the initial bundle.
+import { InsightsKeyStore } from './features/portfolio/insights/insights-key-store';
 import { BrandMark } from './shared/ui/brand-mark/brand-mark';
 import { Backdrop } from './shell/backdrop';
 import { IntroBanner } from './shell/intro-banner';
@@ -30,6 +31,7 @@ import { UpdateBanner } from './shell/update-banner';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class App {
+  protected readonly insightsKeyStored = inject(InsightsKeyStore).stored;
   protected readonly today = new Intl.DateTimeFormat('de-DE').format(new Date());
   /** Only the portfolio page shows the introduction banner. */
   protected readonly isHome = toSignal(

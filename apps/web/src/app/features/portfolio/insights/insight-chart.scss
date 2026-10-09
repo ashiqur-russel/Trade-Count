@@ -1,0 +1,133 @@
+:host {
+  display: grid;
+  gap: var(--tc-space-2);
+  min-width: 0;
+}
+
+/* Below this width the labels get too small to read, so the chart scrolls instead of shrinking. */
+.scroll {
+  overflow-x: auto;
+}
+
+svg {
+  display: block;
+  width: 100%;
+  min-width: 34rem;
+  height: auto;
+  font-family: var(--tc-font-numeric);
+  font-size: 11px;
+}
+
+.grid {
+  stroke: var(--tc-color-border);
+}
+
+.axis {
+  fill: var(--tc-color-text-muted);
+}
+
+.close,
+.ma20,
+.ma50 {
+  fill: none;
+  stroke-linejoin: round;
+}
+
+.close {
+  stroke: var(--tc-color-text);
+  stroke-width: 1.9;
+}
+
+.ma20 {
+  stroke: var(--tc-color-accent);
+  stroke-width: 1.4;
+}
+
+.ma50 {
+  stroke: var(--tc-color-warn);
+  stroke-width: 1.4;
+}
+
+.resistance,
+.support {
+  stroke-dasharray: 4 4;
+}
+
+.resistance {
+  stroke: var(--tc-color-loss);
+}
+
+.support {
+  stroke: var(--tc-color-gain);
+}
+
+.resistance-label {
+  fill: var(--tc-color-loss);
+}
+
+.support-label {
+  fill: var(--tc-color-gain);
+}
+
+.cone {
+  fill: var(--tc-color-accent);
+  fill-opacity: 0.16;
+}
+
+.cone-wide {
+  fill: var(--tc-color-accent);
+  fill-opacity: 0.08;
+}
+
+.cone-label {
+  fill: var(--tc-color-accent);
+}
+
+.today {
+  stroke: var(--tc-color-border);
+}
+
+.dot {
+  fill: var(--tc-color-text);
+}
+
+.legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--tc-space-1) var(--tc-space-4);
+  color: var(--tc-color-text-muted);
+  font-size: var(--tc-text-xs);
+}
+
+.legend i {
+  display: inline-block;
+  width: 14px;
+  height: 3px;
+  margin-right: var(--tc-space-1);
+  vertical-align: middle;
+}
+
+.k-close {
+  background: var(--tc-color-text);
+}
+
+.k-ma20 {
+  background: var(--tc-color-accent);
+}
+
+.k-ma50 {
+  background: var(--tc-color-warn);
+}
+
+.k-resistance {
+  background: var(--tc-color-loss);
+}
+
+.k-support {
+  background: var(--tc-color-gain);
+}
+
+.k-cone {
+  background: var(--tc-color-accent);
+  opacity: 0.3;
+}

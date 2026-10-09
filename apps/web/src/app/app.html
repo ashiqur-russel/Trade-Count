@@ -19,6 +19,11 @@
         >Portfolio</a
       >
       <a routerLink="/reports" routerLinkActive="active" ariaCurrentWhenActive="page">Reports</a>
+      @if (insightsKeyStored()) {
+        <a routerLink="/insights" routerLinkActive="active" ariaCurrentWhenActive="page"
+          >Insights</a
+        >
+      }
       <tc-settings-link />
     </nav>
   </div>

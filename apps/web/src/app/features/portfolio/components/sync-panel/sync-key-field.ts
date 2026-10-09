@@ -6,7 +6,7 @@ import { Field } from '../../../../shared/ui';
   selector: 'tc-sync-key-field',
   imports: [ReactiveFormsModule, Field],
   template: `
-    <tc-field label="Sync key" [controlId]="controlId()" [hint]="hint()">
+    <tc-field [label]="label()" [controlId]="controlId()" [hint]="hint()">
       <input
         [id]="controlId()"
         [formControl]="control()"
@@ -30,6 +30,7 @@ import { Field } from '../../../../shared/ui';
 export class SyncKeyField {
   readonly controlId = input.required<string>();
   readonly control = input.required<FormControl<string>>();
+  readonly label = input('Sync key');
   readonly hint = input('');
   readonly submitted = output();
 }
