@@ -1,0 +1,3721 @@
+{
+ "version": 1,
+ "asOf": "2026-10-19",
+ "usdPerEur": 1.1216,
+ "sharedRisk": "Week of 19 Oct: Tesla reports Wed 21 Oct after the US close (options price a ±7.4% move). Fed decision Wed 28 Oct, with a hike back on the table after September CPI came in at 3.7% (core 2.6%). Chip stocks fell 11% last week on AI-financing worries (CoreWeave bonds), a five-month high in oil ($102) and yields above 5%, even though TSMC guided Q4 up 58% y/y. Monday was a bounce, not yet a turn. 10-year 5.14%, Brent $109, VIX 18. The detailed sections below (snapshot, technicals, ranges, setups) are from the 9 Oct edition; the Latest close and Plan sections are current. Model estimates, not a guarantee.",
+ "sources": [
+  {
+   "label": "TheStreet market close",
+   "url": "https://www.thestreet.com/stock-market-today/stock-market-today-dow-jones-sp-500-nasdaq-updates-oct-09-2026"
+  },
+  {
+   "label": "Market Scholars",
+   "url": "https://www.marketscholars.com/market-outlook-october-9-2026/"
+  },
+  {
+   "label": "Yahoo live",
+   "url": "https://finance.yahoo.com/markets/live/stock-market-today-friday-october-9-dow-sp-500-nasdaq-080148117.html"
+  },
+  {
+   "label": "Nasdaq option chains",
+   "url": "https://www.nasdaq.com/market-activity/stocks/amd/option-chain"
+  },
+  {
+   "label": "StockAnalysis AMD",
+   "url": "https://stockanalysis.com/stocks/amd/statistics/"
+  },
+  {
+   "label": "TSLA",
+   "url": "https://stockanalysis.com/stocks/tsla/statistics/"
+  },
+  {
+   "label": "NVDA",
+   "url": "https://stockanalysis.com/stocks/nvda/statistics/"
+  },
+  {
+   "label": "Schaeffer's on AMD",
+   "url": "https://www.schaeffersresearch.com/content/news/2026/10/06/advanced-micro-devices-stock-hits-record-high-on-pt-hike"
+  },
+  {
+   "label": "Citi/Mizuho on AMD",
+   "url": "https://www.fxleaders.com/news/2026/10/06/amd-stock-reaches-record-highs-eyeing-700-as-citi-and-mizuho-lift-price-targets/"
+  },
+  {
+   "label": "Electrek TSLA deliveries",
+   "url": "https://electrek.co/2026/10/02/tesla-q3-2026-deliveries-486532/"
+  },
+  {
+   "label": "TSLA earnings date",
+   "url": "https://www.teslaoracle.com/2026/10/04/tesla-tsla-announces-the-date-and-time-for-the-q3-2026-earnings-call-live-webcast-with-elon-musk-and-his-team/"
+  },
+  {
+   "label": "Goldman on TSLA",
+   "url": "https://finance.yahoo.com/markets/stocks/articles/tesla-robotaxis-fsd-optimus-outlook-135634668.html"
+  },
+  {
+   "label": "NVIDIA Q2 FY27",
+   "url": "https://www.sec.gov/Archives/edgar/data/0001045810/000104581026000073/q2fy27pr.htm"
+  },
+  {
+   "label": "MarketBeat NVDA",
+   "url": "https://www.marketbeat.com/stocks/NASDAQ/NVDA/news/"
+  },
+  {
+   "label": "CNBC macro",
+   "url": "https://www.cnbc.com/2026/10/02/stock-market-next-week-outlook-for-oct-5-9-2026-.html"
+  }
+ ],
+ "stocks": [
+  {
+   "ticker": "NVDA",
+   "name": "NVIDIA",
+   "aliases": [
+    "NVIDIA",
+    "NVIDIA Corporation",
+    "NVIDIA Corp"
+   ],
+   "rank": 1,
+   "closeUsd": 217.09,
+   "dayChangePct": 1.38,
+   "impliedVolPct": 31,
+   "verdict": {
+    "direction": "Bearish short term, trend intact",
+    "tone": "loss",
+    "action": "REDUCE on a bounce · stop below $207",
+    "entry": "$209–214 (only after a close back above $223)",
+    "stop": "$207.5",
+    "target": "$223, then $227",
+    "riskReward": "≈ 1 : 2 from $214",
+    "probability": "≈ 45%",
+    "nextMove": "Bounce toward $223 (50-day), then decided by the Fed on 28 Oct",
+    "timeframe": "Fed 28 Oct · earnings 18 Nov",
+    "waitHeadline": "Sell half into a bounce at $223; keep the rest with a real stop at $207.5",
+    "waitDetail": "The old $227 stop is gone and the stock is 4% under it. Selling everything now, on the 100-day, after eight down days in the chip index, sells into the hole. Halving on the first bounce and protecting the rest with an order in the broker keeps the worst case near the loss you would have taken last week."
+   },
+   "latest": [
+    "Mon 19 Oct close $217.09 (+1.4%) ≈ 193,55 €, after a −6.6% week. The breakout failed completely: the $227 stop triggered on Wed 14 Oct (close $221.30) and the low on Thu was $212.85.",
+    "Why: a hot CPI (3.7%, core 2.6%) on Wed brought a Fed hike for 28 Oct back into play; CoreWeave's bonds sold off and the stock lost 25% in a week, which turned the OpenAI revenue worry into an AI-financing worry; oil hit $102 and the 10-year 5.1%. TSMC was strong (Q4 guide +58% y/y) and chips fell anyway: sentiment, not demand.",
+    "Where it sits: below the 20-day ($227.66) and 50-day ($222.94), on the 100-day ($214.51). RSI 41. MACD negative, but the histogram has stopped getting worse (−2.38 vs −2.36): the fall is slowing.",
+    "To Friday (implied vol ≈ 37%): 68% range $207–227. Odds: touch $223 (the 50-day) ≈ 56%; touch $209 (September lows) ≈ 42%; close above $227 ≈ 17%; close below $209 ≈ 21%.",
+    "Next: Fed 28 Oct, earnings 18 Nov (guide $108B ±2%). Jensen Huang in Berlin: 'All of this is going to pass.'"
+   ],
+   "series": [
+    [
+     "2026-04-13",
+     189.31,
+     177.87,
+     182.01
+    ],
+    [
+     "2026-04-14",
+     196.51,
+     178.54,
+     182.12
+    ],
+    [
+     "2026-04-15",
+     198.87,
+     179.38,
+     182.39
+    ],
+    [
+     "2026-04-16",
+     198.35,
+     180.28,
+     182.75
+    ],
+    [
+     "2026-04-17",
+     201.68,
+     181.44,
+     183.3
+    ],
+    [
+     "2026-04-20",
+     202.06,
+     182.91,
+     183.9
+    ],
+    [
+     "2026-04-21",
+     199.88,
+     184.12,
+     184.19
+    ],
+    [
+     "2026-04-22",
+     202.5,
+     185.48,
+     184.44
+    ],
+    [
+     "2026-04-23",
+     199.64,
+     186.53,
+     184.66
+    ],
+    [
+     "2026-04-24",
+     208.27,
+     188.38,
+     185.03
+    ],
+    [
+     "2026-04-27",
+     216.61,
+     190.84,
+     185.62
+    ],
+    [
+     "2026-04-28",
+     213.17,
+     193.24,
+     186.23
+    ],
+    [
+     "2026-04-29",
+     209.25,
+     194.98,
+     186.71
+    ],
+    [
+     "2026-04-30",
+     199.57,
+     196.17,
+     186.94
+    ],
+    [
+     "2026-05-01",
+     198.45,
+     197.22,
+     187.15
+    ],
+    [
+     "2026-05-04",
+     198.48,
+     198.27,
+     187.33
+    ],
+    [
+     "2026-05-05",
+     196.5,
+     199.19,
+     187.43
+    ],
+    [
+     "2026-05-06",
+     207.83,
+     200.47,
+     187.73
+    ],
+    [
+     "2026-05-07",
+     211.5,
+     201.85,
+     188.04
+    ],
+    [
+     "2026-05-08",
+     215.2,
+     203.18,
+     188.65
+    ],
+    [
+     "2026-05-11",
+     219.44,
+     204.69,
+     189.5
+    ],
+    [
+     "2026-05-12",
+     220.78,
+     205.9,
+     190.26
+    ],
+    [
+     "2026-05-13",
+     225.83,
+     207.25,
+     191.18
+    ],
+    [
+     "2026-05-14",
+     235.74,
+     209.12,
+     192.23
+    ],
+    [
+     "2026-05-15",
+     225.32,
+     210.3,
+     193.07
+    ],
+    [
+     "2026-05-18",
+     222.32,
+     211.31,
+     193.96
+    ],
+    [
+     "2026-05-19",
+     220.61,
+     212.35,
+     194.72
+    ],
+    [
+     "2026-05-20",
+     223.47,
+     213.4,
+     195.49
+    ],
+    [
+     "2026-05-21",
+     219.51,
+     214.39,
+     196.16
+    ],
+    [
+     "2026-05-22",
+     215.33,
+     214.75,
+     196.81
+    ],
+    [
+     "2026-05-26",
+     214.86,
+     214.66,
+     197.5
+    ],
+    [
+     "2026-05-27",
+     212.6,
+     214.63,
+     198.09
+    ],
+    [
+     "2026-05-28",
+     214.25,
+     214.88,
+     198.73
+    ],
+    [
+     "2026-05-29",
+     211.14,
+     215.46,
+     199.35
+    ],
+    [
+     "2026-06-01",
+     224.36,
+     216.75,
+     200.26
+    ],
+    [
+     "2026-06-02",
+     222.82,
+     217.97,
+     201.27
+    ],
+    [
+     "2026-06-03",
+     214.75,
+     218.88,
+     202.05
+    ],
+    [
+     "2026-06-04",
+     218.66,
+     219.42,
+     202.92
+    ],
+    [
+     "2026-06-05",
+     205.1,
+     219.1,
+     203.45
+    ],
+    [
+     "2026-06-08",
+     208.64,
+     218.78,
+     204.2
+    ],
+    [
+     "2026-06-09",
+     208.19,
+     218.21,
+     205.01
+    ],
+    [
+     "2026-06-10",
+     200.42,
+     217.2,
+     205.71
+    ],
+    [
+     "2026-06-11",
+     204.87,
+     216.15,
+     206.32
+    ],
+    [
+     "2026-06-12",
+     205.19,
+     214.62,
+     206.91
+    ],
+    [
+     "2026-06-15",
+     212.45,
+     213.98,
+     207.61
+    ],
+    [
+     "2026-06-16",
+     207.41,
+     213.23,
+     208.21
+    ],
+    [
+     "2026-06-17",
+     204.65,
+     212.43,
+     208.74
+    ],
+    [
+     "2026-06-18",
+     210.69,
+     211.79,
+     209.31
+    ],
+    [
+     "2026-06-22",
+     208.65,
+     211.25,
+     209.81
+    ],
+    [
+     "2026-06-23",
+     200.04,
+     210.49,
+     210.03
+    ],
+    [
+     "2026-06-24",
+     199.0,
+     209.69,
+     210.23
+    ],
+    [
+     "2026-06-25",
+     195.74,
+     208.85,
+     210.21
+    ],
+    [
+     "2026-06-26",
+     192.53,
+     207.77,
+     210.09
+    ],
+    [
+     "2026-06-29",
+     194.97,
+     206.96,
+     210.02
+    ],
+    [
+     "2026-06-30",
+     200.09,
+     205.74,
+     209.99
+    ],
+    [
+     "2026-07-01",
+     197.58,
+     204.48,
+     209.9
+    ],
+    [
+     "2026-07-02",
+     194.83,
+     203.48,
+     209.8
+    ],
+    [
+     "2026-07-06",
+     195.55,
+     202.33,
+     209.66
+    ],
+    [
+     "2026-07-07",
+     196.93,
+     201.92,
+     209.6
+    ],
+    [
+     "2026-07-08",
+     204.12,
+     201.69,
+     209.52
+    ],
+    [
+     "2026-07-09",
+     202.78,
+     201.42,
+     209.24
+    ],
+    [
+     "2026-07-10",
+     210.96,
+     201.95,
+     209.2
+    ],
+    [
+     "2026-07-13",
+     203.53,
+     201.88,
+     209.08
+    ],
+    [
+     "2026-07-14",
+     211.8,
+     202.21,
+     209.33
+    ],
+    [
+     "2026-07-15",
+     212.5,
+     202.22,
+     209.61
+    ],
+    [
+     "2026-07-16",
+     207.4,
+     202.22,
+     209.79
+    ],
+    [
+     "2026-07-17",
+     202.81,
+     202.12,
+     209.91
+    ],
+    [
+     "2026-07-20",
+     203.28,
+     201.75,
+     209.82
+    ],
+    [
+     "2026-07-21",
+     207.29,
+     201.69,
+     209.74
+    ],
+    [
+     "2026-07-22",
+     212.06,
+     202.29,
+     209.68
+    ],
+    [
+     "2026-07-23",
+     208.76,
+     202.78,
+     209.46
+    ],
+    [
+     "2026-07-24",
+     206.84,
+     203.33,
+     209.18
+    ],
+    [
+     "2026-07-27",
+     196.51,
+     203.53,
+     208.6
+    ],
+    [
+     "2026-07-28",
+     197.01,
+     203.63,
+     207.82
+    ],
+    [
+     "2026-07-29",
+     190.01,
+     203.13,
+     207.12
+    ],
+    [
+     "2026-07-30",
+     195.04,
+     203.0,
+     206.57
+    ],
+    [
+     "2026-07-31",
+     200.75,
+     203.3,
+     206.17
+    ],
+    [
+     "2026-08-03",
+     206.64,
+     203.85,
+     205.84
+    ],
+    [
+     "2026-08-04",
+     211.94,
+     204.6,
+     205.69
+    ],
+    [
+     "2026-08-05",
+     219.22,
+     205.36,
+     205.76
+    ],
+    [
+     "2026-08-06",
+     218.99,
+     206.17,
+     205.85
+    ],
+    [
+     "2026-08-07",
+     223.96,
+     206.82,
+     206.07
+    ],
+    [
+     "2026-08-10",
+     217.55,
+     207.52,
+     206.14
+    ],
+    [
+     "2026-08-11",
+     217.5,
+     207.8,
+     206.27
+    ],
+    [
+     "2026-08-12",
+     224.09,
+     208.38,
+     206.26
+    ],
+    [
+     "2026-08-13",
+     225.3,
+     209.28,
+     206.31
+    ],
+    [
+     "2026-08-14",
+     225.16,
+     210.39,
+     206.52
+    ],
+    [
+     "2026-08-17",
+     225.01,
+     211.48,
+     206.65
+    ],
+    [
+     "2026-08-18",
+     219.74,
+     212.1,
+     206.94
+    ],
+    [
+     "2026-08-19",
+     217.56,
+     212.38,
+     207.12
+    ],
+    [
+     "2026-08-20",
+     216.85,
+     212.78,
+     207.29
+    ],
+    [
+     "2026-08-21",
+     214.72,
+     213.18,
+     207.58
+    ],
+    [
+     "2026-08-24",
+     208.48,
+     213.78,
+     207.65
+    ],
+    [
+     "2026-08-25",
+     213.05,
+     214.58,
+     207.81
+    ],
+    [
+     "2026-08-26",
+     209.66,
+     215.56,
+     207.75
+    ],
+    [
+     "2026-08-27",
+     227.98,
+     217.21,
+     208.16
+    ],
+    [
+     "2026-08-28",
+     217.55,
+     218.05,
+     208.42
+    ],
+    [
+     "2026-08-31",
+     220.78,
+     218.75,
+     208.62
+    ],
+    [
+     "2026-09-01",
+     217.44,
+     219.03,
+     208.8
+    ],
+    [
+     "2026-09-02",
+     224.41,
+     219.29,
+     209.28
+    ],
+    [
+     "2026-09-03",
+     228.45,
+     219.76,
+     209.87
+    ],
+    [
+     "2026-09-04",
+     230.36,
+     220.08,
+     210.57
+    ],
+    [
+     "2026-09-08",
+     225.73,
+     220.49,
+     211.23
+    ],
+    [
+     "2026-09-09",
+     223.67,
+     220.8,
+     211.8
+    ],
+    [
+     "2026-09-10",
+     218.36,
+     220.51,
+     212.17
+    ],
+    [
+     "2026-09-11",
+     218.29,
+     220.16,
+     212.58
+    ],
+    [
+     "2026-09-14",
+     210.96,
+     219.45,
+     212.91
+    ],
+    [
+     "2026-09-15",
+     212.17,
+     218.81,
+     213.24
+    ],
+    [
+     "2026-09-16",
+     213.9,
+     218.52,
+     213.58
+    ],
+    [
+     "2026-09-17",
+     219.34,
+     218.61,
+     213.88
+    ],
+    [
+     "2026-09-18",
+     222.27,
+     218.88,
+     214.27
+    ],
+    [
+     "2026-09-21",
+     227.38,
+     219.51,
+     214.6
+    ],
+    [
+     "2026-09-22",
+     228.87,
+     220.53,
+     215.11
+    ],
+    [
+     "2026-09-23",
+     225.51,
+     221.15,
+     215.38
+    ],
+    [
+     "2026-09-24",
+     224.58,
+     221.9,
+     215.62
+    ],
+    [
+     "2026-09-25",
+     225.07,
+     221.75,
+     215.98
+    ],
+    [
+     "2026-09-28",
+     228.86,
+     222.32,
+     216.5
+    ],
+    [
+     "2026-09-29",
+     227.21,
+     222.64,
+     216.98
+    ],
+    [
+     "2026-09-30",
+     228.38,
+     223.19,
+     217.4
+    ],
+    [
+     "2026-10-01",
+     230.86,
+     223.51,
+     217.77
+    ],
+    [
+     "2026-10-02",
+     233.95,
+     223.79,
+     218.28
+    ],
+    [
+     "2026-10-05",
+     238.9,
+     224.21,
+     218.92
+    ],
+    [
+     "2026-10-06",
+     239.24,
+     224.89,
+     219.77
+    ],
+    [
+     "2026-10-07",
+     237.47,
+     225.58,
+     220.58
+    ],
+    [
+     "2026-10-08",
+     230.48,
+     226.18,
+     221.39
+    ],
+    [
+     "2026-10-09",
+     229.28,
+     226.73,
+     222.08
+    ],
+    [
+     "2026-10-12",
+     226.32,
+     227.5,
+     222.59
+    ],
+    [
+     "2026-10-13",
+     228.52,
+     228.32,
+     223.03
+    ],
+    [
+     "2026-10-14",
+     221.3,
+     228.69,
+     223.21
+    ],
+    [
+     "2026-10-15",
+     217.23,
+     228.58,
+     223.17
+    ],
+    [
+     "2026-10-16",
+     214.13,
+     228.18,
+     223.08
+    ],
+    [
+     "2026-10-19",
+     217.09,
+     227.66,
+     222.94
+    ]
+   ],
+   "chartLevels": {
+    "resistance": [
+     227,
+     223
+    ],
+    "support": [
+     214,
+     209,
+     203
+    ]
+   },
+   "snapshot": [
+    [
+     "5D / 1M / 3M",
+     "+4.0 / +3.1 / +16.3%"
+    ],
+    [
+     "6M / YTD",
+     "+30 / +27%"
+    ],
+    [
+     "52w high",
+     "$243.37 (6 Oct) · −2.4%"
+    ],
+    [
+     "52w low",
+     "$164.27 · +45%"
+    ],
+    [
+     "Avg vol 20d",
+     "108.4M"
+    ],
+    [
+     "Vol 7 Oct vs 20d",
+     "0.75×"
+    ],
+    [
+     "ATR(14)",
+     "$5.61 · 2.4%"
+    ],
+    [
+     "Realized vol 10/20/60d",
+     "16 / 24 / 36%"
+    ],
+    [
+     "Implied vol 2–3 wks",
+     "≈ 30%"
+    ],
+    [
+     "RSI(14)",
+     "64.3"
+    ],
+    [
+     "MACD hist (6d)",
+     "0.5 → 1.4 → 1.3 rising, flat"
+    ],
+    [
+     "Distance above 20D",
+     "2.1 ATR"
+    ],
+    [
+     "RS vs QQQ 1M/3M/6M",
+     "−2 / +10 / +5 pts"
+    ],
+    [
+     "Short interest",
+     "1.27% · 2.3 days"
+    ],
+    [
+     "Forward P/E",
+     "19.6"
+    ],
+    [
+     "Next earnings",
+     "18 Nov"
+    ]
+   ],
+   "movingAverages": [
+    {
+     "label": "20D",
+     "usd": 227.66,
+     "vsPricePct": -4.6
+    },
+    {
+     "label": "50D",
+     "usd": 222.94,
+     "vsPricePct": -2.6
+    },
+    {
+     "label": "100D",
+     "usd": 214.51,
+     "vsPricePct": 1.2
+    },
+    {
+     "label": "200D",
+     "usd": 203.12,
+     "vsPricePct": 6.9
+    }
+   ],
+   "keyPoint": "Whether it holds above the old 235–237 ceiling after breaking out of a five-month range.",
+   "technicals": [
+    "Since May it traded ≈ 189–236.5 (May high 236.54, Sep high 234.76). On 5–6 Oct it closed above that ceiling on 1.2× average volume (127M, 135M).",
+    "The 7 Oct pullback came on light volume (0.75×): constructive.",
+    "Moving averages stacked bullishly and the MACD histogram rising. Realized vol is low (16% over 10 days), which often precedes a directional move.",
+    "Key test: retest of 233–236.5 (old range top). Holding it confirms the breakout; losing 227 means it failed.",
+    "Range height ≈ 27 projected from the breakout gives ≈ 262–264.",
+    "Backtest (n = 125, 3.5–7.5% above 20D, RSI 58–72, above 200D): 21-day median +2.5% (62% up)."
+   ],
+   "nextMove": [
+    [
+     "Setup",
+     "Breakout continuation after a retest"
+    ],
+    [
+     "Most likely",
+     "Retest $233–236, then $250"
+    ],
+    [
+     "Size",
+     "−1.5 to −2%, then +5 to +6%"
+    ],
+    [
+     "Confirms",
+     "Holds $233 and closes > $243.4"
+    ],
+    [
+     "Invalidates",
+     "Daily close < $227"
+    ],
+    [
+     "Trigger",
+     "Rates / macro, AI capex headlines, run-up to 18 Nov"
+    ],
+    [
+     "Timing",
+     "1–3 weeks"
+    ]
+   ],
+   "ranges": [
+    {
+     "horizon": "1 day",
+     "likely": "$233.5–241.5",
+     "wide": "$231–244"
+    },
+    {
+     "horizon": "5 days",
+     "likely": "$227–248",
+     "wide": "$221–255"
+    },
+    {
+     "horizon": "10 days",
+     "likely": "$224–252",
+     "wide": "$215–262"
+    },
+    {
+     "horizon": "1 month",
+     "likely": "$217–260",
+     "wide": "$205–275"
+    },
+    {
+     "horizon": "3 months",
+     "likely": "$204–276",
+     "wide": "—"
+    }
+   ],
+   "touchOdds": [
+    {
+     "level": "$260",
+     "touch": "12%",
+     "close": "6% close above"
+    },
+    {
+     "level": "$250",
+     "touch": "37%",
+     "close": "19% close above"
+    },
+    {
+     "level": "$243.4",
+     "touch": "66%",
+     "close": "33% close above"
+    },
+    {
+     "level": "$228",
+     "touch": "51%",
+     "close": "26% close below"
+    },
+    {
+     "level": "$220",
+     "touch": "21%",
+     "close": "11% close below"
+    }
+   ],
+   "earnings": "≈ ±5–6% implied for 18 Nov (outside 1-month window)",
+   "resistance": [
+    {
+     "label": "R1",
+     "price": "$243.4",
+     "why": "All-time high"
+    },
+    {
+     "label": "R2",
+     "price": "$250",
+     "why": "Call wall"
+    },
+    {
+     "label": "R3",
+     "price": "$262–264",
+     "why": "Range-height target"
+    }
+   ],
+   "support": [
+    {
+     "label": "S1",
+     "price": "$233–236.5",
+     "why": "Old range ceiling"
+    },
+    {
+     "label": "S2",
+     "price": "$225.6–228",
+     "why": "20-day · late-Sep lows"
+    },
+    {
+     "label": "S3",
+     "price": "$220",
+     "why": "50-day · large put OI · then 209"
+    }
+   ],
+   "breaks": [
+    "Above $243.4 → $250, then $262",
+    "Below $227 → breakout failed; $220 follows"
+   ],
+   "setups": [
+    {
+     "name": "Long (preferred)",
+     "entry": "$233–237",
+     "stop": "$227",
+     "targets": "$243.4 / $250 / $262",
+     "rewardRisk": "1:0.9 / 1:1.9 / 1:3.4",
+     "kind": "Breakout retest"
+    },
+    {
+     "name": "Bearish",
+     "entry": "short < $227",
+     "stop": "$236",
+     "targets": "$220 / $210",
+     "rewardRisk": "1:0.8 / 1:1.9",
+     "kind": "Failed breakout"
+    }
+   ],
+   "setupNote": "Cleanest structure, cheapest valuation, lowest volatility (tight stops work), no earnings inside the window.",
+   "scenarios": [
+    {
+     "name": "Bull",
+     "trigger": "Holds $233, then close > $243.4",
+     "target": "$250–262",
+     "time": "2–4 wks",
+     "probability": "30%"
+    },
+    {
+     "name": "Base",
+     "trigger": "Range $228–248",
+     "target": "$235–248",
+     "time": "1–3 wks",
+     "probability": "55%"
+    },
+    {
+     "name": "Bear",
+     "trigger": "Close < $227 (failed breakout)",
+     "target": "$215–220",
+     "time": "1–2 wks",
+     "probability": "15%"
+    }
+   ],
+   "horizonRanges": [
+    {
+     "horizon": "1 week",
+     "range": "$227–248",
+     "note": "tilt 233–248"
+    },
+    {
+     "horizon": "2 weeks",
+     "range": "$224–252",
+     "note": ""
+    },
+    {
+     "horizon": "1 month",
+     "range": "$217–260",
+     "note": "tilt toward 250"
+    },
+    {
+     "horizon": "3 months",
+     "range": "$204–276",
+     "note": "Dec IV 34%"
+    }
+   ],
+   "catalysts": [
+    {
+     "impact": "HIGH",
+     "text": "Macro and rates (same as AMD). Earnings 18 Nov sit outside the 1-month window."
+    },
+    {
+     "impact": "MED",
+     "text": "Q2 FY27: revenue $96.2B (+106%), data center $89.0B (+117%), gross margin 75%, Q3 guide $108B. Guidance assumes zero China data-center revenue: China is upside only."
+    },
+    {
+     "impact": "MED",
+     "text": "Reported $150B extra buyback (filing not seen). Reports that SpaceX seeks $40B to buy Nvidia chips."
+    },
+    {
+     "impact": "LOW",
+     "text": "RTX Spark launch with Microsoft. Average target $328.7 (+38%). Short interest 1.27%."
+    }
+   ],
+   "options": [
+    [
+     "Put/call OI",
+     "0.82"
+    ],
+    [
+     "Put/call volume",
+     "0.77"
+    ],
+    [
+     "Largest call OI",
+     "240 (276k) · 245 · 250"
+    ],
+    [
+     "Largest put OI",
+     "220 (154k) · 200"
+    ],
+    [
+     "IV term",
+     "flat 30–31% · 35% in Nov"
+    ],
+    [
+     "Skew (±7% OTM)",
+     "puts slightly over calls"
+    ],
+    [
+     "Squeeze potential",
+     "None"
+    ]
+   ],
+   "optionsRead": "Call-heavy chain with large positions stacked at 240 / 245 / 250 just above price. Supports a grind higher, with 250 as a ceiling until those options expire.",
+   "changeMind": [
+    "Close < $227 → neutral",
+    "Down day on volume > 1.5× average",
+    "Hyperscaler capex cuts or new China restrictions",
+    "Stalling into $240 / $245 / $250 around 16 Oct expiry is pinning, not a bearish signal"
+   ],
+   "position": {
+    "heldAction": "REDUCE · limit sell {shares:half} at {price:223} · stop {price:207.5}",
+    "levels": [
+     {
+      "name": "R3 · breakout level",
+      "usd": 233
+     },
+     {
+      "name": "R2 · 20-day average",
+      "usd": 227
+     },
+     {
+      "name": "R1 · 50-day average · sell half here",
+      "usd": 223
+     },
+     {
+      "name": "Near resistance",
+      "usd": 220
+     },
+     {
+      "name": "S1 · 100-day average (Fri close)",
+      "usd": 214
+     },
+     {
+      "name": "S2 · September lows",
+      "usd": 209
+     },
+     {
+      "name": "S3 · stop-loss order",
+      "usd": 207.5
+     },
+     {
+      "name": "S4 · 200-day average",
+      "usd": 203
+     }
+    ],
+    "plan": [
+     "**Place two orders now, don't wait for a close.** The $227 rule was missed because it needed you to act; orders act for you.",
+     "**1 · Limit sell {shares:half} shares at {price:223}** (the 50-day average), valid to 30 Oct. About {pl:223:half} on those. Odds of a touch by Friday ≈ 56%.",
+     "**2 · Stop-loss for all {shares:all} at {price:207.5}** (below the September lows at $209). If it fills, about {pl:207.5}. Once order 1 fills, the stop covers the remaining {shares:rest}.",
+     "**If it closes above {price:227}** (20-day) instead, cancel order 1 and raise the stop to {price:214}. Then the next target is {price:233}.",
+     "**Don't add.** The chip index needs a close above its 20-day before any buy makes sense; earnings on 18 Nov are the next real catalyst.",
+     "Current result at today's price: {now}. Worst case with the stop: about {pl:207.5}."
+    ]
+   }
+  },
+  {
+   "ticker": "AMD",
+   "name": "Advanced Micro Devices",
+   "aliases": [
+    "Advanced Micro Devices",
+    "AMD Inc."
+   ],
+   "rank": 2,
+   "closeUsd": 538.05,
+   "dayChangePct": 1.76,
+   "impliedVolPct": 50,
+   "verdict": {
+    "direction": "Bearish short term",
+    "tone": "loss",
+    "action": "WAIT · no entry until a close above $560",
+    "entry": "close > $560, or $506 support",
+    "stop": "$520 (after a $560 close) · $490 (at $506)",
+    "target": "$584, then $600",
+    "riskReward": "≈ 1 : 2",
+    "probability": "≈ 40%",
+    "nextMove": "Test of the 100-day ($526); below it, $506",
+    "timeframe": "Earnings 3 Nov",
+    "waitHeadline": "WAIT; the buy zone from last week ($596–612) failed",
+    "waitDetail": "A stock that drops 11% in a week is not bought on the first green day. Either a daily close back above $560 (momentum returns) or a touch of $506 with a tight stop."
+   },
+   "latest": [
+    "Mon 19 Oct close $538.05 (+1.8%) ≈ 479,72 €, after −11.5% in a week; Friday alone −6%. The $584 line broke on Wed (close $570.82) and $560 on Fri.",
+    "It sits exactly on the 50-day ($538.23); the 100-day is $526. RSI 40. MACD histogram −14.9, still falling. The fastest-rising stock of the three is also the one hit hardest when AI financing is questioned.",
+    "To Friday (implied vol ≈ 56%): 68% range $501–577. Odds: touch $560 ≈ 57%; close below $526 ≈ 37%; touch $506 ≈ 38%.",
+    "Earnings 3 Nov. Price targets ($700–800) are unchanged, but the chart says wait."
+   ],
+   "series": [
+    [
+     "2026-04-13",
+     246.83,
+     213.11,
+     209.24
+    ],
+    [
+     "2026-04-14",
+     255.07,
+     216.04,
+     209.61
+    ],
+    [
+     "2026-04-15",
+     258.12,
+     219.13,
+     209.85
+    ],
+    [
+     "2026-04-16",
+     278.26,
+     223.07,
+     210.57
+    ],
+    [
+     "2026-04-17",
+     278.39,
+     226.72,
+     212.13
+    ],
+    [
+     "2026-04-20",
+     274.95,
+     230.4,
+     213.78
+    ],
+    [
+     "2026-04-21",
+     284.49,
+     234.5,
+     215.3
+    ],
+    [
+     "2026-04-22",
+     303.46,
+     239.4,
+     217.05
+    ],
+    [
+     "2026-04-23",
+     305.33,
+     243.65,
+     218.89
+    ],
+    [
+     "2026-04-24",
+     347.81,
+     250.85,
+     221.57
+    ],
+    [
+     "2026-04-27",
+     334.63,
+     257.49,
+     224.15
+    ],
+    [
+     "2026-04-28",
+     323.21,
+     263.84,
+     226.47
+    ],
+    [
+     "2026-04-29",
+     337.11,
+     270.53,
+     229.15
+    ],
+    [
+     "2026-04-30",
+     354.49,
+     277.74,
+     232.23
+    ],
+    [
+     "2026-05-01",
+     360.54,
+     284.89,
+     235.38
+    ],
+    [
+     "2026-05-04",
+     341.54,
+     290.96,
+     238.2
+    ],
+    [
+     "2026-05-05",
+     355.26,
+     297.65,
+     241.38
+    ],
+    [
+     "2026-05-06",
+     421.39,
+     307.13,
+     245.53
+    ],
+    [
+     "2026-05-07",
+     408.46,
+     315.72,
+     249.48
+    ],
+    [
+     "2026-05-08",
+     455.19,
+     326.23,
+     254.51
+    ],
+    [
+     "2026-05-11",
+     458.79,
+     336.82,
+     259.68
+    ],
+    [
+     "2026-05-12",
+     448.29,
+     346.49,
+     264.68
+    ],
+    [
+     "2026-05-13",
+     445.5,
+     355.85,
+     269.77
+    ],
+    [
+     "2026-05-14",
+     449.7,
+     364.43,
+     274.72
+    ],
+    [
+     "2026-05-15",
+     424.1,
+     371.71,
+     279.21
+    ],
+    [
+     "2026-05-18",
+     420.99,
+     379.01,
+     283.78
+    ],
+    [
+     "2026-05-19",
+     414.05,
+     385.49,
+     288.01
+    ],
+    [
+     "2026-05-20",
+     447.58,
+     392.7,
+     292.9
+    ],
+    [
+     "2026-05-21",
+     449.59,
+     399.91,
+     297.79
+    ],
+    [
+     "2026-05-22",
+     467.51,
+     405.9,
+     303.19
+    ],
+    [
+     "2026-05-26",
+     503.89,
+     414.36,
+     309.4
+    ],
+    [
+     "2026-05-27",
+     495.54,
+     422.98,
+     315.38
+    ],
+    [
+     "2026-05-28",
+     518.09,
+     432.02,
+     321.81
+    ],
+    [
+     "2026-05-29",
+     516.1,
+     440.11,
+     328.15
+    ],
+    [
+     "2026-06-01",
+     510.13,
+     447.58,
+     334.24
+    ],
+    [
+     "2026-06-02",
+     521.54,
+     456.58,
+     340.65
+    ],
+    [
+     "2026-06-03",
+     542.52,
+     465.95,
+     347.44
+    ],
+    [
+     "2026-06-04",
+     523.2,
+     471.04,
+     353.8
+    ],
+    [
+     "2026-06-05",
+     466.38,
+     473.93,
+     358.72
+    ],
+    [
+     "2026-06-08",
+     490.33,
+     475.69,
+     364.45
+    ],
+    [
+     "2026-06-09",
+     475.51,
+     476.53,
+     369.93
+    ],
+    [
+     "2026-06-10",
+     452.4,
+     476.73,
+     375.05
+    ],
+    [
+     "2026-06-11",
+     488.45,
+     478.88,
+     380.75
+    ],
+    [
+     "2026-06-12",
+     511.57,
+     481.97,
+     386.78
+    ],
+    [
+     "2026-06-15",
+     547.26,
+     488.13,
+     393.38
+    ],
+    [
+     "2026-06-16",
+     507.29,
+     492.45,
+     399.12
+    ],
+    [
+     "2026-06-17",
+     512.48,
+     497.37,
+     404.94
+    ],
+    [
+     "2026-06-18",
+     537.37,
+     501.86,
+     411.05
+    ],
+    [
+     "2026-06-22",
+     551.63,
+     506.96,
+     417.35
+    ],
+    [
+     "2026-06-23",
+     519.85,
+     509.58,
+     422.84
+    ],
+    [
+     "2026-06-24",
+     519.74,
+     510.37,
+     428.3
+    ],
+    [
+     "2026-06-25",
+     532.57,
+     512.22,
+     433.85
+    ],
+    [
+     "2026-06-26",
+     521.58,
+     512.39,
+     439.12
+    ],
+    [
+     "2026-06-29",
+     539.49,
+     513.56,
+     444.35
+    ],
+    [
+     "2026-06-30",
+     580.91,
+     517.1,
+     450.4
+    ],
+    [
+     "2026-07-01",
+     540.88,
+     518.07,
+     455.71
+    ],
+    [
+     "2026-07-02",
+     517.82,
+     516.84,
+     460.38
+    ],
+    [
+     "2026-07-06",
+     552.05,
+     518.28,
+     465.35
+    ],
+    [
+     "2026-07-07",
+     516.11,
+     520.76,
+     469.57
+    ],
+    [
+     "2026-07-08",
+     517.41,
+     522.12,
+     472.96
+    ],
+    [
+     "2026-07-09",
+     546.72,
+     525.68,
+     477.2
+    ],
+    [
+     "2026-07-10",
+     557.89,
+     530.95,
+     481.9
+    ],
+    [
+     "2026-07-13",
+     534.39,
+     533.25,
+     485.84
+    ],
+    [
+     "2026-07-14",
+     548.13,
+     535.08,
+     489.71
+    ],
+    [
+     "2026-07-15",
+     529.14,
+     534.17,
+     493.09
+    ],
+    [
+     "2026-07-16",
+     500.94,
+     533.85,
+     496.27
+    ],
+    [
+     "2026-07-17",
+     495.76,
+     533.02,
+     499.08
+    ],
+    [
+     "2026-07-20",
+     503.57,
+     531.33,
+     500.73
+    ],
+    [
+     "2026-07-21",
+     544.43,
+     530.97,
+     503.45
+    ],
+    [
+     "2026-07-22",
+     552.33,
+     532.59,
+     505.39
+    ],
+    [
+     "2026-07-23",
+     539.69,
+     533.59,
+     507.01
+    ],
+    [
+     "2026-07-24",
+     521.95,
+     533.06,
+     508.48
+    ],
+    [
+     "2026-07-27",
+     494.95,
+     531.73,
+     509.47
+    ],
+    [
+     "2026-07-28",
+     454.62,
+     527.48,
+     509.57
+    ],
+    [
+     "2026-07-29",
+     429.56,
+     519.92,
+     509.68
+    ],
+    [
+     "2026-07-30",
+     485.39,
+     517.14,
+     510.97
+    ],
+    [
+     "2026-07-31",
+     476.15,
+     515.06,
+     512.21
+    ],
+    [
+     "2026-08-03",
+     484.64,
+     511.69,
+     512.95
+    ],
+    [
+     "2026-08-04",
+     518.58,
+     511.81,
+     514.33
+    ],
+    [
+     "2026-08-05",
+     482.05,
+     510.04,
+     514.62
+    ],
+    [
+     "2026-08-06",
+     489.28,
+     507.17,
+     514.33
+    ],
+    [
+     "2026-08-07",
+     483.36,
+     503.45,
+     514.08
+    ],
+    [
+     "2026-08-10",
+     469.56,
+     500.2,
+     513.11
+    ],
+    [
+     "2026-08-11",
+     474.32,
+     496.51,
+     512.28
+    ],
+    [
+     "2026-08-12",
+     482.93,
+     494.2,
+     511.73
+    ],
+    [
+     "2026-08-13",
+     483.01,
+     493.31,
+     510.96
+    ],
+    [
+     "2026-08-14",
+     514.39,
+     494.24,
+     510.4
+    ],
+    [
+     "2026-08-17",
+     506.0,
+     494.36,
+     510.06
+    ],
+    [
+     "2026-08-18",
+     484.39,
+     491.36,
+     510.42
+    ],
+    [
+     "2026-08-19",
+     466.42,
+     487.06,
+     509.94
+    ],
+    [
+     "2026-08-20",
+     469.46,
+     483.55,
+     509.82
+    ],
+    [
+     "2026-08-21",
+     473.25,
+     481.12,
+     510.23
+    ],
+    [
+     "2026-08-24",
+     456.75,
+     479.21,
+     509.6
+    ],
+    [
+     "2026-08-25",
+     479.18,
+     480.43,
+     508.95
+    ],
+    [
+     "2026-08-26",
+     480.93,
+     483.0,
+     507.63
+    ],
+    [
+     "2026-08-27",
+     476.67,
+     482.57,
+     507.01
+    ],
+    [
+     "2026-08-28",
+     465.58,
+     482.04,
+     506.08
+    ],
+    [
+     "2026-08-31",
+     470.72,
+     481.34,
+     504.74
+    ],
+    [
+     "2026-09-01",
+     459.61,
+     478.39,
+     502.9
+    ],
+    [
+     "2026-09-02",
+     457.06,
+     477.14,
+     501.65
+    ],
+    [
+     "2026-09-03",
+     456.16,
+     475.49,
+     500.37
+    ],
+    [
+     "2026-09-04",
+     477.57,
+     475.2,
+     499.27
+    ],
+    [
+     "2026-09-08",
+     505.74,
+     477.01,
+     498.96
+    ],
+    [
+     "2026-09-09",
+     521.1,
+     479.35,
+     498.59
+    ],
+    [
+     "2026-09-10",
+     503.6,
+     480.38,
+     497.04
+    ],
+    [
+     "2026-09-11",
+     516.13,
+     482.04,
+     496.55
+    ],
+    [
+     "2026-09-14",
+     493.41,
+     480.99,
+     496.06
+    ],
+    [
+     "2026-09-15",
+     504.2,
+     480.9,
+     495.1
+    ],
+    [
+     "2026-09-16",
+     512.5,
+     482.3,
+     495.03
+    ],
+    [
+     "2026-09-17",
+     545.09,
+     486.24,
+     495.59
+    ],
+    [
+     "2026-09-18",
+     559.82,
+     490.75,
+     495.85
+    ],
+    [
+     "2026-09-21",
+     615.52,
+     497.87,
+     497.0
+    ],
+    [
+     "2026-09-22",
+     623.77,
+     506.22,
+     498.79
+    ],
+    [
+     "2026-09-23",
+     614.61,
+     512.99,
+     500.12
+    ],
+    [
+     "2026-09-24",
+     629.26,
+     520.41,
+     502.12
+    ],
+    [
+     "2026-09-25",
+     630.63,
+     528.1,
+     504.71
+    ],
+    [
+     "2026-09-28",
+     607.87,
+     535.22,
+     506.96
+    ],
+    [
+     "2026-09-29",
+     607.57,
+     542.06,
+     509.04
+    ],
+    [
+     "2026-09-30",
+     611.76,
+     549.67,
+     510.38
+    ],
+    [
+     "2026-10-01",
+     615.73,
+     557.6,
+     511.65
+    ],
+    [
+     "2026-10-02",
+     633.91,
+     566.49,
+     513.53
+    ],
+    [
+     "2026-10-05",
+     631.75,
+     574.2,
+     515.73
+    ],
+    [
+     "2026-10-06",
+     649.42,
+     581.38,
+     518.82
+    ],
+    [
+     "2026-10-07",
+     645.86,
+     587.62,
+     522.64
+    ],
+    [
+     "2026-10-08",
+     620.68,
+     593.47,
+     526.47
+    ],
+    [
+     "2026-10-09",
+     608.1,
+     598.07,
+     528.92
+    ],
+    [
+     "2026-10-12",
+     594.24,
+     603.11,
+     531.28
+    ],
+    [
+     "2026-10-13",
+     605.53,
+     608.18,
+     533.7
+    ],
+    [
+     "2026-10-14",
+     570.82,
+     611.1,
+     534.75
+    ],
+    [
+     "2026-10-15",
+     562.23,
+     611.95,
+     536.35
+    ],
+    [
+     "2026-10-16",
+     528.75,
+     610.4,
+     537.14
+    ],
+    [
+     "2026-10-19",
+     538.05,
+     606.53,
+     538.23
+    ]
+   ],
+   "chartLevels": {
+    "resistance": [
+     584,
+     560
+    ],
+    "support": [
+     526,
+     506
+    ]
+   },
+   "snapshot": [
+    [
+     "5D / 1M / 3M",
+     "+5.6 / +35.2 / +24.8%"
+    ],
+    [
+     "6M / YTD",
+     "+179 / +202%"
+    ],
+    [
+     "52w high",
+     "$658.52 (6 Oct) · −1.9%"
+    ],
+    [
+     "52w low",
+     "$188.22 · +243%"
+    ],
+    [
+     "Avg vol 20d",
+     "22.0M"
+    ],
+    [
+     "Vol 7 Oct vs 20d",
+     "0.83×"
+    ],
+    [
+     "ATR(14)",
+     "$23.43 · 3.6%"
+    ],
+    [
+     "Realized vol 10/20/60d",
+     "31 / 51 / 63%"
+    ],
+    [
+     "Implied vol 2–3 wks",
+     "≈ 47–48%"
+    ],
+    [
+     "RSI(14)",
+     "70.7"
+    ],
+    [
+     "MACD hist (6d)",
+     "6.5 → 2.9 falling"
+    ],
+    [
+     "Distance above 20D",
+     "2.5 ATR"
+    ],
+    [
+     "RS vs QQQ 1M/3M/6M",
+     "+30 / +18 / +154 pts"
+    ],
+    [
+     "Short interest",
+     "2.46% · 2.2 days"
+    ],
+    [
+     "Forward P/E",
+     "58"
+    ],
+    [
+     "Next earnings",
+     "3 Nov"
+    ]
+   ],
+   "movingAverages": [
+    {
+     "label": "20D",
+     "usd": 606.53,
+     "vsPricePct": -11.3
+    },
+    {
+     "label": "50D",
+     "usd": 538.23,
+     "vsPricePct": 0.0
+    },
+    {
+     "label": "100D",
+     "usd": 526.16,
+     "vsPricePct": 2.3
+    },
+    {
+     "label": "200D",
+     "usd": 395.87,
+     "vsPricePct": 35.9
+    }
+   ],
+   "keyPoint": "How stretched it is (2.5 ATR above the 20-day) against a falling MACD histogram.",
+   "technicals": [
+    "Daily and weekly trend up. Moving averages stacked bullishly; weekly closes 516 → 560 → 631 → 634 → 646.",
+    "6 Oct high of 658.52 came on 24.2M shares (1.1×) with a wide 628–658.5 candle that closed mid-range. Volume fell to 0.83× the next day.",
+    "Momentum conflict: price made a higher high while the MACD histogram fell six days in a row (6.48 → 2.90) and RSI stayed ≈ 70. A bearish momentum divergence: the move is slowing, not reversing.",
+    "Realized vol over 10 days (31%) is well below 60-day (63%), and implied (~48%) is rich vs realized. Options traders are paying for a move.",
+    "Backtest disagrees with 'overbought means pullback': in 86 cases since 2016 with AMD 7–14% above its 20D and RSI 65–78, median return was +1.3% after 5 days (62% up) and +3.5% after 10 days (62% up), range −23% to +23%.",
+    "Net: drift still up, but stretch and fading momentum make a dip toward 600–630 likely before a move to 700."
+   ],
+   "nextMove": [
+    [
+     "Setup",
+     "Pullback / consolidation, then another try higher"
+    ],
+    [
+     "Most likely",
+     "Dip to $628 → $600–612, then $658–700"
+    ],
+    [
+     "Size",
+     "−3% to −7%, then +8% to +15%"
+    ],
+    [
+     "Confirms",
+     "Daily close > $660 on volume > 25M"
+    ],
+    [
+     "Invalidates",
+     "Daily close < $584 (top of 21 Sep gap)"
+    ],
+    [
+     "Trigger",
+     "Analyst targets, Helios orders, rates, 3 Nov earnings"
+    ],
+    [
+     "Timing",
+     "Dip within 1–2 weeks; resolved by 3 Nov"
+    ]
+   ],
+   "ranges": [
+    {
+     "horizon": "1 day",
+     "likely": "$628–664",
+     "wide": "$617–676"
+    },
+    {
+     "horizon": "5 days",
+     "likely": "$604–691",
+     "wide": "$578–722"
+    },
+    {
+     "horizon": "10 days",
+     "likely": "$588–709",
+     "wide": "$554–753"
+    },
+    {
+     "horizon": "1 month (incl. earnings)",
+     "likely": "$548–761",
+     "wide": "$493–847"
+    },
+    {
+     "horizon": "3 months",
+     "likely": "$512–812",
+     "wide": "—"
+    }
+   ],
+   "touchOdds": [
+    {
+     "level": "$700",
+     "touch": "37%",
+     "close": "19% close above"
+    },
+    {
+     "level": "$658.5",
+     "touch": "80%",
+     "close": "40% close above"
+    },
+    {
+     "level": "$628",
+     "touch": "81%",
+     "close": "40% close below"
+    },
+    {
+     "level": "$600",
+     "touch": "47%",
+     "close": "24% close below"
+    },
+    {
+     "level": "$560",
+     "touch": "15%",
+     "close": "7% close below"
+    }
+   ],
+   "earnings": "≈ ±7–8% implied for 3 Nov",
+   "resistance": [
+    {
+     "label": "R1",
+     "price": "$658.5",
+     "why": "All-time high"
+    },
+    {
+     "label": "R2",
+     "price": "$700",
+     "why": "Call wall · Mizuho $705"
+    },
+    {
+     "label": "R3",
+     "price": "$750",
+     "why": "Call OI · path to Citi $800"
+    }
+   ],
+   "support": [
+    {
+     "label": "S1",
+     "price": "$628–633",
+     "why": "6/7 Oct lows · 2 Oct gap"
+    },
+    {
+     "label": "S2",
+     "price": "$596–612",
+     "why": "Late-Sep lows · 20D (≈ 600 mid-Oct)"
+    },
+    {
+     "label": "S3",
+     "price": "$560–584",
+     "why": "Open 21 Sep gap"
+    },
+    {
+     "label": "S4",
+     "price": "$516–523",
+     "why": "50 / 100-day averages"
+    }
+   ],
+   "breaks": [
+    "Above $660 → targets $700, then $750",
+    "Below $628 → $600–612 likely",
+    "Below $584 → gap fills to $560; uptrend structure damaged"
+   ],
+   "setups": [
+    {
+     "name": "Long (preferred)",
+     "entry": "$600–612",
+     "stop": "$579",
+     "targets": "$658 / $700 / $750",
+     "rewardRisk": "1:1.9 / 1:3.5 / 1:5.4",
+     "kind": "Pullback in uptrend"
+    },
+    {
+     "name": "Bearish",
+     "entry": "short < $596",
+     "stop": "$618",
+     "targets": "$584 / $560",
+     "rewardRisk": "1:0.5 / 1:1.6",
+     "kind": "Breakdown (counter-trend, weak)"
+    }
+   ],
+   "setupNote": "Buying a breakout above 660 with a stop at 628 risks 32 to make 40 (1:1.25). Waiting for the rising 20-day and late-Sep lows roughly triples the payoff.",
+   "scenarios": [
+    {
+     "name": "Bull",
+     "trigger": "Close > $660 on volume; rates ease",
+     "target": "$700–720",
+     "time": "1–3 wks",
+     "probability": "25% (20–30)"
+    },
+    {
+     "name": "Base",
+     "trigger": "Momentum fades, range $600–665",
+     "target": "$615–660",
+     "time": "until 3 Nov",
+     "probability": "50%"
+    },
+    {
+     "name": "Bear",
+     "trigger": "Close < $584 or yield spike",
+     "target": "$560–575",
+     "time": "1–2 wks",
+     "probability": "25% (20–30)"
+    }
+   ],
+   "horizonRanges": [
+    {
+     "horizon": "1 week",
+     "range": "$604–691",
+     "note": "tilt 610–665"
+    },
+    {
+     "horizon": "2 weeks",
+     "range": "$588–709",
+     "note": ""
+    },
+    {
+     "horizon": "1 month",
+     "range": "$548–761",
+     "note": "includes earnings"
+    },
+    {
+     "horizon": "3 months",
+     "range": "$512–812",
+     "note": "Dec IV 52%"
+    }
+   ],
+   "catalysts": [
+    {
+     "impact": "HIGH",
+     "text": "Q3 earnings 3 Nov. Consensus EPS $1.95 on $13.19B, above AMD's guidance midpoint: high bar. Q4 Helios commentary matters most."
+    },
+    {
+     "impact": "HIGH",
+     "text": "Rates: 10-year at 5.34% (24-year high) after the 16 Sep Fed hike; oil ≈ $90."
+    },
+    {
+     "impact": "MED",
+     "text": "6 Oct: Citi target $800 (from $575), Mizuho $705 (from $580) on a 'CPU renaissance'. Drove the record high."
+    },
+    {
+     "impact": "MED",
+     "text": "Lisa Su: production up substantially in 2027. Vultr $1.2B Helios order (1 Oct). World Labs $8.2B all-stock deal pending."
+    },
+    {
+     "impact": "LOW",
+     "text": "Short interest 2.46% and falling (41.7M → 40.0M): no squeeze fuel. CEO sales under a 10b5-1 plan."
+    },
+    {
+     "impact": "RUMOR",
+     "text": "Reports that the Helios mass-production ramp slips to Q2 2027. Not confirmed by AMD."
+    }
+   ],
+   "options": [
+    [
+     "Put/call OI",
+     "1.11"
+    ],
+    [
+     "Put/call volume",
+     "0.85"
+    ],
+    [
+     "Largest call OI",
+     "700 (23.9k) · 750 · 640"
+    ],
+    [
+     "Largest put OI",
+     "600 (15.4k) · 500 · 430 · 400"
+    ],
+    [
+     "IV term",
+     "47–49% Oct · 57% across earnings"
+    ],
+    [
+     "Skew (±7% OTM)",
+     "calls priced over puts"
+    ],
+    [
+     "Squeeze potential",
+     "None"
+    ]
+   ],
+   "optionsRead": "High put/call OI reflects hedging of gains, not bearish bets. 700 is the call wall: big positions there tend to slow a rally. Positioning does not strongly confirm either direction.",
+   "changeMind": [
+    "Close < $584 on volume > 30M → flip to bearish, target ≤ $560",
+    "Close > $660 on volume > 25M with MACD histogram turning up → bull odds ≈ 40%",
+    "Confirmed Helios slip, or Q4 guidance leaning on CPUs",
+    "10-year yield above ≈ 5.5%"
+   ]
+  },
+  {
+   "ticker": "TSLA",
+   "name": "Tesla",
+   "aliases": [
+    "Tesla",
+    "Tesla Inc.",
+    "Tesla, Inc."
+   ],
+   "rank": 3,
+   "closeUsd": 368.06,
+   "dayChangePct": 3.76,
+   "impliedVolPct": 45,
+   "verdict": {
+    "direction": "Neutral into earnings",
+    "tone": "warn",
+    "action": "HALVE before earnings",
+    "entry": "after earnings only",
+    "stop": "$345.88 (daily close) · stop order $342",
+    "target": "$386.83, then $392",
+    "riskReward": "n/a across earnings",
+    "probability": "≈ 50%",
+    "nextMove": "±7% on 21 Oct, then a new range",
+    "timeframe": "Decided Wed 21 Oct, 22:00 CEST",
+    "waitHeadline": "Sell half before Wednesday's close, keep half through earnings with a stop order",
+    "waitDetail": "A ±7.4% move on 50 shares is ≈ ±1.200 €. Halving caps the downside at ≈ −600 € while keeping half of any jump. A stop order can fill below its level on a gap; that is the price of staying in."
+   },
+   "latest": [
+    "Mon 19 Oct close $368.06 (+3.8%) ≈ 328,16 €, back to the 20-day ($369.97) after Friday's drop to $354.72 (−2.1%, heavy volume).",
+    "Why last week: the Nasdaq lost 4.5% in the week; the Roadster reveal on Thu faded within a day (ships 2028); the tech sell-off on Fri. Nothing company-specific broke.",
+    "The sell-half limit near $390 never filled: the high was $388.56 on 9 Oct. That plan is over; earnings decide now.",
+    "Earnings Wed 21 Oct after the US close (call 23:30 CEST). Consensus EPS ≈ $0.43–0.55, revenue ≈ $26.3–27.9B, capex up to $7.5B. Options price a ±7.4% move: about $341–395 (304–352 €). Goldman: robotaxi and Optimus outlook matter more than the quarter.",
+    "To Friday incl. earnings (implied vol ≈ 58%): 68% range $342–396; 90% $326–415. Odds: touch $386.83 ≈ 50%; touch $349 ≈ 47%; close below $345.88 ≈ 20%."
+   ],
+   "series": [
+    [
+     "2026-04-13",
+     352.42,
+     368.91,
+     393.02
+    ],
+    [
+     "2026-04-14",
+     364.2,
+     367.34,
+     391.7
+    ],
+    [
+     "2026-04-15",
+     391.95,
+     366.98,
+     391.1
+    ],
+    [
+     "2026-04-16",
+     388.9,
+     366.78,
+     390.44
+    ],
+    [
+     "2026-04-17",
+     400.62,
+     367.8,
+     390.33
+    ],
+    [
+     "2026-04-20",
+     392.5,
+     369.03,
+     390.24
+    ],
+    [
+     "2026-04-21",
+     386.42,
+     369.31,
+     389.74
+    ],
+    [
+     "2026-04-22",
+     387.51,
+     369.53,
+     389.15
+    ],
+    [
+     "2026-04-23",
+     373.72,
+     368.92,
+     388.12
+    ],
+    [
+     "2026-04-24",
+     376.3,
+     369.13,
+     387.08
+    ],
+    [
+     "2026-04-27",
+     378.67,
+     369.97,
+     386.31
+    ],
+    [
+     "2026-04-28",
+     376.02,
+     371.01,
+     385.48
+    ],
+    [
+     "2026-04-29",
+     372.8,
+     371.06,
+     384.73
+    ],
+    [
+     "2026-04-30",
+     381.63,
+     371.08,
+     384.13
+    ],
+    [
+     "2026-05-01",
+     390.82,
+     372.59,
+     383.71
+    ],
+    [
+     "2026-05-04",
+     392.51,
+     374.57,
+     383.33
+    ],
+    [
+     "2026-05-05",
+     389.37,
+     376.71,
+     383.12
+    ],
+    [
+     "2026-05-06",
+     398.73,
+     379.48,
+     382.91
+    ],
+    [
+     "2026-05-07",
+     411.79,
+     382.79,
+     382.79
+    ],
+    [
+     "2026-05-08",
+     428.35,
+     386.76,
+     383.19
+    ],
+    [
+     "2026-05-11",
+     445.0,
+     391.39,
+     384.04
+    ],
+    [
+     "2026-05-12",
+     433.45,
+     394.85,
+     384.64
+    ],
+    [
+     "2026-05-13",
+     445.27,
+     397.52,
+     385.7
+    ],
+    [
+     "2026-05-14",
+     443.3,
+     400.24,
+     386.45
+    ],
+    [
+     "2026-05-15",
+     422.24,
+     401.32,
+     386.78
+    ],
+    [
+     "2026-05-18",
+     409.99,
+     402.19,
+     387.04
+    ],
+    [
+     "2026-05-19",
+     404.11,
+     403.08,
+     387.15
+    ],
+    [
+     "2026-05-20",
+     417.26,
+     404.57,
+     387.51
+    ],
+    [
+     "2026-05-21",
+     417.85,
+     406.77,
+     387.71
+    ],
+    [
+     "2026-05-22",
+     426.01,
+     409.26,
+     388.33
+    ],
+    [
+     "2026-05-26",
+     433.59,
+     412.0,
+     389.18
+    ],
+    [
+     "2026-05-27",
+     440.36,
+     415.22,
+     390.08
+    ],
+    [
+     "2026-05-28",
+     442.1,
+     418.69,
+     390.93
+    ],
+    [
+     "2026-05-29",
+     435.79,
+     421.39,
+     391.8
+    ],
+    [
+     "2026-06-01",
+     415.88,
+     422.65,
+     392.51
+    ],
+    [
+     "2026-06-02",
+     423.74,
+     424.21,
+     393.62
+    ],
+    [
+     "2026-06-03",
+     423.7,
+     425.93,
+     394.48
+    ],
+    [
+     "2026-06-04",
+     418.45,
+     426.91,
+     395.19
+    ],
+    [
+     "2026-06-05",
+     391.0,
+     425.87,
+     395.29
+    ],
+    [
+     "2026-06-08",
+     408.95,
+     424.9,
+     396.03
+    ],
+    [
+     "2026-06-09",
+     396.68,
+     422.49,
+     396.72
+    ],
+    [
+     "2026-06-10",
+     381.59,
+     419.89,
+     397.25
+    ],
+    [
+     "2026-06-11",
+     399.15,
+     417.59,
+     397.8
+    ],
+    [
+     "2026-06-12",
+     406.43,
+     415.74,
+     398.3
+    ],
+    [
+     "2026-06-15",
+     411.15,
+     415.19,
+     399.31
+    ],
+    [
+     "2026-06-16",
+     404.66,
+     414.92,
+     400.35
+    ],
+    [
+     "2026-06-17",
+     396.38,
+     414.54,
+     401.34
+    ],
+    [
+     "2026-06-18",
+     400.49,
+     413.7,
+     402.49
+    ],
+    [
+     "2026-06-22",
+     405.05,
+     413.06,
+     403.68
+    ],
+    [
+     "2026-06-23",
+     381.61,
+     410.84,
+     404.33
+    ],
+    [
+     "2026-06-24",
+     375.53,
+     407.93,
+     404.79
+    ],
+    [
+     "2026-06-25",
+     375.12,
+     404.67,
+     405.01
+    ],
+    [
+     "2026-06-26",
+     379.71,
+     401.55,
+     404.76
+    ],
+    [
+     "2026-06-29",
+     411.84,
+     400.36,
+     405.22
+    ],
+    [
+     "2026-06-30",
+     420.6,
+     400.59,
+     405.62
+    ],
+    [
+     "2026-07-01",
+     425.3,
+     400.67,
+     406.28
+    ],
+    [
+     "2026-07-02",
+     393.45,
+     399.16,
+     406.42
+    ],
+    [
+     "2026-07-06",
+     419.77,
+     399.22,
+     407.07
+    ],
+    [
+     "2026-07-07",
+     402.9,
+     399.82,
+     407.65
+    ],
+    [
+     "2026-07-08",
+     394.06,
+     399.07,
+     408.0
+    ],
+    [
+     "2026-07-09",
+     406.55,
+     399.57,
+     408.56
+    ],
+    [
+     "2026-07-10",
+     407.76,
+     400.88,
+     409.2
+    ],
+    [
+     "2026-07-13",
+     394.76,
+     400.66,
+     409.64
+    ],
+    [
+     "2026-07-14",
+     396.18,
+     400.14,
+     409.93
+    ],
+    [
+     "2026-07-15",
+     394.46,
+     399.31,
+     410.0
+    ],
+    [
+     "2026-07-16",
+     391.06,
+     398.63,
+     409.97
+    ],
+    [
+     "2026-07-17",
+     380.84,
+     397.85,
+     409.8
+    ],
+    [
+     "2026-07-20",
+     369.57,
+     396.31,
+     409.22
+    ],
+    [
+     "2026-07-21",
+     378.93,
+     395.0,
+     408.56
+    ],
+    [
+     "2026-07-22",
+     374.01,
+     394.62,
+     407.47
+    ],
+    [
+     "2026-07-23",
+     319.69,
+     391.83,
+     404.97
+    ],
+    [
+     "2026-07-24",
+     313.03,
+     388.72,
+     402.56
+    ],
+    [
+     "2026-07-27",
+     309.22,
+     385.2,
+     399.84
+    ],
+    [
+     "2026-07-28",
+     307.44,
+     379.98,
+     397.12
+    ],
+    [
+     "2026-07-29",
+     298.32,
+     373.86,
+     394.64
+    ],
+    [
+     "2026-07-30",
+     308.85,
+     368.04,
+     392.62
+    ],
+    [
+     "2026-07-31",
+     311.21,
+     363.93,
+     390.76
+    ],
+    [
+     "2026-08-03",
+     322.08,
+     359.05,
+     388.86
+    ],
+    [
+     "2026-08-04",
+     327.35,
+     355.27,
+     387.05
+    ],
+    [
+     "2026-08-05",
+     321.55,
+     351.64,
+     384.96
+    ],
+    [
+     "2026-08-06",
+     319.53,
+     347.29,
+     382.68
+    ],
+    [
+     "2026-08-07",
+     328.58,
+     343.33,
+     380.44
+    ],
+    [
+     "2026-08-10",
+     330.88,
+     340.14,
+     378.22
+    ],
+    [
+     "2026-08-11",
+     332.81,
+     336.97,
+     376.16
+    ],
+    [
+     "2026-08-12",
+     327.51,
+     333.62,
+     374.39
+    ],
+    [
+     "2026-08-13",
+     339.96,
+     331.07,
+     372.71
+    ],
+    [
+     "2026-08-14",
+     342.27,
+     329.14,
+     371.09
+    ],
+    [
+     "2026-08-17",
+     339.3,
+     327.63,
+     369.5
+    ],
+    [
+     "2026-08-18",
+     336.87,
+     325.52,
+     368.42
+    ],
+    [
+     "2026-08-19",
+     351.12,
+     324.38,
+     367.26
+    ],
+    [
+     "2026-08-20",
+     345.13,
+     325.65,
+     366.23
+    ],
+    [
+     "2026-08-21",
+     362.86,
+     328.14,
+     365.86
+    ],
+    [
+     "2026-08-24",
+     348.95,
+     330.13,
+     364.85
+    ],
+    [
+     "2026-08-25",
+     350.25,
+     332.27,
+     363.73
+    ],
+    [
+     "2026-08-26",
+     345.82,
+     334.64,
+     362.42
+    ],
+    [
+     "2026-08-27",
+     354.81,
+     336.94,
+     361.43
+    ],
+    [
+     "2026-08-28",
+     348.75,
+     338.82,
+     360.47
+    ],
+    [
+     "2026-08-31",
+     367.95,
+     341.11,
+     359.82
+    ],
+    [
+     "2026-09-01",
+     356.09,
+     342.55,
+     358.84
+    ],
+    [
+     "2026-09-02",
+     357.01,
+     344.32,
+     358.35
+    ],
+    [
+     "2026-09-03",
+     376.37,
+     347.16,
+     358.37
+    ],
+    [
+     "2026-09-04",
+     354.08,
+     348.44,
+     357.95
+    ],
+    [
+     "2026-09-08",
+     368.16,
+     350.3,
+     357.72
+    ],
+    [
+     "2026-09-09",
+     367.81,
+     352.05,
+     356.84
+    ],
+    [
+     "2026-09-10",
+     363.56,
+     353.86,
+     355.7
+    ],
+    [
+     "2026-09-11",
+     365.44,
+     355.13,
+     354.5
+    ],
+    [
+     "2026-09-14",
+     358.97,
+     355.96,
+     353.81
+    ],
+    [
+     "2026-09-15",
+     356.58,
+     356.83,
+     352.54
+    ],
+    [
+     "2026-09-16",
+     358.08,
+     357.89,
+     351.65
+    ],
+    [
+     "2026-09-17",
+     366.2,
+     358.64,
+     351.09
+    ],
+    [
+     "2026-09-18",
+     364.27,
+     359.6,
+     350.25
+    ],
+    [
+     "2026-09-21",
+     375.3,
+     360.22,
+     349.6
+    ],
+    [
+     "2026-09-22",
+     378.9,
+     361.72,
+     349.28
+    ],
+    [
+     "2026-09-23",
+     380.12,
+     363.21,
+     348.96
+    ],
+    [
+     "2026-09-24",
+     377.94,
+     364.82,
+     348.63
+    ],
+    [
+     "2026-09-25",
+     372.11,
+     365.68,
+     348.25
+    ],
+    [
+     "2026-09-28",
+     357.45,
+     366.12,
+     347.78
+    ],
+    [
+     "2026-09-29",
+     352.84,
+     365.36,
+     347.45
+    ],
+    [
+     "2026-09-30",
+     354.81,
+     365.3,
+     346.96
+    ],
+    [
+     "2026-10-01",
+     354.11,
+     365.15,
+     346.57
+    ],
+    [
+     "2026-10-02",
+     370.59,
+     364.87,
+     347.58
+    ],
+    [
+     "2026-10-05",
+     378.73,
+     366.1,
+     348.9
+    ],
+    [
+     "2026-10-06",
+     380.68,
+     366.72,
+     350.33
+    ],
+    [
+     "2026-10-07",
+     377.81,
+     367.22,
+     351.73
+    ],
+    [
+     "2026-10-08",
+     375.0,
+     367.8,
+     353.27
+    ],
+    [
+     "2026-10-09",
+     382.7,
+     368.66,
+     354.74
+    ],
+    [
+     "2026-10-12",
+     378.03,
+     369.61,
+     356.08
+    ],
+    [
+     "2026-10-13",
+     375.23,
+     370.54,
+     357.14
+    ],
+    [
+     "2026-10-14",
+     367.16,
+     371.0,
+     357.94
+    ],
+    [
+     "2026-10-15",
+     362.44,
+     370.81,
+     358.76
+    ],
+    [
+     "2026-10-16",
+     354.72,
+     370.33,
+     359.46
+    ],
+    [
+     "2026-10-19",
+     368.06,
+     369.97,
+     360.25
+    ]
+   ],
+   "chartLevels": {
+    "resistance": [
+     386.83,
+     370
+    ],
+    "support": [
+     360,
+     349.33,
+     345.88
+    ]
+   },
+   "snapshot": [
+    [
+     "5D / 1M / 3M",
+     "+6.5 / +6.7 / −4.1%"
+    ],
+    [
+     "6M / YTD",
+     "+10 / −16%"
+    ],
+    [
+     "52w high",
+     "$498.83 (22 Dec '25) · −24.3%"
+    ],
+    [
+     "52w low",
+     "$297.38 (29 Jul) · +27%"
+    ],
+    [
+     "Avg vol 20d",
+     "35.5M"
+    ],
+    [
+     "Vol 7 Oct vs 20d",
+     "0.71×"
+    ],
+    [
+     "ATR(14)",
+     "$11.87 · 3.1%"
+    ],
+    [
+     "Realized vol 10/20/60d",
+     "36 / 30 / 51%"
+    ],
+    [
+     "Implied vol 2–3 wks",
+     "≈ 41% · 50% across earnings"
+    ],
+    [
+     "RSI(14)",
+     "57.7"
+    ],
+    [
+     "MACD hist (6d)",
+     "−2.4 → +0.8 turned positive"
+    ],
+    [
+     "Distance above 20D",
+     "0.9 ATR"
+    ],
+    [
+     "RS vs QQQ 1M/3M/6M",
+     "+1 / −11 / −15 pts"
+    ],
+    [
+     "Short interest",
+     "2.44% · 1.8 days"
+    ],
+    [
+     "Forward P/E",
+     "202"
+    ],
+    [
+     "Next earnings",
+     "21 Oct"
+    ]
+   ],
+   "movingAverages": [
+    {
+     "label": "20D",
+     "usd": 369.97,
+     "vsPricePct": -0.5
+    },
+    {
+     "label": "50D",
+     "usd": 360.25,
+     "vsPricePct": 2.2
+    },
+    {
+     "label": "100D",
+     "usd": 370.35,
+     "vsPricePct": -0.6
+    },
+    {
+     "label": "200D",
+     "usd": 387.58,
+     "vsPricePct": -5.0
+    }
+   ],
+   "keyPoint": "Position vs the 200-day and the 346–387 range, with earnings in 9 sessions.",
+   "technicals": [
+    "Daily: range 345.88–386.83 (30 Sep low, 25 Sep high), price below the 200-day at 391.7.",
+    "Weekly: recovering from the 297 July low but still under the 40-week average (387) and far below the 499 December high.",
+    "MACD just turned positive and RSI is 58: momentum turning up early. But volume after the delivery beat faded steadily (55M → 42M → 28M → 25.5M), so the move is unconfirmed.",
+    "Resistance cluster 384–392: September highs 384.0 / 386.8 plus the 200-day at 391.7. A breakout only counts with a close above ≈ 392.",
+    "Relative strength vs QQQ negative over 3 and 6 months: TSLA has been lagging the index.",
+    "Backtest (n = 51, price 0–6% above 20D, RSI 50–65, below 200D): 5-day median +1.8% (59% up), 21-day +4.1% (67% up). Small sample."
+   ],
+   "nextMove": [
+    [
+     "Setup",
+     "Sideways into earnings, then breakout or breakdown"
+    ],
+    [
+     "Most likely",
+     "Range $355–392 until 21 Oct"
+    ],
+    [
+     "Size",
+     "±4% in range; ±6–7% on earnings"
+    ],
+    [
+     "Confirms",
+     "Daily close > $392 (above 200D) on volume > 45M"
+    ],
+    [
+     "Invalidates",
+     "Daily close < $345.9"
+    ],
+    [
+     "Trigger",
+     "21 Oct earnings: margins, robotaxi, FSD Europe"
+    ],
+    [
+     "Timing",
+     "Decided 21–22 Oct"
+    ]
+   ],
+   "ranges": [
+    {
+     "horizon": "1 day",
+     "likely": "$370–386",
+     "wide": "$365–391"
+    },
+    {
+     "horizon": "5 days",
+     "likely": "$357–400",
+     "wide": "$344–416"
+    },
+    {
+     "horizon": "10 days (incl. earnings)",
+     "likely": "$342–417",
+     "wide": "$321–445"
+    },
+    {
+     "horizon": "1 month",
+     "likely": "$332–430",
+     "wide": "$305–468"
+    },
+    {
+     "horizon": "3 months",
+     "likely": "$315–453",
+     "wide": "—"
+    }
+   ],
+   "touchOdds": [
+    {
+     "level": "$400",
+     "touch": "53%",
+     "close": "27% close above"
+    },
+    {
+     "level": "$386.8",
+     "touch": "77%",
+     "close": "39% close above"
+    },
+    {
+     "level": "$360",
+     "touch": "66%",
+     "close": "33% close below"
+    },
+    {
+     "level": "$345.9",
+     "touch": "40%",
+     "close": "20% close below"
+    },
+    {
+     "level": "$330",
+     "touch": "19%",
+     "close": "10% close below"
+    }
+   ],
+   "earnings": "≈ ±6–7% implied for 21 Oct",
+   "resistance": [
+    {
+     "label": "R1",
+     "price": "$384–387",
+     "why": "September highs"
+    },
+    {
+     "label": "R2",
+     "price": "$392",
+     "why": "200-day average"
+    },
+    {
+     "label": "R3",
+     "price": "$400",
+     "why": "Call wall · then 420"
+    }
+   ],
+   "support": [
+    {
+     "label": "S1",
+     "price": "$374",
+     "why": "100-day average"
+    },
+    {
+     "label": "S2",
+     "price": "$367",
+     "why": "20-day average"
+    },
+    {
+     "label": "S3",
+     "price": "$345.9",
+     "why": "Bottom of range · then 330"
+    }
+   ],
+   "breaks": [
+    "Above $392 → $400, then $420; next $433–445 (July / May swing highs)",
+    "Below $345.9 → $330, then $320"
+   ],
+   "setups": [
+    {
+     "name": "Long (preferred)",
+     "entry": "$356–360",
+     "stop": "$344",
+     "targets": "$386 / $400 / $420",
+     "rewardRisk": "1:2 / 1:3 / 1:4.4",
+     "kind": "Range support, pre-earnings"
+    },
+    {
+     "name": "Breakout long",
+     "entry": "close > $392",
+     "stop": "$372",
+     "targets": "$420 / $445",
+     "rewardRisk": "1:1.4 / 1:2.6",
+     "kind": "Breakout"
+    },
+    {
+     "name": "Bearish",
+     "entry": "short < $345.9",
+     "stop": "$358",
+     "targets": "$330 / $320",
+     "rewardRisk": "1:1.3 / 1:2.1",
+     "kind": "Breakdown"
+    }
+   ],
+   "setupNote": "The range-low long has defined risk, but it is held through earnings: a ±6–7% gap can jump past the 344 stop. Halve the size or exit before 21 Oct.",
+   "scenarios": [
+    {
+     "name": "Bull",
+     "trigger": "Close > $392, then strong call",
+     "target": "$400–420",
+     "time": "21–30 Oct",
+     "probability": "30%"
+    },
+    {
+     "name": "Base",
+     "trigger": "Range $350–392 into earnings",
+     "target": "$360–390",
+     "time": "until 21 Oct",
+     "probability": "45%"
+    },
+    {
+     "name": "Bear",
+     "trigger": "Margin miss or close < $345.9",
+     "target": "$320–335",
+     "time": "21–30 Oct",
+     "probability": "25%"
+    }
+   ],
+   "horizonRanges": [
+    {
+     "horizon": "1 week",
+     "range": "$357–400",
+     "note": ""
+    },
+    {
+     "horizon": "2 weeks",
+     "range": "$342–417",
+     "note": "includes earnings"
+    },
+    {
+     "horizon": "1 month",
+     "range": "$332–430",
+     "note": ""
+    },
+    {
+     "horizon": "3 months",
+     "range": "$315–453",
+     "note": "Dec IV 41%"
+    }
+   ],
+   "catalysts": [
+    {
+     "impact": "HIGH",
+     "text": "Q3 earnings 21 Oct after the close. Goldman: robotaxi / FSD / Optimus outlook matters more than EPS."
+    },
+    {
+     "impact": "MED",
+     "text": "Q3 deliveries 486,532 vs ≈ 462k consensus (beat), −2.1% YoY. Energy storage 13.7 GWh vs 15.9 GWh expected (miss)."
+    },
+    {
+     "impact": "MED",
+     "text": "Germany backs faster EU-wide FSD rollout. Robotaxi live in 7 US metros; Cybercab added in Texas."
+    },
+    {
+     "impact": "LOW",
+     "text": "UBS target $391, Goldman Hold $360. Average target $396.6 (≈ +5%). Forward P/E ≈ 200."
+    }
+   ],
+   "options": [
+    [
+     "Put/call OI",
+     "0.94"
+    ],
+    [
+     "Put/call volume",
+     "0.81"
+    ],
+    [
+     "Largest call OI",
+     "400 (89.9k) · 500 · 420"
+    ],
+    [
+     "Largest put OI",
+     "350 (44k) · 300 · 250"
+    ],
+    [
+     "IV term",
+     "37–41% → 50% for 23 Oct expiry"
+    ],
+    [
+     "Skew (±7% OTM)",
+     "balanced"
+    ],
+    [
+     "Squeeze potential",
+     "None"
+    ]
+   ],
+   "optionsRead": "Large call OI at 400 pulls price toward that level into expiry, but the 21 Oct earnings event dominates.",
+   "changeMind": [
+    "Close > $392 holding two sessions → bullish",
+    "Close < $345.9 → bearish",
+    "Earnings: auto gross margin ex-credits, robotaxi timeline, energy storage recovery from the 13.7 GWh miss",
+    "EU FSD approval formalised, not one country's backing"
+   ],
+   "position": {
+    "heldAction": "HALVE · limit {shares:half} at {price:378}, else at market Wed · stop {price:342}",
+    "levels": [
+     {
+      "name": "R4 · 200-day average",
+      "usd": 387.58
+     },
+     {
+      "name": "R3 · range top",
+      "usd": 386.83
+     },
+     {
+      "name": "R2 · pre-earnings limit",
+      "usd": 378
+     },
+     {
+      "name": "R1 · 20-day average",
+      "usd": 370
+     },
+     {
+      "name": "S1 · 50-day average",
+      "usd": 360.25
+     },
+     {
+      "name": "S2 · Friday low",
+      "usd": 349.33
+     },
+     {
+      "name": "S3 · bottom of range",
+      "usd": 345.88
+     },
+     {
+      "name": "Stop-loss order",
+      "usd": 342
+     },
+     {
+      "name": "Next support",
+      "usd": 330
+     },
+     {
+      "name": "July–Aug support",
+      "usd": 320
+     }
+    ],
+    "plan": [
+     "**1 · Limit sell {shares:half} shares at {price:378}**, valid Tue–Wed. ≈ {pl:378:half} on those. Odds of a touch before the close on Wed ≈ 40%.",
+     "**2 · If it hasn't filled by Wed 21:30 CEST, sell {shares:half} at market** before the US close. The point is to halve the earnings risk, whatever the price.",
+     "**3 · Stop-loss order at {price:342}** for the remaining {shares:rest} (below the $345.88 range bottom). If it fills there: about {pl:342:rest}. On a gap it can fill lower.",
+     "**After earnings:** a close above {price:392} on volume → hold the {shares:rest}, targets {price:400} and {price:420}, stop up to {price:370}. A close below {price:345.88} → the stop does its job.",
+     "Current result: {now}. Realised losses go into your Aktienverlusttopf and offset later gains.",
+     "**Why not sell all before earnings?** Deliveries beat, Shanghai is growing, and the stock sits at its 20-day, not at a breakdown. Half keeps you in the 50% case where the call lifts it; half protects you in the other 50%."
+    ]
+   }
+  }
+ ]
+}
