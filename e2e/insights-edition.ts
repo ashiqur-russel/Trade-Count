@@ -1,5 +1,3 @@
-import { deriveCredentials, encryptVault, generateSyncKey } from '@trade-count/sync-crypto';
-
 const stock = (ticker: string, name: string, aliases: string[], rank: number, closeUsd: number) => ({
   ticker,
   name,
@@ -67,9 +65,5 @@ const edition = {
   ],
 };
 
-/** A small edition encrypted with a fresh key, served in place of the real `/insights.vault`. */
-export async function testEdition(): Promise<{ key: string; vault: string }> {
-  const key = await generateSyncKey();
-  const envelope = await encryptVault(JSON.stringify(edition), await deriveCredentials(key));
-  return { key, vault: JSON.stringify(envelope) };
-}
+/** A small edition served in place of the real `/insights.json`. */
+export const testEdition = JSON.stringify(edition);

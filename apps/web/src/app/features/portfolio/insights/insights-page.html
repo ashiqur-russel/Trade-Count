@@ -1,12 +1,11 @@
-@let state = vault.state();
+@let state = edition.state();
 <header class="head">
   <div class="title">
     <a class="back" routerLink="/">← Back to your portfolio</a>
     <h1>Insights</h1>
     @if (bundle(); as b) {
       <p class="muted">
-        As of the <strong>{{ b.asOf | displayDate }}</strong> close · 1 € = ${{ b.usdPerEur }} ·
-        personal notes for the key holder, not investment advice
+        As of the <strong>{{ b.asOf | displayDate }}</strong> close · 1 € = ${{ b.usdPerEur }}
       </p>
     }
   </div>
@@ -18,12 +17,16 @@
         [value]="currency()"
         (valueChange)="chooseCurrency($event)"
       />
-      <button tc-button variant="quiet" type="button" (click)="forget()">Forget key</button>
     </div>
   }
 </header>
 
 @if (bundle(); as b) {
+  <p class="disclaimer" role="note">
+    Market notes from public prices, option data and news, with the plan worked out from your own
+    shares. Estimates, not investment advice: decide and trade at your own risk.
+  </p>
+
   @if (stale()) {
     <p class="stale" role="status">
       These notes are from {{ b.asOf | displayDate }}, more than a week ago. Levels and plans may no
@@ -110,27 +113,8 @@
       </p>
     }
   </footer>
+} @else if (state.status === 'failed') {
+  <p class="error" role="alert">{{ state.message }}</p>
 } @else {
-  <form class="unlock" (submit)="$event.preventDefault(); unlock()">
-    <p class="muted">
-      Private market notes for the key holder. They are stored encrypted inside the app; without the
-      key there is nothing to read.
-    </p>
-    <tc-sync-key-field
-      label="Insights key"
-      controlId="insights-key"
-      [control]="keyInput"
-      (submitted)="unlock()"
-    />
-    <tc-check-row [(checked)]="rememberKey">
-      Remember the key on this device. The notes then open without asking, and
-      <strong>Insights</strong> appears in the top bar.
-    </tc-check-row>
-    @if (state.status === 'failed') {
-      <p class="error" role="alert">{{ state.message }}</p>
-    }
-    <button tc-button variant="primary" type="submit" [disabled]="state.status === 'opening'">
-      {{ state.status === 'opening' ? 'Opening…' : 'Unlock' }}
-    </button>
-  </form>
+  <p class="muted" role="status">Loading the notes…</p>
 }

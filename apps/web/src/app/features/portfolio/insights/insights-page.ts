@@ -1,17 +1,14 @@
 import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
-import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
 import { Big } from '@trade-count/ledger';
-import { Button, Pill, SegmentedControl, type SegmentOption } from '../../../shared/ui';
-import { CheckRow } from '../components/sync-panel/check-row';
-import { SyncKeyField } from '../components/sync-panel/sync-key-field';
+import { Pill, SegmentedControl, type SegmentOption } from '../../../shared/ui';
 import { PortfolioStore } from '../data/portfolio-store';
 import { DISPLAY_PIPES } from '../format/display-pipes';
 import { InsightPrices } from './insight-prices';
 import { InsightStock } from './insight-stock';
 import type { InsightCurrency } from './insight-text';
 import { InsightTextView } from './insight-text-view';
-import { InsightsVault } from './insights-vault';
+import { InsightsEdition } from './insights-edition';
 import { matchInsights, type MatchedInsight } from './insights-match';
 import { positionFigures } from './position-figures';
 
@@ -20,18 +17,7 @@ const CURRENCY_STORAGE_KEY = 'tc-insights-currency';
 
 @Component({
   selector: 'tc-insights-page',
-  imports: [
-    ReactiveFormsModule,
-    RouterLink,
-    Button,
-    Pill,
-    SegmentedControl,
-    SyncKeyField,
-    CheckRow,
-    InsightStock,
-    InsightTextView,
-    ...DISPLAY_PIPES,
-  ],
+  imports: [RouterLink, Pill, SegmentedControl, InsightStock, InsightTextView, ...DISPLAY_PIPES],
   templateUrl: './insights-page.html',
   styleUrl: './insights-page.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -39,10 +25,7 @@ const CURRENCY_STORAGE_KEY = 'tc-insights-currency';
 export class InsightsPage {
   private readonly store = inject(PortfolioStore);
   private readonly prices = inject(InsightPrices);
-  protected readonly vault = inject(InsightsVault);
-
-  protected readonly keyInput = new FormControl('', { nonNullable: true });
-  protected readonly rememberKey = signal(true);
+  protected readonly edition = inject(InsightsEdition);
 
   protected readonly currencyOptions: readonly SegmentOption<InsightCurrency>[] = [
     { value: 'EUR', label: '€ EUR' },
@@ -51,7 +34,7 @@ export class InsightsPage {
   protected readonly currency = signal<InsightCurrency>(readCurrency());
 
   protected readonly bundle = computed(() => {
-    const state = this.vault.state();
+    const state = this.edition.state();
     return state.status === 'open' ? state.bundle : null;
   });
   protected readonly matches = computed(() => {
@@ -64,17 +47,7 @@ export class InsightsPage {
   });
 
   constructor() {
-    void this.vault.openWithStoredKey();
-  }
-
-  protected unlock(): void {
-    const key = this.keyInput.value.trim();
-    if (key) void this.vault.unlock(key, this.rememberKey());
-  }
-
-  protected forget(): void {
-    this.vault.forget();
-    this.keyInput.setValue('');
+    void this.edition.load();
   }
 
   protected chooseCurrency(currency: InsightCurrency): void {

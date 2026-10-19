@@ -14,5 +14,3 @@ coverage/
 /test-results/
 /playwright-report/
 
-# Private market notes: only the encrypted apps/web/public/insights.vault is committed.
-/insights/
