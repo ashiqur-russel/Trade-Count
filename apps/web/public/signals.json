@@ -666,6 +666,71 @@
    "priceEur": null,
    "status": "open",
    "resultEur": null
+  },
+  {
+   "id": "Z",
+   "ticker": "TSLA",
+   "givenOn": "2026-10-28",
+   "activeFrom": "2026-10-29",
+   "activeTo": null,
+   "text": "If it closes above $420 (≈ 377 €), raise the stop to 362 €",
+   "levelEur": 377,
+   "reachedOn": null,
+   "priceEur": null,
+   "status": "open",
+   "resultEur": null
+  },
+  {
+   "id": "AA",
+   "ticker": "TSLA",
+   "givenOn": "2026-10-28",
+   "activeFrom": "2026-10-29",
+   "activeTo": null,
+   "text": "If the buy-backs fill, one stop for all shares at 338 €",
+   "levelEur": 338,
+   "reachedOn": null,
+   "priceEur": null,
+   "status": "open",
+   "resultEur": null
+  },
+  {
+   "id": "AB",
+   "ticker": "AMD",
+   "givenOn": "2026-10-28",
+   "activeFrom": "2026-10-29",
+   "activeTo": null,
+   "text": "Stop-loss for all 5 at 485 € (≈ $541, under the 50-day average)",
+   "levelEur": 485,
+   "reachedOn": null,
+   "priceEur": null,
+   "status": "open",
+   "resultEur": null
+  },
+  {
+   "id": "AC",
+   "ticker": "AMD",
+   "givenOn": "2026-10-28",
+   "activeFrom": "2026-10-29",
+   "activeTo": "2026-11-03",
+   "text": "Before results on 3 Nov: if at 530 € or more, sell 2–3 first",
+   "levelEur": 530,
+   "reachedOn": null,
+   "priceEur": null,
+   "status": "open",
+   "resultEur": null
+  },
+  {
+   "id": "AD",
+   "ticker": "AMD",
+   "givenOn": "2026-10-28",
+   "activeFrom": "2026-10-29",
+   "activeTo": null,
+   "text": "Target for the rest: 590 € (≈ $658)",
+   "levelEur": 590,
+   "reachedOn": null,
+   "priceEur": null,
+   "status": "open",
+   "resultEur": null
   }
  ]
 }
