@@ -1,0 +1,111 @@
+:host {
+  display: block;
+  min-width: 0;
+}
+
+/* Below this width the labels get too small to read, so the chart scrolls instead of shrinking. */
+.scroll {
+  overflow-x: auto;
+}
+
+svg {
+  display: block;
+  width: 100%;
+  min-width: 34rem;
+  height: auto;
+  font-family: var(--tc-font-numeric);
+  font-size: 11px;
+}
+
+.grid {
+  stroke: var(--tc-color-border);
+}
+
+.axis {
+  fill: var(--tc-color-text-muted);
+}
+
+.band {
+  fill: var(--tc-color-text);
+  fill-opacity: 0.07;
+}
+
+.close {
+  fill: none;
+  stroke: var(--tc-color-text);
+  stroke-width: 1.9;
+  stroke-linejoin: round;
+}
+
+.dot {
+  fill: var(--tc-color-text);
+}
+
+.level {
+  stroke-width: 1.8;
+}
+
+.level.open {
+  stroke-dasharray: 6 4;
+}
+
+.level.unreached {
+  stroke-dasharray: 2 4;
+}
+
+.hit {
+  stroke-width: 2.5;
+}
+
+.hit.missed {
+  fill: var(--tc-color-surface);
+}
+
+.hit.acted {
+  stroke: var(--tc-color-surface);
+  stroke-width: 1.5;
+}
+
+.tag {
+  font-weight: var(--tc-weight-semibold);
+}
+
+.missed {
+  stroke: var(--tc-color-warn);
+
+  &.tag {
+    fill: var(--tc-color-warn);
+    stroke: none;
+  }
+}
+
+.acted {
+  stroke: var(--tc-color-gain);
+
+  &.hit,
+  &.tag {
+    fill: var(--tc-color-gain);
+  }
+
+  &.tag {
+    stroke: none;
+  }
+}
+
+.open {
+  stroke: var(--tc-color-accent);
+
+  &.tag {
+    fill: var(--tc-color-accent);
+    stroke: none;
+  }
+}
+
+.unreached {
+  stroke: var(--tc-color-text-muted);
+
+  &.tag {
+    fill: var(--tc-color-text-muted);
+    stroke: none;
+  }
+}

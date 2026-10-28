@@ -1,0 +1,671 @@
+{
+ "version": 1,
+ "asOf": "2026-10-28",
+ "stocks": [
+  {
+   "ticker": "NVDA",
+   "name": "Nvidia",
+   "summary": "Following the first exit (close below $227 on 12 Oct) would be worth +380 € today. The 199 € sell order is still open.",
+   "series": [
+    [
+     "2026-10-01",
+     205.21,
+     206.48,
+     202.81
+    ],
+    [
+     "2026-10-02",
+     207.96,
+     211.45,
+     207.64
+    ],
+    [
+     "2026-10-05",
+     212.98,
+     214.05,
+     209.64
+    ],
+    [
+     "2026-10-06",
+     212.58,
+     216.25,
+     212.31
+    ],
+    [
+     "2026-10-07",
+     212.01,
+     213.45,
+     211.03
+    ],
+    [
+     "2026-10-08",
+     205.55,
+     211.42,
+     204.99
+    ],
+    [
+     "2026-10-09",
+     204.48,
+     208.62,
+     204.33
+    ],
+    [
+     "2026-10-12",
+     202.8,
+     205.07,
+     201.52
+    ],
+    [
+     "2026-10-13",
+     203.96,
+     204.07,
+     199.09
+    ],
+    [
+     "2026-10-14",
+     197.68,
+     201.88,
+     196.19
+    ],
+    [
+     "2026-10-15",
+     193.73,
+     194.84,
+     189.82
+    ],
+    [
+     "2026-10-16",
+     190.97,
+     195.02,
+     190.24
+    ],
+    [
+     "2026-10-19",
+     193.55,
+     195.81,
+     191.42
+    ],
+    [
+     "2026-10-20",
+     192.81,
+     194.58,
+     189.52
+    ],
+    [
+     "2026-10-21",
+     197.57,
+     197.77,
+     193.73
+    ],
+    [
+     "2026-10-22",
+     189.12,
+     195.06,
+     188.27
+    ],
+    [
+     "2026-10-23",
+     188.0,
+     190.58,
+     187.31
+    ],
+    [
+     "2026-10-26",
+     192.55,
+     194.11,
+     189.53
+    ],
+    [
+     "2026-10-27",
+     195.04,
+     196.16,
+     192.89
+    ],
+    [
+     "2026-10-28",
+     193.06,
+     197.19,
+     192.25
+    ]
+   ]
+  },
+  {
+   "ticker": "TSLA",
+   "name": "Tesla",
+   "summary": "The early sell signals came too soon: not selling at 337–345 € left the position about 440–570 € better off. 15 shares were sold above the 356 € target.",
+   "series": [
+    [
+     "2026-10-01",
+     314.76,
+     319.81,
+     314.49
+    ],
+    [
+     "2026-10-02",
+     329.41,
+     332.98,
+     319.48
+    ],
+    [
+     "2026-10-05",
+     337.64,
+     340.19,
+     325.32
+    ],
+    [
+     "2026-10-06",
+     338.26,
+     340.62,
+     336.34
+    ],
+    [
+     "2026-10-07",
+     337.3,
+     341.35,
+     334.28
+    ],
+    [
+     "2026-10-08",
+     334.43,
+     335.29,
+     328.22
+    ],
+    [
+     "2026-10-09",
+     341.3,
+     346.53,
+     338.63
+    ],
+    [
+     "2026-10-12",
+     338.74,
+     342.92,
+     338.33
+    ],
+    [
+     "2026-10-13",
+     334.91,
+     336.53,
+     331.4
+    ],
+    [
+     "2026-10-14",
+     327.97,
+     331.75,
+     324.98
+    ],
+    [
+     "2026-10-15",
+     323.23,
+     324.4,
+     316.8
+    ],
+    [
+     "2026-10-16",
+     316.35,
+     330.42,
+     311.54
+    ],
+    [
+     "2026-10-19",
+     328.16,
+     329.51,
+     316.04
+    ],
+    [
+     "2026-10-20",
+     332.87,
+     336.32,
+     323.9
+    ],
+    [
+     "2026-10-21",
+     343.99,
+     346.1,
+     338.68
+    ],
+    [
+     "2026-10-22",
+     333.82,
+     346.55,
+     333.05
+    ],
+    [
+     "2026-10-23",
+     331.72,
+     336.26,
+     325.52
+    ],
+    [
+     "2026-10-26",
+     349.1,
+     354.14,
+     342.07
+    ],
+    [
+     "2026-10-27",
+     364.65,
+     365.54,
+     353.72
+    ],
+    [
+     "2026-10-28",
+     362.33,
+     368.28,
+     356.02
+    ]
+   ]
+  },
+  {
+   "ticker": "AMD",
+   "name": "AMD",
+   "summary": "The buy after a close above $560 was taken. The $506 dip on 22 Oct was the cheaper entry: +338 € on 5 shares.",
+   "series": [
+    [
+     "2026-10-01",
+     547.32,
+     550.49,
+     534.67
+    ],
+    [
+     "2026-10-02",
+     563.48,
+     573.74,
+     558.71
+    ],
+    [
+     "2026-10-05",
+     563.21,
+     564.77,
+     552.72
+    ],
+    [
+     "2026-10-06",
+     577.06,
+     585.14,
+     558.02
+    ],
+    [
+     "2026-10-07",
+     576.61,
+     578.95,
+     565.27
+    ],
+    [
+     "2026-10-08",
+     553.54,
+     574.2,
+     546.99
+    ],
+    [
+     "2026-10-09",
+     542.32,
+     559.5,
+     540.44
+    ],
+    [
+     "2026-10-12",
+     532.47,
+     539.22,
+     525.57
+    ],
+    [
+     "2026-10-13",
+     540.46,
+     541.06,
+     509.28
+    ],
+    [
+     "2026-10-14",
+     509.89,
+     528.7,
+     506.48
+    ],
+    [
+     "2026-10-15",
+     501.41,
+     507.11,
+     472.75
+    ],
+    [
+     "2026-10-16",
+     471.55,
+     491.36,
+     469.84
+    ],
+    [
+     "2026-10-19",
+     479.72,
+     494.3,
+     477.59
+    ],
+    [
+     "2026-10-20",
+     476.3,
+     488.21,
+     467.27
+    ],
+    [
+     "2026-10-21",
+     491.96,
+     495.59,
+     478.24
+    ],
+    [
+     "2026-10-22",
+     452.66,
+     472.31,
+     447.91
+    ],
+    [
+     "2026-10-23",
+     460.56,
+     466.91,
+     453.04
+    ],
+    [
+     "2026-10-26",
+     473.6,
+     475.57,
+     458.2
+    ],
+    [
+     "2026-10-27",
+     501.4,
+     504.67,
+     481.92
+    ],
+    [
+     "2026-10-28",
+     518.5,
+     519.1,
+     502.44
+    ]
+   ]
+  }
+ ],
+ "signals": [
+  {
+   "id": "A",
+   "ticker": "NVDA",
+   "givenOn": "2026-10-09",
+   "activeFrom": "2026-10-12",
+   "activeTo": null,
+   "text": "Sell all 39 on a daily close below $227",
+   "levelEur": 202.45,
+   "reachedOn": "2026-10-12",
+   "priceEur": 202.8,
+   "status": "missed",
+   "resultEur": 380,
+   "note": "Close $226,32 on 12 Oct. Missed by one day; you held all 39."
+  },
+  {
+   "id": "B",
+   "ticker": "TSLA",
+   "givenOn": "2026-10-09",
+   "activeFrom": "2026-10-12",
+   "activeTo": "2026-10-20",
+   "text": "Limit sell 25 at ≈ $390 (≈ 349 €), valid to 20 Oct",
+   "levelEur": 347.81,
+   "reachedOn": null,
+   "priceEur": null,
+   "status": "unreached",
+   "resultEur": null
+  },
+  {
+   "id": "C",
+   "ticker": "TSLA",
+   "givenOn": "2026-10-09",
+   "activeFrom": "2026-10-12",
+   "activeTo": null,
+   "text": "Stop: sell the rest on a daily close below $345,88",
+   "levelEur": 308.46,
+   "reachedOn": null,
+   "priceEur": null,
+   "status": "unreached",
+   "resultEur": null
+  },
+  {
+   "id": "D",
+   "ticker": "AMD",
+   "givenOn": "2026-10-12",
+   "activeFrom": "2026-10-15",
+   "activeTo": "2026-10-16",
+   "text": "Buy only if AMD holds above $596 after TSMC (15 Oct)",
+   "levelEur": 534.05,
+   "reachedOn": null,
+   "priceEur": null,
+   "status": "unreached",
+   "resultEur": null
+  },
+  {
+   "id": "E",
+   "ticker": "NVDA",
+   "givenOn": "2026-10-13",
+   "activeFrom": "2026-10-14",
+   "activeTo": "2026-10-14",
+   "text": "Sell 20 at $229 or more on 14 Oct",
+   "levelEur": 204.39,
+   "reachedOn": null,
+   "priceEur": null,
+   "status": "unreached",
+   "resultEur": null
+  },
+  {
+   "id": "F",
+   "ticker": "NVDA",
+   "givenOn": "2026-10-13",
+   "activeFrom": "2026-10-14",
+   "activeTo": "2026-10-18",
+   "text": "Stop-loss order at 196 € for the other 19",
+   "levelEur": 196,
+   "reachedOn": "2026-10-15",
+   "priceEur": 192.01,
+   "status": "missed",
+   "resultEur": -20,
+   "note": "Gap down on 15 Oct: a stop order would have filled near the open, ≈ 192 €."
+  },
+  {
+   "id": "G",
+   "ticker": "NVDA",
+   "givenOn": "2026-10-13",
+   "activeFrom": "2026-10-14",
+   "activeTo": "2026-10-18",
+   "text": "Sell the 19 on a daily close below $223",
+   "levelEur": 199.03,
+   "reachedOn": "2026-10-14",
+   "priceEur": 197.68,
+   "status": "missed",
+   "resultEur": 88,
+   "note": "Close $221,30 on 14 Oct."
+  },
+  {
+   "id": "H",
+   "ticker": "TSLA",
+   "givenOn": "2026-10-13",
+   "activeFrom": "2026-10-14",
+   "activeTo": null,
+   "text": "Stop-loss order at ≈ 305 €",
+   "levelEur": 305,
+   "reachedOn": null,
+   "priceEur": null,
+   "status": "unreached",
+   "resultEur": null
+  },
+  {
+   "id": "J",
+   "ticker": "NVDA",
+   "givenOn": "2026-10-19",
+   "activeFrom": "2026-10-20",
+   "activeTo": "2026-10-30",
+   "text": "Limit sell 20 at 199 €, valid to 30 Oct",
+   "levelEur": 199,
+   "reachedOn": null,
+   "priceEur": null,
+   "status": "open",
+   "resultEur": null
+  },
+  {
+   "id": "K",
+   "ticker": "NVDA",
+   "givenOn": "2026-10-19",
+   "activeFrom": "2026-10-20",
+   "activeTo": null,
+   "text": "Stop-loss for all 39 at 185 €",
+   "levelEur": 185,
+   "reachedOn": null,
+   "priceEur": null,
+   "status": "open",
+   "resultEur": null
+  },
+  {
+   "id": "L",
+   "ticker": "NVDA",
+   "givenOn": "2026-10-19",
+   "activeFrom": "2026-10-20",
+   "activeTo": null,
+   "text": "Close above $227: cancel the limit, raise the stop to 191 €",
+   "levelEur": 202.39,
+   "reachedOn": null,
+   "priceEur": null,
+   "status": "unreached",
+   "resultEur": null
+  },
+  {
+   "id": "M",
+   "ticker": "TSLA",
+   "givenOn": "2026-10-19",
+   "activeFrom": "2026-10-20",
+   "activeTo": "2026-10-21",
+   "text": "Limit sell 25 at 337 € before results (20–21 Oct)",
+   "levelEur": 337,
+   "reachedOn": "2026-10-21",
+   "priceEur": 339.5,
+   "status": "missed",
+   "resultEur": -571,
+   "note": "Opened above 337 € on 21 Oct, so it would have filled at ≈ 339,50 €."
+  },
+  {
+   "id": "N",
+   "ticker": "AMD",
+   "givenOn": "2026-10-19",
+   "activeFrom": "2026-10-20",
+   "activeTo": null,
+   "text": "Buy after a daily close above $560, stop $520",
+   "levelEur": 499.29,
+   "reachedOn": "2026-10-27",
+   "priceEur": 501.4,
+   "status": "acted",
+   "resultEur": 37,
+   "note": "You bought 5 on 28 Oct at 511,16 € on average."
+  },
+  {
+   "id": "P",
+   "ticker": "AMD",
+   "givenOn": "2026-10-19",
+   "activeFrom": "2026-10-20",
+   "activeTo": null,
+   "text": "Or buy the dip at $506 support, stop $490",
+   "levelEur": 451.14,
+   "reachedOn": "2026-10-22",
+   "priceEur": 450.94,
+   "status": "missed",
+   "resultEur": 338,
+   "note": "Low $502,60 on 22 Oct, close $507,93: the support held."
+  },
+  {
+   "id": "Q",
+   "ticker": "TSLA",
+   "givenOn": "2026-10-21",
+   "activeFrom": "2026-10-21",
+   "activeTo": "2026-10-21",
+   "text": "Sell 25 at market now (≈ 344,65 €), before results",
+   "levelEur": 344.65,
+   "reachedOn": "2026-10-21",
+   "priceEur": 344.65,
+   "status": "missed",
+   "resultEur": -442,
+   "note": "Not sold. Tesla then rallied after results."
+  },
+  {
+   "id": "T",
+   "ticker": "TSLA",
+   "givenOn": "2026-10-21",
+   "activeFrom": "2026-10-22",
+   "activeTo": null,
+   "text": "Limit sell at 356 € (≈ $400), first target after results",
+   "levelEur": 356,
+   "reachedOn": "2026-10-27",
+   "priceEur": 356,
+   "status": "acted",
+   "resultEur": null,
+   "note": "You sold 10 at 365,00 € and 5 at 370,30 €, above the target."
+  },
+  {
+   "id": "U",
+   "ticker": "TSLA",
+   "givenOn": "2026-10-21",
+   "activeFrom": "2026-10-22",
+   "activeTo": null,
+   "text": "Next target 374 € (≈ $420); renewed 28 Oct as 377 €",
+   "levelEur": 374,
+   "reachedOn": null,
+   "priceEur": null,
+   "status": "open",
+   "resultEur": null
+  },
+  {
+   "id": "V",
+   "ticker": "TSLA",
+   "givenOn": "2026-10-21",
+   "activeFrom": "2026-10-22",
+   "activeTo": null,
+   "text": "Stop at 340 € on the shares kept",
+   "levelEur": 340,
+   "reachedOn": "2026-10-22",
+   "priceEur": 333.56,
+   "status": "missed",
+   "resultEur": -719,
+   "note": "Gap down on 22 Oct would have sold at ≈ 333,56 €. No order was in, so you kept the shares through the rally."
+  },
+  {
+   "id": "W",
+   "ticker": "TSLA",
+   "givenOn": "2026-10-28",
+   "activeFrom": "2026-10-28",
+   "activeTo": null,
+   "text": "Buy back 8 at 352 € (and 7 at 347 €)",
+   "levelEur": 352,
+   "reachedOn": null,
+   "priceEur": null,
+   "status": "open",
+   "resultEur": null
+  },
+  {
+   "id": "X",
+   "ticker": "TSLA",
+   "givenOn": "2026-10-28",
+   "activeFrom": "2026-10-28",
+   "activeTo": null,
+   "text": "Stop for all 35 at 345 €",
+   "levelEur": 345,
+   "reachedOn": null,
+   "priceEur": null,
+   "status": "open",
+   "resultEur": null
+  },
+  {
+   "id": "Y",
+   "ticker": "AMD",
+   "givenOn": "2026-10-28",
+   "activeFrom": "2026-10-29",
+   "activeTo": null,
+   "text": "Limit sell 2 at 547 € (≈ $610); stop 485 €",
+   "levelEur": 547,
+   "reachedOn": null,
+   "priceEur": null,
+   "status": "open",
+   "resultEur": null
+  }
+ ]
+}

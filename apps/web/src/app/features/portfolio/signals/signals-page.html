@@ -1,0 +1,127 @@
+@let state = trackRecord.state();
+<header class="title">
+  <a class="back" routerLink="/insights">← Back to Insights</a>
+  <h1>Signal track record</h1>
+  @if (record(); as r) {
+    <p class="muted">
+      Every buy, sell and stop signal from the Insights notes, checked against the prices that
+      followed. Latest close: <strong>{{ r.asOf | displayDate }}</strong
+      >.
+    </p>
+  }
+</header>
+
+@if (record(); as r) {
+  <p class="disclaimer" role="note">
+    One investor's real positions and decisions, published as a record of how the signals played
+    out. Past signals say nothing certain about future ones. Not investment advice.
+  </p>
+
+  <ul class="legend" aria-label="Legend">
+    @for (status of statuses; track status) {
+      <li><i [attr.data-status]="status"></i>{{ statusLabel[status] }}</li>
+    }
+  </ul>
+
+  <section class="cards" aria-label="Summary per stock">
+    @for (s of stocks(); track s.stock.ticker) {
+      <article class="card">
+        <div class="row">
+          <h2>{{ s.stock.name }}</h2>
+          <span class="price">{{ s.close | euro }}</span>
+        </div>
+        <div class="pills">
+          @for (c of s.counts; track c.status) {
+            <tc-pill [tone]="statusTone[c.status]">{{ c.count }} {{ c.label }}</tc-pill>
+          }
+        </div>
+        <p class="muted">{{ s.stock.summary }}</p>
+      </article>
+    }
+  </section>
+
+  @for (s of stocks(); track s.stock.ticker) {
+    <figure class="chart">
+      <figcaption class="row">
+        <h2>{{ s.stock.name }}</h2>
+        <span class="muted small">daily close in €, high–low band</span>
+      </figcaption>
+      <tc-signal-chart [stock]="s.stock" [signals]="s.signals" />
+    </figure>
+  }
+
+  <section class="ledger" aria-labelledby="ledger-title">
+    <div class="row wrap">
+      <h2 id="ledger-title">All signals</h2>
+      <tc-select
+        ariaLabel="Show signals"
+        [options]="filterOptions"
+        [value]="filter()"
+        (valueChange)="filter.set($event ?? 'all')"
+      />
+    </div>
+    <div class="table-scroll">
+      <table>
+        <thead>
+          <tr>
+            <th scope="col">Given</th>
+            <th scope="col">Stock</th>
+            <th scope="col">Signal</th>
+            <th scope="col">Reached</th>
+            <th scope="col" class="num">Price then</th>
+            <th scope="col">Status</th>
+            <th scope="col" class="num">If followed, vs. latest close</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (row of rows(); track row.id) {
+            <tr>
+              <td class="date">{{ row.givenOn | displayDate }}</td>
+              <td>{{ row.stockName }}</td>
+              <td>
+                <span class="id">{{ row.id }}</span> {{ row.text }}
+                @if (row.note) {
+                  <span class="note">{{ row.note }}</span>
+                }
+              </td>
+              <td class="date">{{ row.reachedOn ? (row.reachedOn | displayDate) : '–' }}</td>
+              <td class="num">{{ row.priceEur === null ? '–' : (row.priceEur | euro) }}</td>
+              <td>
+                <tc-pill [tone]="statusTone[row.status]">{{ statusLabel[row.status] }}</tc-pill>
+              </td>
+              <td
+                class="num"
+                [attr.data-tone]="row.resultEur === null ? null : tone(row.resultEur)"
+              >
+                {{ row.resultEur === null ? '–' : (row.resultEur | signedEuro) }}
+                @if (row.status === 'acted' && row.resultEur !== null) {
+                  <span class="note">actual result</span>
+                }
+              </td>
+            </tr>
+          } @empty {
+            <tr>
+              <td colspan="7" class="muted">No signals in this group.</td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <footer class="foot">
+    <p>
+      "If followed": for a sell, (price it would have sold at − latest close) × shares; for a buy,
+      the reverse. Positive means following the signal would have been better. Signals on the same
+      shares overlap, so the rows don't add up.
+    </p>
+    <p>
+      Prices are US daily closes, highs and lows converted to euros at that day's EUR/USD rate.
+      German venues trade slightly differently, so a level within about 0,5 % is a near miss.
+    </p>
+  </footer>
+} @else if (state.status === 'failed') {
+  <p class="error" role="alert">{{ state.message }}</p>
+} @else {
+  <p class="muted" role="status">Loading the track record…</p>
+}

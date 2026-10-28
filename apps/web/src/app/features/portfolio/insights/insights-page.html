@@ -5,7 +5,8 @@
     <h1>Insights</h1>
     @if (bundle(); as b) {
       <p class="muted">
-        As of the <strong>{{ b.asOf | displayDate }}</strong> close · 1 € = ${{ b.usdPerEur }}
+        As of the <strong>{{ b.asOf | displayDate }}</strong> close · 1 € = ${{ b.usdPerEur }} ·
+        <a routerLink="/signals">Signal track record</a>
       </p>
     }
   </div>
