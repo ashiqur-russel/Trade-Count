@@ -1,6 +1,7 @@
 import { ChangeDetectionStrategy, Component, computed, input } from '@angular/core';
 import type { InsightStock } from './insights-bundle';
 import { formatEuro } from '../format/display-format';
+import { gridSteps } from './chart-grid';
 import type { InsightCurrency } from './insight-text';
 
 const W = 1000;
@@ -166,14 +167,6 @@ export class InsightChart {
       todayY: y(now),
     };
   });
-}
-
-function gridSteps(lo: number, hi: number): number[] {
-  const magnitude = Math.pow(10, Math.floor(Math.log10((hi - lo) / 4)));
-  const step = [1, 2, 2.5, 5, 10].map((s) => s * magnitude).find((s) => (hi - lo) / s <= 6)!;
-  const steps: number[] = [];
-  for (let v = Math.ceil(lo / step) * step; v <= hi; v += step) steps.push(v);
-  return steps;
 }
 
 function monthLabels(dates: string[]): { index: number; month: number }[] {

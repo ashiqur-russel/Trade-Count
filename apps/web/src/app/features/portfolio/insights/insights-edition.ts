@@ -1,4 +1,5 @@
 import { Injectable, signal } from '@angular/core';
+import { fetchPublishedJson } from '../data/published-json';
 import { InsightsBundleError, parseInsightsBundle, type InsightsBundle } from './insights-bundle';
 
 const EDITION_URL = '/insights.json';
@@ -27,14 +28,8 @@ export class InsightsEdition {
 class NoEditionError extends Error {}
 
 async function fetchEdition(): Promise<InsightsBundle> {
-  // The service worker never caches an edition, so the request skips it and goes straight to the network.
-  const response = await fetch(EDITION_URL, {
-    cache: 'no-cache',
-    headers: { 'ngsw-bypass': 'true' },
-  });
-  // Pages answers unknown paths with the app shell, so anything but JSON means "none published".
-  const json = response.ok ? await response.text() : '';
-  if (!json.trimStart().startsWith('{')) throw new NoEditionError();
+  const json = await fetchPublishedJson(EDITION_URL);
+  if (json === null) throw new NoEditionError();
   return parseInsightsBundle(json);
 }
 
