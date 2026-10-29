@@ -18,3 +18,14 @@ export function portfolioTotals(ledger: Ledger): PortfolioTotals {
   }
   return totals;
 }
+
+/** Realized profit of the sales made in one calendar month, `YYYY-MM`. */
+export function monthRealizedProfit(ledger: Ledger, month: string): Big {
+  let profit = new Big(0);
+  for (const entry of ledger.values()) {
+    for (const sale of entry.sales) {
+      if (sale.sell.tradedOn.startsWith(`${month}-`)) profit = profit.plus(sale.profit);
+    }
+  }
+  return profit;
+}

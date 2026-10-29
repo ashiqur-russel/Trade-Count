@@ -3,6 +3,9 @@
   <div>
     <span class="label">Realized P/L</span>
     <tc-profit-amount class="value" [value]="totals.realizedProfit" />
+    <a class="note" routerLink="/reports">
+      {{ monthName }}: <tc-profit-amount [value]="monthProfit()" />
+    </a>
   </div>
   <div>
     <span class="label">Open investment</span>

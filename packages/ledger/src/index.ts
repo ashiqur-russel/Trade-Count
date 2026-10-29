@@ -12,7 +12,7 @@ export {
 } from './oversell.js';
 export { describeOversell } from './describe-oversell.js';
 export { openSharesBefore } from './open-shares.js';
-export { portfolioTotals, type PortfolioTotals } from './portfolio-totals.js';
+export { monthRealizedProfit, portfolioTotals, type PortfolioTotals } from './portfolio-totals.js';
 export { breakEvenWithPastLoss, winBackPrice } from './loss-recovery.js';
 export { lossPotTimeline, type LossPotStart, type LossPotTimeline, type SaleTax } from './loss-pot.js';
 export {

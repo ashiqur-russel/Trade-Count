@@ -55,3 +55,14 @@ div + div {
     border-top: var(--tc-rule-width) solid var(--tc-color-rule);
   }
 }
+
+.note {
+  color: var(--tc-color-text-muted);
+  font-size: var(--tc-text-sm);
+  white-space: nowrap;
+  text-decoration: none;
+}
+
+.note:hover {
+  text-decoration: underline;
+}

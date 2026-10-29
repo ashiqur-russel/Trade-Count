@@ -33,6 +33,15 @@ test.describe('sell form', () => {
 
     await expect(page.locator('tc-trade-form .open-badge')).toHaveCount(0);
   });
+
+  test("adds a sale to this month's realized P/L in the summary", async ({ openDevice }) => {
+    const page = await openDevice();
+    await addStockWithBuy(page, 'Acme', '10', '100');
+    await addSale(page, '4', '120');
+
+    const month = new Intl.DateTimeFormat('en-GB', { month: 'long' }).format(new Date());
+    await expect(page.locator('tc-portfolio-summary')).toContainText(`${month}: +80,00 €`);
+  });
 });
 
 test.describe('selling at a loss', () => {
