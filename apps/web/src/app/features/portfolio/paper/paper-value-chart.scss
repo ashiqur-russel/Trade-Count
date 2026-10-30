@@ -1,0 +1,17 @@
+@use '../signals/signal-chart';
+
+.value,
+.hold {
+  fill: none;
+  stroke-width: 2;
+  stroke-linejoin: round;
+}
+
+.value {
+  stroke: var(--tc-color-accent);
+}
+
+.hold {
+  stroke: var(--tc-color-text-muted);
+  stroke-dasharray: 6 4;
+}

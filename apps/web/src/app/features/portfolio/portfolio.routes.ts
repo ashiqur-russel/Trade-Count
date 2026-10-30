@@ -31,6 +31,11 @@ export const PORTFOLIO_ROUTES: Routes = [
         loadComponent: () => import('./signals/signals-page').then((m) => m.SignalsPage),
       },
       {
+        path: 'paper',
+        title: 'Agent paper trading · Trade Count',
+        loadComponent: () => import('./paper/paper-page').then((m) => m.PaperPage),
+      },
+      {
         path: 'settings',
         title: 'Settings · Trade Count',
         loadComponent: () => import('./settings-page/settings-page').then((m) => m.SettingsPage),

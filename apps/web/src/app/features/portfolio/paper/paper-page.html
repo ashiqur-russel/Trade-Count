@@ -1,0 +1,142 @@
+@let state = results.state();
+<header class="title">
+  <a class="back" routerLink="/signals">← Back to the signal track record</a>
+  <h1>Agent paper trading</h1>
+  @if (record(); as r) {
+    <p class="muted">
+      An automated agent researches each stock after the US close and sets buy and sell levels;
+      every level the price reaches becomes a paper trade. Started
+      <strong>{{ r.startedOn | displayDate }}</strong>, latest close
+      <strong>{{ r.asOf | displayDate }}</strong>.
+    </p>
+  }
+</header>
+
+@if (record(); as r) {
+  @let f = figures()!;
+  <p class="disclaimer" role="note">
+    Simulated trades only: no real money, no fees or taxes. It tests whether the agent's signals
+    beat simply holding. Not investment advice.
+  </p>
+
+  <section class="cards" aria-label="Paper portfolio totals">
+    <article class="card">
+      <span class="label">Paper portfolio</span>
+      <span class="figure">{{ f.value | euro }}</span>
+      <span class="muted" [attr.data-tone]="tone(f.change)">{{ f.change | percentChange }} since the start</span>
+    </article>
+    <article class="card">
+      <span class="label">Against holding</span>
+      <span class="figure" [attr.data-tone]="tone(f.versusHold)">{{ f.versusHold | signedEuro }}</span>
+      <span class="muted">Holding the start positions: {{ f.hold | euro }}</span>
+    </article>
+    <article class="card">
+      <span class="label">Realized P/L</span>
+      <span class="figure" [attr.data-tone]="tone(f.realized)">{{ f.realized | signedEuro }}</span>
+      <span class="muted">Paper sales, matched FIFO</span>
+    </article>
+    <article class="card">
+      <span class="label">Cash</span>
+      <span class="figure">{{ f.cash | euro }}</span>
+      <span class="muted">Started with {{ r.startCash | euro }} for buys</span>
+    </article>
+  </section>
+
+  <figure class="chart">
+    <figcaption class="row wrap">
+      <h2>Value after each close</h2>
+      <span class="key"><i class="value"></i>Paper portfolio <i class="hold"></i>Holding</span>
+    </figcaption>
+    @if (r.days.length > 1) {
+      <tc-paper-value-chart [days]="r.days" />
+    } @else {
+      <p class="muted">The chart starts after the second trading day.</p>
+    }
+  </figure>
+
+  <section class="ledger" aria-labelledby="positions-title">
+    <h2 id="positions-title">Open positions</h2>
+    <div class="table-scroll">
+      <table class="narrow">
+        <thead>
+          <tr>
+            <th scope="col">Stock</th>
+            <th scope="col" class="num">Shares</th>
+            <th scope="col" class="num">Average price</th>
+            <th scope="col" class="num">Latest close</th>
+            <th scope="col" class="num">Unrealized</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (p of f.positions; track p.symbol) {
+            <tr>
+              <td>{{ p.name }}</td>
+              <td class="num">{{ p.shares | quantity }}</td>
+              <td class="num">{{ p.averagePrice | euro }}</td>
+              <td class="num">{{ p.close | euro }}</td>
+              <td class="num" [attr.data-tone]="tone(p.unrealized)">{{ p.unrealized | signedEuro }}</td>
+            </tr>
+          } @empty {
+            <tr>
+              <td colspan="5" class="muted">All cash: no open positions.</td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <section class="ledger" aria-labelledby="trades-title">
+    <h2 id="trades-title">Paper trades</h2>
+    <div class="table-scroll">
+      <table>
+        <thead>
+          <tr>
+            <th scope="col">Date</th>
+            <th scope="col">Stock</th>
+            <th scope="col">Trade</th>
+            <th scope="col" class="num">Shares</th>
+            <th scope="col" class="num">Price</th>
+            <th scope="col">Why</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (t of trades(); track t.id) {
+            <tr>
+              <td class="date">{{ t.date | displayDate }}</td>
+              <td>{{ t.stockName }}</td>
+              <td>
+                @if (t.start) {
+                  <tc-pill tone="neutral">Start</tc-pill>
+                } @else {
+                  <tc-pill [tone]="t.side === 'buy' ? 'accent' : 'warn'">{{
+                    t.side === 'buy' ? 'Buy' : 'Sell'
+                  }}</tc-pill>
+                }
+              </td>
+              <td class="num">{{ t.shares | quantity }}</td>
+              <td class="num">{{ t.priceEur | euro }}</td>
+              <td class="muted">{{ t.start ? 'Position held at the start, at that close' : t.note }}</td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <footer class="foot">
+    <p>
+      Fills are cautious: a buy pays the higher and a sell gets the lower of its level and the price
+      the agent saw, so a stop that gaps fills below its level and a limit never fills better than
+      itself. Close-based signals fill at the close. Prices are US prices converted to euros.
+    </p>
+    <p>
+      "Against holding" compares with keeping the start positions and cash untouched. Above zero
+      means the signals added value so far.
+    </p>
+  </footer>
+} @else if (state.status === 'failed') {
+  <p class="muted" role="status">{{ state.message }}</p>
+} @else {
+  <p class="muted" role="status">Loading the paper results…</p>
+}
