@@ -1,14 +1,13 @@
 import { ChangeDetectionStrategy, Component, computed, input } from '@angular/core';
 import type { InsightStock } from './insights-bundle';
 import { formatEuro } from '../format/display-format';
-import { gridSteps } from './chart-grid';
+import { gridSteps, MONTHS } from './chart-grid';
 import type { InsightCurrency } from './insight-text';
 
 const W = 1000;
 const H = 320;
 const M = { left: 8, right: 64, top: 14, bottom: 26 };
 const FUTURE_DAYS = 21;
-const MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
 
 interface Line {
   y: number;

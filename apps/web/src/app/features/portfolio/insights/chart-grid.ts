@@ -6,3 +6,10 @@ export function gridSteps(lo: number, hi: number): number[] {
   for (let v = Math.ceil(lo / step) * step; v <= hi; v += step) steps.push(v);
   return steps;
 }
+
+export const MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+
+/** `2026-10-05` → `5 Oct` */
+export function dayLabel(date: string): string {
+  return `${Number(date.slice(8, 10))} ${MONTHS[Number(date.slice(5, 7)) - 1]}`;
+}

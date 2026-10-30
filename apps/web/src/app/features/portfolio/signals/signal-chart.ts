@@ -1,12 +1,11 @@
 import { ChangeDetectionStrategy, Component, computed, input } from '@angular/core';
-import { gridSteps } from '../insights/chart-grid';
+import { dayLabel, gridSteps } from '../insights/chart-grid';
 import type { Signal, SignalStatus, SignalStock } from './signal-record';
 import { SIGNAL_STATUS_LABEL } from './signal-status';
 
 const W = 1000;
 const H = 300;
 const M = { left: 8, right: 64, top: 18, bottom: 26 };
-const MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
 
 interface SignalMark {
   id: string;
@@ -147,8 +146,4 @@ export class SignalChart {
       lastY: y(series[last]![1]),
     };
   });
-}
-
-function dayLabel(date: string): string {
-  return `${Number(date.slice(8, 10))} ${MONTHS[Number(date.slice(5, 7)) - 1]}`;
 }
