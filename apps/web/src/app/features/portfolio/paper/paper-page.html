@@ -23,7 +23,7 @@
     <article class="card">
       <span class="label">Paper portfolio</span>
       <span class="figure">{{ f.value | euro }}</span>
-      <span class="muted" [attr.data-tone]="tone(f.change)">{{ f.change | percentChange }} since the start</span>
+      <span class="muted" [attr.data-tone]="tone(f.change)">{{ f.change | percentChange }} on the start cost</span>
     </article>
     <article class="card">
       <span class="label">Against holding</span>
@@ -116,7 +116,7 @@
               </td>
               <td class="num">{{ t.shares | quantity }}</td>
               <td class="num">{{ t.priceEur | euro }}</td>
-              <td class="muted">{{ t.start ? 'Position held at the start, at that close' : t.note }}</td>
+              <td class="muted">{{ t.start ? 'Real position at the start, at its average buy price' : t.note }}</td>
             </tr>
           }
         </tbody>
