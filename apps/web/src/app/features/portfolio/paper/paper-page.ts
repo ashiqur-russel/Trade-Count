@@ -4,6 +4,7 @@ import { Pill } from '../../../shared/ui';
 import { DISPLAY_PIPES } from '../format/display-pipes';
 import { profitTone } from '../format/display-format';
 import { paperFigures } from './paper-figures';
+import { triggerText } from './paper-order-text';
 import { PaperResults } from './paper-results';
 import { PaperValueChart } from './paper-value-chart';
 
@@ -30,6 +31,13 @@ export class PaperPage {
     if (!record) return [];
     const names = new Map(record.stocks.map((s) => [s.symbol, s.name]));
     return [...record.trades].reverse().map((t) => ({ ...t, stockName: names.get(t.symbol)! }));
+  });
+
+  protected readonly orders = computed(() => {
+    const record = this.record();
+    if (!record?.orders) return [];
+    const names = new Map(record.stocks.map((s) => [s.symbol, s.name]));
+    return record.orders.map((o) => ({ ...o, stockName: names.get(o.symbol)!, when: triggerText(o.trigger) }));
   });
 
   protected readonly tone = profitTone;

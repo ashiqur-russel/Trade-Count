@@ -9,6 +9,8 @@ export interface PaperRecord {
   stocks: PaperStock[];
   trades: PaperTrade[];
   days: PaperDay[];
+  /** The agent's orders waiting for their price; absent in records published before orders were. */
+  orders?: PaperOrder[];
 }
 
 export interface PaperStock {
@@ -30,6 +32,23 @@ export interface PaperTrade {
   /** One of the positions the paper portfolio started with. */
   start?: boolean;
 }
+
+export type PaperOrderTrigger = 'price-at-or-above' | 'price-at-or-below' | 'close-above' | 'close-below';
+
+/** An order the agent fills on paper once its trigger is met; `info` orders only alert. */
+export interface PaperOrder {
+  id: string;
+  symbol: string;
+  action: 'buy' | 'sell' | 'info';
+  trigger: PaperOrderTrigger;
+  eur: number;
+  shares?: number;
+  from?: string;
+  until?: string;
+  note?: string;
+}
+
+const TRIGGERS: readonly string[] = ['price-at-or-above', 'price-at-or-below', 'close-above', 'close-below'];
 
 /** End-of-day value of the paper portfolio, and of the start positions left untouched. */
 export interface PaperDay {
@@ -67,7 +86,20 @@ export function parsePaperRecord(json: string): PaperRecord {
         typeof t.at === 'string',
     ) &&
     Array.isArray(value.days) &&
-    value.days.every((d) => isDate(d?.date) && isNumber(d.value) && isNumber(d.hold));
+    value.days.every((d) => isDate(d?.date) && isNumber(d.value) && isNumber(d.hold)) &&
+    (value.orders === undefined ||
+      (Array.isArray(value.orders) &&
+        value.orders.every(
+          (o) =>
+            typeof o?.id === 'string' &&
+            symbols.has(o.symbol) &&
+            ['buy', 'sell', 'info'].includes(o.action) &&
+            TRIGGERS.includes(o.trigger) &&
+            isNumber(o.eur) &&
+            (o.shares === undefined || (Number.isInteger(o.shares) && o.shares > 0)) &&
+            (o.from === undefined || isDate(o.from)) &&
+            (o.until === undefined || isDate(o.until)),
+        )));
   if (!valid) throw new Error('Unreadable paper record');
   return value as PaperRecord;
 }

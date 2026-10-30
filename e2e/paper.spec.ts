@@ -21,6 +21,10 @@ const record = JSON.stringify({
     { date: '2026-11-02', value: 13700, hold: 13600 },
     { date: '2026-11-03', value: 13730, hold: 13600 },
   ],
+  orders: [
+    { id: 'tsla-stop', symbol: 'TSLA', action: 'sell', trigger: 'price-at-or-below', eur: 337, shares: 25, note: 'Stop under the MA20' },
+    { id: 'pltr-breakout', symbol: 'PLTR', action: 'buy', trigger: 'close-above', eur: 181.5, shares: 10, from: '2026-11-04' },
+  ],
 });
 
 /** WebKit can't intercept requests from a page its service worker controls, so the page runs without one. */
@@ -35,7 +39,7 @@ async function openPaper(page: Page): Promise<void> {
 }
 
 test.describe('agent paper trading page', () => {
-  test('shows the paper value against holding, the open positions and every paper trade', async ({ openDevice }) => {
+  test('shows the paper value against holding, the open positions, the waiting orders and every paper trade', async ({ openDevice }) => {
     const page = await openDevice();
     await openPaper(page);
 
@@ -46,5 +50,9 @@ test.describe('agent paper trading page', () => {
     const trades = page.locator('section[aria-labelledby="trades-title"] tbody tr');
     await expect(trades).toHaveCount(3);
     await expect(trades.first()).toContainText('Buy the dip');
+    const orders = page.locator('section[aria-labelledby="orders-title"] tbody tr');
+    await expect(orders).toHaveCount(2);
+    await expect(orders.first()).toContainText('Price falls to 337,00 €');
+    await expect(orders.last()).toContainText('from 04.11.2026');
   });
 });

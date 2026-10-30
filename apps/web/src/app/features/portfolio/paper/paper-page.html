@@ -86,6 +86,58 @@
     </div>
   </section>
 
+  <section class="ledger" aria-labelledby="orders-title">
+    <h2 id="orders-title">Waiting orders</h2>
+    <p class="muted">
+      The agent's buy and sell orders from its latest review. Each one becomes a paper trade when its
+      price is reached; info orders only send an alert.
+    </p>
+    <div class="table-scroll">
+      <table>
+        <thead>
+          <tr>
+            <th scope="col">Stock</th>
+            <th scope="col">Order</th>
+            <th scope="col">When</th>
+            <th scope="col" class="num">Shares</th>
+            <th scope="col">Valid</th>
+            <th scope="col">Why</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (o of orders(); track o.id) {
+            <tr>
+              <td>{{ o.stockName }}</td>
+              <td>
+                <tc-pill [tone]="o.action === 'buy' ? 'accent' : o.action === 'sell' ? 'warn' : 'neutral'">{{
+                  o.action === 'buy' ? 'Buy' : o.action === 'sell' ? 'Sell' : 'Info'
+                }}</tc-pill>
+              </td>
+              <td class="date">{{ o.when }} {{ o.eur | euro }}</td>
+              <td class="num">{{ o.shares ? (o.shares | quantity) : '–' }}</td>
+              <td class="date">
+                @if (o.from) {
+                  from {{ o.from | displayDate }}
+                }
+                @if (o.until) {
+                  until {{ o.until | displayDate }}
+                }
+                @if (!o.from && !o.until) {
+                  now
+                }
+              </td>
+              <td class="muted">{{ o.note }}</td>
+            </tr>
+          } @empty {
+            <tr>
+              <td colspan="6" class="muted">No waiting orders.</td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  </section>
+
   <section class="ledger" aria-labelledby="trades-title">
     <h2 id="trades-title">Paper trades</h2>
     <div class="table-scroll">
