@@ -3,6 +3,8 @@ name: CI
 on:
   push:
     branches: [main]
+    # The signal agent commits its paper results; a data-only push needs no build.
+    paths-ignore: [apps/web/public/paper.json]
   pull_request:
 
 permissions:
